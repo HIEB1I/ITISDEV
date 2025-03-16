@@ -28,7 +28,10 @@
         <activity android:name=".signUp" />
         <activity android:name=".logIn" />
         <activity android:name=".welcomePage" />
-
+        <activity android:name=".home" />
+        <activity android:name=".foodManagement" />
+        <activity android:name=".community" />
+        <activity android:name=".profile" />
 
 
 

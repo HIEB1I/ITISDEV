@@ -14,10 +14,9 @@ public class welcomePage extends AppCompatActivity {
         setContentView(R.layout.activity_welcomepage);
     }
 
-    /*
     public void goHome(View view) {
         Intent intent = new Intent(this, home.class);
         startActivity(intent);
-    }*/
+    }
 
 }
