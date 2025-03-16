@@ -28,4 +28,10 @@
     <string name="congratulations_subtitle">We’re excited to have you! Track your food, reduce waste,\nand cook smarter with ConservaBite.</string>
     <string name="continueText">Continue</string>
 
+    <string name="home">Home</string>
+    <string name="food">Food</string>
+    <string name="community">Community</string>
+    <string name="profile">Profile</string>
+
+
 </resources>
