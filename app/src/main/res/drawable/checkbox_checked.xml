@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background square with white fill and black border -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- White background -->
+            <solid android:color="#FFFFFF" />
+            <!-- Black border -->
+            <stroke android:width="2dp" android:color="#000000" />
+            <corners android:radius="2dp" />
+            <!-- Adjust the size as needed -->
+            <size android:width="24dp" android:height="24dp" />
+        </shape>
+    </item>
+
+    <!-- Centered check mark -->
+    <item android:gravity="center">
+        <vector
+            android:width="18dp"
+            android:height="18dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24"
+            android:fillColor="#000000">
+            <!-- Standard Material check path -->
+            <path android:pathData="M9,16.17L4.83,12l-1.42,1.41L9,19l11-11-1.41-1.41z" />
+        </vector>
+    </item>
+</layer-list>

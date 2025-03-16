@@ -23,8 +23,13 @@
             </intent-filter>
         </activity>
 
+        <!-- ADD CLASSES HERE -->
         <activity android:name=".signIn" />
         <activity android:name=".signUp" />
+        <activity android:name=".logIn" />
+        <activity android:name=".welcomePage" />
+
+
 
 
         <meta-data

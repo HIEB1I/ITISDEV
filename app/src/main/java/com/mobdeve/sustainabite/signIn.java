@@ -19,6 +19,11 @@ public class signIn extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goLogin(View view) {
+        Intent intent = new Intent(this, logIn.class);
+        startActivity(intent);
+    }
+
 /*
     public void goHome(View v) {
         navigateTo(Home.class);
