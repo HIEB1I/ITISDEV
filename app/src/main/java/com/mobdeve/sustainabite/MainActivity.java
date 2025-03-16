@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.content.Intent;
+import android.os.Handler;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,5 +24,19 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                Intent i = new Intent(MainActivity.this, signIn.class);
+                startActivity(i);
+
+                // Optionally finish MainActivity so the user cannot return to it
+                finish();
+            }
+        }, 3000); // 3-second delay (can edit this to extend or shorten the delay)
+
+
     }
 }

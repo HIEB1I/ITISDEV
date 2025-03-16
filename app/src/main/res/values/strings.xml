@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SustainaBite</string>
+    <string name="create_account_title">Create your\nConservaBite Account</string>
+    <string name="create_account_subtitle">ConservaBite helps you reduce food waste by tracking\nexpiration dates and suggesting smart recipes.</string>
+    <string name="tagline">“A Smarter Way to Bite Sustainably”</string>
+    <string name="signup">Sign Up</string>
+    <string name="login">Log In</string>
+
 </resources>
