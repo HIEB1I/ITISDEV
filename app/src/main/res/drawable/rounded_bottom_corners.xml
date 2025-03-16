@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Only bottom corners rounded -->
+    <corners
+        android:topLeftRadius="0dp"
+        android:topRightRadius="0dp"
+        android:bottomLeftRadius="20dp"
+        android:bottomRightRadius="20dp" />
+
+    <!-- Transparent fill, since the ImageView covers it -->
+    <solid android:color="@android:color/transparent" />
+</shape>
