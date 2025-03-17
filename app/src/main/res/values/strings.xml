@@ -33,5 +33,36 @@
     <string name="community">Community</string>
     <string name="profile">Profile</string>
 
+    <string name="my_recipes">My Recipes</string>
+    <string name="edit">Edit Profile</string>
+    <string name="save">Save Changes</string>
+    <string name="hint_username2">_gracieabrams</string>
+    <string name="hint_email2">gracieabrams@gmail.com</string>
+    <string name="sample_username">\@_gracieabrams</string>
+    <string name="sample_email">gracieabrams@gmail.com</string>
+    <string name="recipe1">Fried Rice</string>
+    <string name="recipe2">Spinach Omelette</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="ingredients1">Rice, eggs, vegetables, soy sauce, garlic, oil</string>
+    <string name="ingredients2">Eggs, spinach, cheese, salt, pepper</string>
+    <string name="procedures">Procedures</string>
+    <string name="procedures1">
+    • Sauté garlic in oil.\n
+    • Add veggies and stir-fry.\n
+    • Push aside, scramble eggs, then mix.\n
+    • Add rice, soy sauce, stir well.
+    </string>
+    <string name="procedures2">
+    • Whisk eggs, season with salt and pepper.\n
+    • Cook spinach, pour eggs, and add cheese.\n
+    • Fold and serve.
+    </string>
+
+
+
+
+
+
+
 
 </resources>

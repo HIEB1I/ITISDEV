@@ -6,17 +6,17 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class profile extends AppCompatActivity {
+public class profile_edit extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_profile_edit);
     }
 
     /*NAVIGATIONS*/
-    public void goEdit(View view) {
-        Intent intent = new Intent(this, profile_edit.class);
+    public void goSave(View view) {
+        Intent intent = new Intent(this, profile.class);
         startActivity(intent);
     }
 

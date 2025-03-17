@@ -32,6 +32,7 @@
         <activity android:name=".foodManagement" />
         <activity android:name=".community" />
         <activity android:name=".profile" />
+        <activity android:name=".profile_edit" />
 
 
 
