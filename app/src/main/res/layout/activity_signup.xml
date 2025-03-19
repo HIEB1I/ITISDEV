@@ -220,5 +220,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/roundedButton" />
 
+    <ImageView
+        android:id="@+id/NoViewPass"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editPassword"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="@+id/editPassword"
+        app:layout_constraintTop_toTopOf="@+id/editPassword"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/no_view_pass" />
+
+    <ImageView
+        android:id="@+id/NoViewPass2"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editConfirmPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editConfirmPassword"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="@+id/editConfirmPassword"
+        app:layout_constraintTop_toTopOf="@+id/editConfirmPassword"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/no_view_pass" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

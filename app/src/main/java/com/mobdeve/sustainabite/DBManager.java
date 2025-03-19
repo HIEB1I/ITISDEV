@@ -9,26 +9,55 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class DBManager {
     private final FirebaseFirestore firestore;
+    String newID;
 
     public DBManager() {
         this.firestore = FirebaseFirestore.getInstance();
     }
 
-    public void getLatestUserID() {
-        firestore.collection("USERS")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    String latestUserID = null;
+    public interface FirestoreCallback {
+        void onUserIDRetrieved(String newUserID);
+    }
 
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        latestUserID = document.getId();
-                    }
+// === USERS ===
+public void getLatestUserID(FirestoreCallback callback) {
+    firestore.collection("USERS")
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                String latestUserID = null;
 
-                    Log.d("Firestore", "Latest User ID: " + latestUserID);
-                });
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    latestUserID = document.getId();
+                }
+
+                String finalID = incrementUserId(latestUserID);
+
+                Log.d("Increment", "Updated Latest ID: " + finalID);
+                Log.d("Firestore", "Latest User ID: " + latestUserID);
+
+                callback.onUserIDRetrieved(finalID);
+            });
+}
+
+
+    public String incrementUserId(String LUserID) {
+        String numpart = LUserID.substring(1);
+
+        int incrementedID = Integer.parseInt(numpart) + 1;
+
+        newID = String.format("U00%d", incrementedID);
+
+        return newID;
+    }
+
+    public void putNewUser() {
+        getLatestUserID(newUserID -> {
+            Log.d("Firestore", "Generated New User ID: " + newUserID);
+        });
     }
 
 
+// === FOODS ===
   public void getLatestFoodID() {
         firestore.collection("FOODS")
                 .get()
@@ -43,6 +72,7 @@ public class DBManager {
                 });
     }
 
+    // === RECIPES ===
     public void getLatestRecipeID() {
         firestore.collection("RECIPES")
                 .get()

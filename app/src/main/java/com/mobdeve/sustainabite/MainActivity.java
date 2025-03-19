@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent i = new Intent(MainActivity.this, signIn.class);
+                Intent i = new Intent(MainActivity.this, dbtrial.class);
                 startActivity(i);
 
                 // Optionally finish MainActivity so the user cannot return to it
