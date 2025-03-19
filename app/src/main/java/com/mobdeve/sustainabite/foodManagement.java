@@ -35,4 +35,10 @@ public class foodManagement extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToInputEntry(View view) {
+        Intent intent = new Intent(this, inputEntry.class); // Make sure inputEntry.java exists
+        startActivity(intent);
+    }
+
+
 }

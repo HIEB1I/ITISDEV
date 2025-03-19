@@ -57,6 +57,26 @@
     • Cook spinach, pour eggs, and add cheese.\n
     • Fold and serve.
     </string>
+    <string name="search">Search</string>
+    <string name="add">Add</string>
+    <string name="sort">Sort</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="edit_entry">Edit entry</string>
+    <string name="save_changes">Save changes</string>
+    <string name="quantity">Quantity</string>
+    <string name="remarks">Remarks</string>
+    <string name="date_of_expiry">Date of Expiry</string>
+    <string name="date_of_input">Date of Input</string>
+    <string name="name">Name</string>
+    <string name="add_entry">Add entry</string>
+    <string name="place_of_storage">Place of storage</string>
+    <string name="share_details_about_the_items">Share details about the items.</string>
+    <string name="save_input">Save</string>
+    <string name="_3_pcs">3 pcs</string>
+    <string name="item_name">Item Name</string>
+    <string name="input_date_01_01_2025">Input Date: 01/01/2025</string>
+    <string name="expiry_01_02_2025">Expiry: 01/02/2025</string>
 
 
 </resources>
