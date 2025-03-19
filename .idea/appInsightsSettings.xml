@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.mobdeve.sustainabite" />
-                  <option name="mobileSdkAppId" value="1:555691617684:android:91e65fe2b3868fd6b2b381" />
-                  <option name="projectId" value="conservabite" />
-                  <option name="projectNumber" value="555691617684" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
