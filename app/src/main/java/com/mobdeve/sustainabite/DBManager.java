@@ -6,6 +6,10 @@ import android.util.Log;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 
 public class DBManager {
     private final FirebaseFirestore firestore;
@@ -50,10 +54,19 @@ public void getLatestUserID(FirestoreCallback callback) {
         return newID;
     }
 
-    public void putNewUser() {
+    public void putNewUser(String Uname, String Upass, String Umail, String Uimage) {
         getLatestUserID(newUserID -> {
-            Log.d("Firestore", "Generated New User ID: " + newUserID);
+            Log.d("NEW ID", "Generated New User ID: " + newUserID);
+
+            Map<String, Object> user = new HashMap<>();
+            user.put("UName", Uname);
+            user.put("UPass", Upass);
+            user.put("UEmail", Umail);
+            user.put("UImage", Uimage);
+
+            firestore.collection("USERS").document(newUserID).set(user);
         });
+
     }
 
 
