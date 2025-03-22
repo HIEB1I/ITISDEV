@@ -266,22 +266,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/quantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/quantity"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextQty"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDOI"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
         android:id="@+id/remarks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -317,7 +301,7 @@
         android:id="@+id/doe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="92dp"
+        android:layout_marginEnd="94dp"
         android:fontFamily="@font/poppins"
         android:gravity="center"
         android:lineSpacingExtra="0sp"
@@ -332,7 +316,7 @@
         android:layout_width="165dp"
         android:layout_height="46dp"
         android:layout_marginEnd="28dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="10dp"
         android:autofillHints="expiryDate"
         android:background="@drawable/white_textbox"
         android:inputType="date"
@@ -340,7 +324,7 @@
         android:padding="12dp"
         android:textColor="#000000"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@+id/inputEntryFragment"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
@@ -348,7 +332,7 @@
         android:layout_width="165dp"
         android:layout_height="46dp"
         android:layout_marginStart="28dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="10dp"
         android:autofillHints="doi"
         android:background="@drawable/white_textbox"
         android:inputType="date"
@@ -356,7 +340,7 @@
         android:padding="12dp"
         android:textColor="#000000"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextQty"
+        app:layout_constraintBottom_toTopOf="@+id/quantityEntryFragment"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -392,21 +376,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <EditText
-        android:id="@+id/editTextQty"
-        android:layout_width="165dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="12dp"
-        android:autofillHints="quantity"
-        android:background="@drawable/white_textbox"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/remarks"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/foodImageFrame"
@@ -419,25 +388,24 @@
         app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <fragment
+        android:id="@+id/inputEntryFragment"
+        android:name="com.mobdeve.sustainabite.InputEntryFragment"
         android:layout_width="165dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
-        android:layout_marginBottom="43dp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_marginBottom="-12dp"
+        app:layout_constraintBottom_toTopOf="@+id/remarks"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:text="@string/pantry_"
-            android:focusable="true"
-            android:clickable="true" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <fragment
+        android:id="@+id/quantityEntryFragment"
+        android:name="com.mobdeve.sustainabite.QuantityEntryFragment"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        app:layout_constraintBottom_toTopOf="@+id/remarks"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

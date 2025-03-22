@@ -6,18 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.mobdeve.sustainabite.databinding.FragmentInputEntryBinding;
 
-public class InputEntryFragment extends Fragment {
+import com.mobdeve.sustainabite.databinding.FragmentQuantityInputEntryBinding;
 
-    private FragmentInputEntryBinding binding;
+public class QuantityEntryFragment extends Fragment {
+
+    private FragmentQuantityInputEntryBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentInputEntryBinding.inflate(inflater, container, false);
+        binding = FragmentQuantityInputEntryBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -26,13 +28,12 @@ public class InputEntryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Set up the dropdown menu
-        String[] storageOptions = getResources().getStringArray(R.array.storage);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.storage_dropdown, storageOptions);
-        binding.autoCompleteTextView.setAdapter(adapter);
-
+        String[] quantityOptions = getResources().getStringArray(R.array.quantity);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, quantityOptions);
 
         AutoCompleteTextView autoCompleteTextView = binding.autoCompleteTextView;
         autoCompleteTextView.setAdapter(adapter);
+
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
     }
 

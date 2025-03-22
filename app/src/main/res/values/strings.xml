@@ -86,7 +86,17 @@
         <item>Refrigerator</item>
         <item>Freezer</item>
         <item>Cupboard</item>
-        <item>Cool, Dry Place</item>
+        <item>Dry Place</item>
         <item>Countertop</item>
     </string-array>
+
+    <string-array name="quantity">
+        <item>Piece (pc/s)</item>
+        <item>Gram (g)</item>
+        <item>Kilogram (kg)</item>
+        <item>Ounce (oz)</item>
+        <item>Liter (L)</item>
+        <item>Milliliter (ml)</item>
+    </string-array>
+
 </resources>
