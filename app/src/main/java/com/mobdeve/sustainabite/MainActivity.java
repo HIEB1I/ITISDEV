@@ -1,42 +1,26 @@
 package com.mobdeve.sustainabite;
 
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
-
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Change 1
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
+        // Handler to delay the transition to the sign-in screen
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                Intent i = new Intent(MainActivity.this, signIn.class);
-                startActivity(i);
-
-                // Optionally finish MainActivity so the user cannot return to it
-                finish();
+                Intent intent = new Intent(MainActivity.this, signIn.class);
+                startActivity(intent);
+                finish(); // Close the splash screen to prevent going back to it
             }
-        }, 3000); // 3-second delay (can edit this to extend or shorten the delay)
-
-
+        }, 3000); // 3000 ms = 3 seconds
     }
+
 }
