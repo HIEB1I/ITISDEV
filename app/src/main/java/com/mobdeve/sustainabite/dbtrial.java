@@ -25,7 +25,7 @@ public class dbtrial extends AppCompatActivity {
             return insets;
         });
 
-        //dbManager.putNewUser();
+        dbManager.putNewUser();
         //dbManager.getLatestFoodID();
         //dbManager.getLatestRecipeID();
 
