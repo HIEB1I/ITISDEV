@@ -1,19 +1,13 @@
 package com.mobdeve.sustainabite;
 
-
 import android.util.Log;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 
 public class DBManager {
     private final FirebaseFirestore firestore;
-    String newID;
 
     public DBManager() {
         this.firestore = FirebaseFirestore.getInstance();
@@ -23,40 +17,58 @@ public class DBManager {
         void onUserIDRetrieved(String newUserID);
     }
 
-// === USERS ===
-public void getLatestUserID(FirestoreCallback callback) {
-    firestore.collection("USERS")
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                String latestUserID = null;
+    // === USERS ===
+    public void getLatestUserID(FirestoreCallback callback) {
+        firestore.collection("USERS")
+                .orderBy("UName")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    String latestUserID = null;
 
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    latestUserID = document.getId();
-                }
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        latestUserID = document.getId();
+                    }
 
-                String finalID = incrementUserId(latestUserID);
+                    String finalID = incrementUserId(latestUserID);
 
-                Log.d("Increment", "Updated Latest ID: " + finalID);
-                Log.d("Firestore", "Latest User ID: " + latestUserID);
+                    Log.d("Increment", "Updated Latest ID: " + finalID);
+                    Log.d("Firestore", "Latest User ID: " + latestUserID);
 
-                callback.onUserIDRetrieved(finalID);
-            });
-}
-
+                    callback.onUserIDRetrieved(finalID);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error retrieving latest User ID", e);
+                    callback.onUserIDRetrieved(null);
+                });
+    }
 
     public String incrementUserId(String LUserID) {
-        String numpart = LUserID.substring(1);
+        if (LUserID == null || LUserID.isEmpty()) {
+            return "U001";
+        }
 
-        int incrementedID = Integer.parseInt(numpart) + 1;
-
-        newID = String.format("U00%d", incrementedID);
-
-        return newID;
+        try {
+            String numpart = LUserID.substring(1);
+            int incrementedID = Integer.parseInt(numpart) + 1;
+            return String.format("U%03d", incrementedID);
+        } catch (NumberFormatException e) {
+            Log.e("IncrementError", "Invalid UserID format: " + LUserID, e);
+            return "U001";
+        }
     }
 
     public void putNewUser(String Uname, String Upass, String Umail, String Uimage) {
         getLatestUserID(newUserID -> {
+            if (newUserID == null || newUserID.isEmpty()) {
+                Log.e("DB_ERROR", "Failed to generate new user ID.");
+                return;
+            }
+
             Log.d("NEW ID", "Generated New User ID: " + newUserID);
+            Log.d("SignUpDebug", "Username: " + Uname);
+            Log.d("SignUpDebug", "Password: " + Upass);
+            Log.d("SignUpDebug", "Email: " + Umail);
+            Log.d("SignUpDebug", "Image String Length: " + (Uimage != null ? Uimage.length() : 0));
 
             Map<String, Object> user = new HashMap<>();
             user.put("UName", Uname);
@@ -64,13 +76,14 @@ public void getLatestUserID(FirestoreCallback callback) {
             user.put("UEmail", Umail);
             user.put("UImage", Uimage);
 
-            firestore.collection("USERS").document(newUserID).set(user);
+            firestore.collection("USERS").document(newUserID).set(user)
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "User successfully added!"))
+                    .addOnFailureListener(e -> Log.e("Firestore", "Error adding user", e));
         });
-
     }
 
 
-// === FOODS ===
+    // === FOODS ===
   public void getLatestFoodID() {
         firestore.collection("FOODS")
                 .get()
