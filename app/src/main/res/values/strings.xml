@@ -77,6 +77,16 @@
     <string name="item_name">Item Name</string>
     <string name="input_date_01_01_2025">Input Date: 01/01/2025</string>
     <string name="expiry_01_02_2025">Expiry: 01/02/2025</string>
+    <string name="add_entry_"><![CDATA[< Add entry]]></string>
+    <string name="pantry">Pantry</string>
+    <string name="pantry_">Pantry</string>
 
-
+    <string-array name="storage">
+        <item>Pantry</item>
+        <item>Refrigerator</item>
+        <item>Freezer</item>
+        <item>Cupboard</item>
+        <item>Cool, Dry Place</item>
+        <item>Countertop</item>
+    </string-array>
 </resources>

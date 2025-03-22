@@ -219,11 +219,6 @@
 
     </LinearLayout>
 
-    <!-- Place of Storage -->
-
-
-    <!-- Name -->
-
     <Button
         android:id="@+id/btnAddEntry"
         android:layout_width="wrap_content"
@@ -231,7 +226,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
-        android:text="@string/add_entry"
+        android:text="@string/add_entry_"
         android:textColor="#e16162"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -282,8 +277,6 @@
         android:textColor="#000000"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextQty"
-        app:layout_constraintEnd_toStartOf="@+id/storage"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextDOI"
         app:layout_constraintVertical_bias="1.0" />
@@ -339,6 +332,7 @@
         android:layout_width="165dp"
         android:layout_height="46dp"
         android:layout_marginEnd="28dp"
+        android:layout_marginBottom="14dp"
         android:autofillHints="expiryDate"
         android:background="@drawable/white_textbox"
         android:inputType="date"
@@ -346,22 +340,8 @@
         android:padding="12dp"
         android:textColor="#000000"
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="488dp" />
-
-    <TextView
-        android:id="@+id/storage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="72dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/place_of_storage"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDOE" />
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/editTextDOI"
@@ -438,6 +418,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="43dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:text="@string/pantry_"
+            android:focusable="true"
+            android:clickable="true" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
