@@ -80,6 +80,9 @@
     <string name="add_entry_"><![CDATA[< Add entry]]></string>
     <string name="pantry">Pantry</string>
     <string name="pantry_">Pantry</string>
+    <string name="sort_"><![CDATA[< Sort]]></string>
+    <string name="show_results">Show results</string>
+    <string name="expiry_tag">Expiry Tag</string>
 
     <string-array name="storage">
         <item>Pantry</item>

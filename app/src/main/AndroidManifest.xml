@@ -35,6 +35,7 @@
         <activity android:name=".profile" />
         <activity android:name=".profile_edit" />
         <activity android:name=".inputEntry" />
+        <activity android:name=".Sort" />
 
 
 

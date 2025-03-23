@@ -44,6 +44,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="#F7F7F7"
+            android:onClick="goToSort"
             android:src="@android:drawable/ic_menu_sort_by_size"
             android:contentDescription="@string/sort" />
 

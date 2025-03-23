@@ -60,7 +60,12 @@ public class foodManagement extends AppCompatActivity {
     }
 
     public void goToInputEntry(View view) {
-        Intent intent = new Intent(this, inputEntry.class); // Make sure inputEntry.java exists
+        Intent intent = new Intent(this, inputEntry.class);
+        startActivity(intent);
+    }
+
+    public void goToSort(View view) {
+        Intent intent = new Intent(this, Sort.class);
         startActivity(intent);
     }
 }
