@@ -29,11 +29,12 @@ public class QuantityEntryFragment extends Fragment {
 
         // Set up the dropdown menu
         String[] quantityOptions = getResources().getStringArray(R.array.quantity);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, quantityOptions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.quantity_dropdown, quantityOptions);
+        binding.autoCompleteTextView.setAdapter(adapter);
+
 
         AutoCompleteTextView autoCompleteTextView = binding.autoCompleteTextView;
         autoCompleteTextView.setAdapter(adapter);
-
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
     }
 
@@ -43,3 +44,4 @@ public class QuantityEntryFragment extends Fragment {
         binding = null;
     }
 }
+
