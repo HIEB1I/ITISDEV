@@ -31,15 +31,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    android {
-        viewBinding {
-            enable = true
-        }
+    viewBinding {
+        enable = true
     }
-
 }
 
 dependencies {
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

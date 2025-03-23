@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -23,30 +24,32 @@
             android:scaleType="centerCrop"
             android:src="@drawable/banana" />
 
-        <!-- Overlay: Quantity Tag in the lower right of the image -->
+        <!-- Quantity Tag Overlay -->
         <TextView
             android:id="@+id/itemQuantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="76dp"
+            android:layout_height="34dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="8dp"
-            android:background="#F7F7F7"
+            android:background="@drawable/rounded_bg"
+            android:fontFamily="@font/poppins_semibold"
             android:padding="4dp"
             android:text="@string/_3_pcs"
+            android:textAlignment="center"
             android:textColor="@android:color/black"
-            android:textSize="12sp" />
+            android:textSize="15sp" />
 
     </FrameLayout>
 
-    <!-- Information Section (Now Below the Image) -->
+    <!-- Information Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#AA000000"
+        android:background="#ffffff"
         android:padding="8dp">
 
-        <!-- Left side: Item Name and Input Date -->
+        <!-- Left Side: Item Name and Input Date -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -59,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/item_name"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
@@ -68,10 +71,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/input_date_01_01_2025"
                 android:textSize="12sp"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <!-- Right side: Expiry Date -->
+        <!-- Right Side: Expiry Date -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,9 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/expiry_01_02_2025"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
