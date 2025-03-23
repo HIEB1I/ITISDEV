@@ -196,7 +196,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/yellow_rounded_button"
         android:fontFamily="@font/poppins_semibold"
-        android:onClick="goLogin"
+        android:onClick="goSignUp"
         android:padding="12dp"
         android:text="@string/signup"
         android:textColor="#000000"
@@ -219,6 +219,45 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/roundedButton" />
+
+    <ImageView
+        android:id="@+id/NoViewPass"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editPassword"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="@+id/editPassword"
+        app:layout_constraintTop_toTopOf="@+id/editPassword"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/no_view_pass" />
+
+    <ImageView
+        android:id="@+id/NoViewPass2"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editConfirmPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editConfirmPassword"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="@+id/editConfirmPassword"
+        app:layout_constraintTop_toTopOf="@+id/editConfirmPassword"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/no_view_pass" />
+
+    <ImageView
+        android:id="@+id/imageButton"
+        android:layout_width="28dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editProfile"
+        app:layout_constraintEnd_toEndOf="@+id/editProfile"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toStartOf="@+id/editProfile"
+        app:layout_constraintTop_toTopOf="@+id/editProfile"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/upload" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,7 @@
         <activity android:name=".community" />
         <activity android:name=".profile" />
         <activity android:name=".profile_edit" />
+        <activity android:name=".AddRecipeActivity"/>
         <activity android:name=".inputEntry" />
         <activity android:name=".Sort" />
 
@@ -42,6 +43,7 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>

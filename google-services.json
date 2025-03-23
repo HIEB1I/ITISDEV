@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "555691617684",
+    "project_id": "conservabite",
+    "storage_bucket": "conservabite.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555691617684:android:91e65fe2b3868fd6b2b381",
+        "android_client_info": {
+          "package_name": "com.mobdeve.sustainabite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc3ftJ-MfHDXQvBWtlk_DKEKEOfr8vkqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
