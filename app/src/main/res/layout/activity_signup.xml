@@ -6,6 +6,39 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/registerHere"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="center"
+        android:lineSpacingExtra="0sp"
+        android:text="Already have an account?"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.312"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/roundedButton" />
+
+    <TextView
+        android:id="@+id/registerHere2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="center"
+        android:lineSpacingExtra="0sp"
+        android:onClick="goLogin"
+        android:text="Login here."
+        android:textColor="#417B49"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.085"
+        app:layout_constraintStart_toEndOf="@+id/registerHere"
+        app:layout_constraintTop_toBottomOf="@+id/roundedButton" />
+
+    <TextView
         android:id="@+id/createTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -205,23 +238,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editConfirmPassword" />
 
-    <TextView
-        android:id="@+id/loginHere"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/loginHere"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roundedButton" />
-
     <ImageView
-        android:id="@+id/NoViewPass"
+        android:id="@+id/NoViewPass_1"
         android:layout_width="28dp"
         android:layout_height="23dp"
         android:layout_marginTop="12dp"

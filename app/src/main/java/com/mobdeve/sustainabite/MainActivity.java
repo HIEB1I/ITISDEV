@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         // Handler to delay the transition to the sign-in screen
         new Handler().postDelayed(new Runnable() {
             @Override
