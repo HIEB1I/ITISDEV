@@ -15,7 +15,7 @@ public class welcomePage extends AppCompatActivity {
     }
 
     public void goHome(View view) {
-        Intent intent = new Intent(this, home.class);
+        Intent intent = new Intent(this, logIn.class);
         startActivity(intent);
     }
 

@@ -1,7 +1,9 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,23 @@ public class home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String userId = prefs.getString("USER_ID", "No ID");
+        String email = prefs.getString("USER_EMAIL", "No Email");
+        String name = prefs.getString("USER_NAME", "No Name");
+        String image = prefs.getString("USER_IMAGE", "No Image");
+
+        Log.d("UserPrefs", "Name: " + name);
+        Log.d("UserPrefs", "User ID: " + userId);
+      /*
+      boolean isLoggedIn = prefs.getBoolean("IS_LOGGED_IN", false);
+        Log.d("UserPrefs", "User ID: " + userId);
+        Log.d("UserPrefs", "Email: " + email);
+        Log.d("UserPrefs", "Name: " + name);
+        Log.d("UserPrefs", "Image URL: " + image);
+        Log.d("UserPrefs", "Is Logged In: " + isLoggedIn);*/
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));

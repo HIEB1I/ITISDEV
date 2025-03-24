@@ -1,13 +1,21 @@
 package com.mobdeve.sustainabite;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DBManager {
     private final FirebaseFirestore firestore;
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+
 
     public DBManager() {
         this.firestore = FirebaseFirestore.getInstance();
@@ -17,7 +25,50 @@ public class DBManager {
         void onUserIDRetrieved(String newUserID);
     }
 
-    // === USERS ===
+// === USERS ===
+    // == SIGN IN ==
+    public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
+
+
+    firestore.collection("USERS")
+            .whereEqualTo("UEmail", userEmail)
+            .whereEqualTo("UPass", userPass)
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+                    // Retrieve user details
+                    String userId = document.getId();
+                    String email = document.getString("UEmail");
+                    String name = document.getString("UName");
+                    String image = document.getString("UImage");
+
+                    Log.d("Firestore", "User found: " + name);
+
+                    // Store user details in SharedPreferences
+                    SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("USER_ID", userId);
+                    editor.putString("USER_EMAIL", email);
+                    editor.putString("USER_NAME", name);
+                    editor.putString("USER_IMAGE", image);
+                    editor.putBoolean("IS_LOGGED_IN", true);
+                    editor.apply();
+
+                    listener.onResult(true);
+                } else {
+                    Log.d("Firestore", "User not found.");
+                    listener.onResult(false);
+                }
+            });
+}
+
+    public interface OnCheckUserListener {
+        void onResult(boolean exists);
+    }
+
+    // == SIGN UP ==
     public void getLatestUserID(FirestoreCallback callback) {
         firestore.collection("USERS")
                 .orderBy("UName")
@@ -35,10 +86,6 @@ public class DBManager {
                     Log.d("Firestore", "Latest User ID: " + latestUserID);
 
                     callback.onUserIDRetrieved(finalID);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error retrieving latest User ID", e);
-                    callback.onUserIDRetrieved(null);
                 });
     }
 
@@ -46,7 +93,6 @@ public class DBManager {
         if (LUserID == null || LUserID.isEmpty()) {
             return "U001";
         }
-
         try {
             String numpart = LUserID.substring(1);
             int incrementedID = Integer.parseInt(numpart) + 1;
