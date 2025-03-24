@@ -9,7 +9,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DBManager {
@@ -23,6 +26,11 @@ public class DBManager {
 
     public interface FirestoreCallback {
         void onUserIDRetrieved(String newUserID);
+    }
+
+    public interface OnRecipesFetchedListener {
+        void onRecipesFetched(List<FoodItem> recipes);
+        void onError(Exception e);
     }
 
 // === USERS ===
@@ -158,6 +166,30 @@ public class DBManager {
                     Log.d("Firestore", "Latest Recipe ID: " + latestRecipeID);
                 });
     }
+
+    public void fetchRecipes(OnRecipesFetchedListener listener) {
+        firestore.collection("RECIPES")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<FoodItem> foodList = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String name = document.getString("RNAME");
+                            String image = document.getString("RImage");
+                            String ingredients = document.getString("RIngredients");
+                            String procedure = document.getString("RProcedure");
+
+                            int imageResId = R.drawable.banana;
+
+                            foodList.add(new FoodItem(imageResId, name, image, ingredients, procedure));
+                        }
+                        listener.onRecipesFetched(foodList);
+                    } else {
+                        listener.onError(task.getException());
+                    }
+                });
+    }
+
 }
 
 
