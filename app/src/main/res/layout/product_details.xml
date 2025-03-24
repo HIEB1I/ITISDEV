@@ -30,13 +30,11 @@
             android:src="@drawable/yellow_bg" />
     </FrameLayout>
 
-    <!-- Product Details Section -->
 
-    <!-- Menu Bar -->
 
     <ImageView
         android:id="@+id/productImage"
-        android:layout_width="match_parent"
+        android:layout_width="335dp"
         android:layout_height="200dp"
         android:layout_marginBottom="80dp"
         android:backgroundTint="#AFACAC"
@@ -311,22 +309,29 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAddEntry"
+        android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
         android:text="@string/back_button"
-        android:textColor="#e16162"
-        android:textSize="20sp"
+        android:textColor="#858080"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/banner" />
 
-
-
-
+    <ImageButton
+        android:id="@+id/btnEditEntry"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="38dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/edit"
+        android:onClick="goToEditEntry"
+        android:src="@android:drawable/ic_menu_edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/banner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

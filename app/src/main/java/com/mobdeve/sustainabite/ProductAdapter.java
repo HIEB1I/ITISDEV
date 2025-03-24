@@ -45,8 +45,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             intent.putExtra("productQty_Type", product.getQty_Type());
             intent.putExtra("productDOI", product.getDOI());
             intent.putExtra("productDOE", product.getDOE());
-            intent.putExtra("productStorage", product.getStorage());
-            intent.putExtra("productRemarks", product.getRemarks());
+            //intent.putExtra("productStorage", product.getStorage());
+            //intent.putExtra("productRemarks", product.getRemarks());
             intent.putExtra("productImage", product.getImageResource());
             view.getContext().startActivity(intent);
         });
