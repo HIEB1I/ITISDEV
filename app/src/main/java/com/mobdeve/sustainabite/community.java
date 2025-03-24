@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,16 @@ public class community extends AppCompatActivity {
     private IngProcAdapter ingProcAdapter;
     private List<FoodItem> foodList;
     private DBManager dbManager;
+
+    // Register ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> addRecipeLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (result.getData() != null && result.getData().getBooleanExtra("recipe_added", false)) {
+                        fetchRecipesFromFirestore(); // Refresh the list
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +50,7 @@ public class community extends AppCompatActivity {
         Button addRecipeButton = findViewById(R.id.addRecipeButton);
         addRecipeButton.setOnClickListener(v -> {
             Intent intent = new Intent(community.this, AddRecipeActivity.class);
-            startActivity(intent);
+            addRecipeLauncher.launch(intent); // Start activity with launcher
         });
     }
 

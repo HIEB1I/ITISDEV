@@ -3,7 +3,9 @@ package com.mobdeve.sustainabite;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,44 +35,49 @@ public class DBManager {
         void onError(Exception e);
     }
 
-// === USERS ===
+    public interface OnRecipeAddedListener {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
 
 
-    firestore.collection("USERS")
-            .whereEqualTo("UEmail", userEmail)
-            .whereEqualTo("UPass", userPass)
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                    DocumentSnapshot document = task.getResult().getDocuments().get(0);
+        firestore.collection("USERS")
+                .whereEqualTo("UEmail", userEmail)
+                .whereEqualTo("UPass", userPass)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
 
-                    // Retrieve user details
-                    String userId = document.getId();
-                    String email = document.getString("UEmail");
-                    String name = document.getString("UName");
-                    String image = document.getString("UImage");
+                        // Retrieve user details
+                        String userId = document.getId();
+                        String email = document.getString("UEmail");
+                        String name = document.getString("UName");
+                        String image = document.getString("UImage");
 
-                    Log.d("Firestore", "User found: " + name);
+                        Log.d("Firestore", "User found: " + name);
 
-                    // Store user details in SharedPreferences
-                    SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("USER_ID", userId);
-                    editor.putString("USER_EMAIL", email);
-                    editor.putString("USER_NAME", name);
-                    editor.putString("USER_IMAGE", image);
-                    editor.putBoolean("IS_LOGGED_IN", true);
-                    editor.apply();
+                        // Store user details in SharedPreferences
+                        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("USER_ID", userId);
+                        editor.putString("USER_EMAIL", email);
+                        editor.putString("USER_NAME", name);
+                        editor.putString("USER_IMAGE", image);
+                        editor.putBoolean("IS_LOGGED_IN", true);
+                        editor.apply();
 
-                    listener.onResult(true);
-                } else {
-                    Log.d("Firestore", "User not found.");
-                    listener.onResult(false);
-                }
-            });
-}
+                        listener.onResult(true);
+                    } else {
+                        Log.d("Firestore", "User not found.");
+                        listener.onResult(false);
+                    }
+                });
+    }
 
     public interface OnCheckUserListener {
         void onResult(boolean exists);
@@ -138,7 +145,7 @@ public class DBManager {
 
 
     // === FOODS ===
-  public void getLatestFoodID() {
+    public void getLatestFoodID() {
         firestore.collection("FOODS")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -189,6 +196,64 @@ public class DBManager {
                     }
                 });
     }
+
+    // Fetch last Recipe ID and add a new one
+    public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, OnRecipeAddedListener listener) {
+        // Retrieve user ID (UNum) from SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String uNum = prefs.getString("UNum", "U000"); // Default to "U000" if not found
+
+        CollectionReference recipesRef = firestore.collection("RECIPES");
+
+        // Get last document ID and determine next ID
+        recipesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                int maxId = 0;
+
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String docId = document.getId(); // e.g., "R001"
+                    if (docId.startsWith("R")) {
+                        try {
+                            int num = Integer.parseInt(docId.substring(1));
+                            if (num > maxId) {
+                                maxId = num;
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.e("Firestore", "Invalid Recipe ID format: " + docId);
+                        }
+                    }
+                }
+
+                // New recipe ID (increment from last found)
+                String newRecipeId = "R" + String.format("%03d", maxId + 1);
+
+                // Recipe data
+                Map<String, Object> recipeData = new HashMap<>();
+                recipeData.put("RImage", rImage);
+                recipeData.put("RIngredients", rIngredients);
+                recipeData.put("RNAME", rName);
+                recipeData.put("RProcedure", rProcedure);
+                recipeData.put("UNum", uNum); // Assign logged-in user ID
+
+                // Add to Firestore
+                recipesRef.document(newRecipeId)
+                        .set(recipeData)
+                        .addOnSuccessListener(unused -> {
+                            Log.d("Firestore", "Recipe added with ID: " + newRecipeId);
+                            if (listener != null) listener.onSuccess();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("Firestore", "Error adding recipe", e);
+                            if (listener != null) listener.onFailure(e);
+                        });
+
+            } else {
+                Log.e("Firestore", "Error fetching recipes", task.getException());
+                if (listener != null) listener.onFailure(task.getException());
+            }
+        });
+    }
+
 
 }
 
