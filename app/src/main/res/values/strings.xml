@@ -84,6 +84,7 @@
     <string name="show_results">Show results</string>
     <string name="expiry_tag">Expiry Tag</string>
     <string name="edit_entry_"><![CDATA[< Edit entry]]></string>
+    <string name="back_button"><![CDATA[<]]></string>
 
     <string-array name="storage">
         <item>Pantry</item>

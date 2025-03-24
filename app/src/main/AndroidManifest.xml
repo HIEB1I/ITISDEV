@@ -37,6 +37,8 @@
         <activity android:name=".AddRecipeActivity"/>
         <activity android:name=".inputEntry" />
         <activity android:name=".Sort" />
+        <activity android:name=".ProductDetailsActivity" />
+
 
 
 
