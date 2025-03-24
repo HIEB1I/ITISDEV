@@ -75,14 +75,15 @@
     <string name="save_input">Save</string>
     <string name="_3_pcs">3 pcs</string>
     <string name="item_name">Item Name</string>
-    <string name="input_date_01_01_2025">Input Date: 01/01/2025</string>
-    <string name="expiry_01_02_2025">Expiry: 01/02/2025</string>
+    <string name="input_date_01_01_2025">01/01/2025</string>
+    <string name="expiry_01_02_2025">Exp: 01/02/2025</string>
     <string name="add_entry_"><![CDATA[< Add entry]]></string>
     <string name="pantry">Pantry</string>
     <string name="pantry_">Pantry</string>
     <string name="sort_"><![CDATA[< Sort]]></string>
     <string name="show_results">Show results</string>
     <string name="expiry_tag">Expiry Tag</string>
+    <string name="edit_entry_"><![CDATA[< Edit entry]]></string>
 
     <string-array name="storage">
         <item>Pantry</item>
@@ -94,12 +95,12 @@
     </string-array>
 
     <string-array name="quantity">
-        <item>Piece (pc/s)</item>
-        <item>Gram (g)</item>
-        <item>Kilogram (kg)</item>
-        <item>Ounce (oz)</item>
-        <item>Liter (L)</item>
-        <item>Milliliter (ml)</item>
+        <item>pc</item>
+        <item>g</item>
+        <item>kg</item>
+        <item>oz</item>
+        <item>L</item>
+        <item>ml</item>
     </string-array>
 
 </resources>
