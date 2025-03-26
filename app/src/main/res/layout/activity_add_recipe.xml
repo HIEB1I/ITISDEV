@@ -271,17 +271,16 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="4dp" />
 
-                <EditText
-                    android:id="@+id/pictureInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Attach an image"
-                    android:background="@android:drawable/editbox_background"
-                    android:padding="10dp"
-                    android:focusable="false"
-                    android:clickable="true"
+                <Button
+                    android:id="@+id/attachImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attach Image"
+                    android:backgroundTint="#d5d5d5"
                     android:drawableEnd="@drawable/baseline_attach_file_24"
-                    android:drawablePadding="8dp"/>
+                    android:drawablePadding="8dp"
+                    android:layout_gravity="center"/>
+
 
                 <Button
                     android:id="@+id/addRecipeButton"

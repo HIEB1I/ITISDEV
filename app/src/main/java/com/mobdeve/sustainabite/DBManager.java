@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
 public class DBManager {
     private final FirebaseFirestore firestore;
     FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -175,33 +179,44 @@ public class DBManager {
     }
 
     public void fetchRecipes(OnRecipesFetchedListener listener) {
-        firestore.collection("RECIPES")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("RECIPES")
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<FoodItem> foodList = new ArrayList<>();
-                        for (DocumentSnapshot document : task.getResult()) {
-                            String name = document.getString("RNAME");
-                            String image = document.getString("RImage");
-                            String ingredients = document.getString("RIngredients");
-                            String procedure = document.getString("RProcedure");
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<FoodItem> foodItems = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String name = document.getString("RNAME");
+                        String kcal = document.getString("kcal");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageString = document.getString("RImage");
 
-                            int imageResId = R.drawable.banana;
-
-                            foodList.add(new FoodItem(imageResId, name, image, ingredients, procedure));
+                        Bitmap imageBitmap = null;
+                        if (imageString != null && !imageString.isEmpty()) {
+                            imageBitmap = decodeBase64ToBitmap(imageString);
+                            if (imageBitmap == null) {
+                                Log.e("Firestore", "Failed to decode image for recipe: " + name);
+                            }
+                        } else {
+                            Log.e("Firestore", "No image data found for recipe: " + name);
                         }
-                        listener.onRecipesFetched(foodList);
-                    } else {
-                        listener.onError(task.getException());
+
+                        foodItems.add(new FoodItem(imageString, name, kcal, ingredients, procedures));
                     }
+                    listener.onRecipesFetched(foodItems);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching recipes", e);
+                    listener.onError(e);
                 });
     }
 
+
+
     // Fetch last Recipe ID and add a new one
     public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, OnRecipeAddedListener listener) {
-        // Retrieve user ID (UNum) from SharedPreferences
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String uNum = prefs.getString("UNum", "U000"); // Default to "U000" if not found
+        String uNum = prefs.getString("UNum", "U000");
 
         CollectionReference recipesRef = firestore.collection("RECIPES");
 
@@ -211,7 +226,7 @@ public class DBManager {
                 int maxId = 0;
 
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String docId = document.getId(); // e.g., "R001"
+                    String docId = document.getId();
                     if (docId.startsWith("R")) {
                         try {
                             int num = Integer.parseInt(docId.substring(1));
@@ -224,7 +239,7 @@ public class DBManager {
                     }
                 }
 
-                // New recipe ID (increment from last found)
+                // New recipe ID increment
                 String newRecipeId = "R" + String.format("%03d", maxId + 1);
 
                 // Recipe data
@@ -233,7 +248,7 @@ public class DBManager {
                 recipeData.put("RIngredients", rIngredients);
                 recipeData.put("RNAME", rName);
                 recipeData.put("RProcedure", rProcedure);
-                recipeData.put("UNum", uNum); // Assign logged-in user ID
+                recipeData.put("UNum", uNum);
 
                 // Add to Firestore
                 recipesRef.document(newRecipeId)
@@ -253,6 +268,25 @@ public class DBManager {
             }
         });
     }
+
+
+    // Method to decode Base64 string to Bitmap
+
+    public static Bitmap decodeBase64ToBitmap(String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            Log.e("DecodeBase64", "Empty Base64 string");
+            return null;
+        }
+
+        try {
+            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            Log.e("DecodeBase64", "Failed to decode Base64 string", e);
+            return null;
+        }
+    }
+
 
 
 }

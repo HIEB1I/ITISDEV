@@ -22,12 +22,12 @@ public class community extends AppCompatActivity {
     private List<FoodItem> foodList;
     private DBManager dbManager;
 
-    // Register ActivityResultLauncher
+    // Register ActivityResultLauncher to refresh list after adding recipe
     private final ActivityResultLauncher<Intent> addRecipeLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     if (result.getData() != null && result.getData().getBooleanExtra("recipe_added", false)) {
-                        fetchRecipesFromFirestore(); // Refresh the list
+                        fetchRecipesFromFirestore(); // Refresh
                     }
                 }
             });
@@ -55,9 +55,14 @@ public class community extends AppCompatActivity {
     }
 
     private void fetchRecipesFromFirestore() {
+        Log.d("Firestore", "fetchRecipesFromFirestore() called"); // Debug Log
         dbManager.fetchRecipes(new DBManager.OnRecipesFetchedListener() {
             @Override
             public void onRecipesFetched(List<FoodItem> recipes) {
+                Log.d("Firestore", "Recipes fetched: " + recipes.size());
+                for (FoodItem recipe : recipes) {
+                    Log.d("Firestore", "Fetched recipe: " + recipe.getName() + " | ImageString: " + recipe.getImageString());
+                }
                 foodList.clear();
                 foodList.addAll(recipes);
                 ingProcAdapter.notifyDataSetChanged();
@@ -69,6 +74,7 @@ public class community extends AppCompatActivity {
             }
         });
     }
+
 
     /* NAVIGATIONS */
     public void goHome(View view) {

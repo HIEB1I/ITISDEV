@@ -1,6 +1,8 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,20 +51,31 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
 
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
-
         FoodItem food = foodList.get(position);
-        holder.foodImage.setImageResource(food.getImage());
+
+        Log.d("Adapter", "Loading image for: " + food.getName());
+
+        if (food.getImageString() != null && !food.getImageString().isEmpty()) {
+            // Load Base64 image
+            Bitmap decodedBitmap = DBManager.decodeBase64ToBitmap(food.getImageString());
+            if (decodedBitmap != null) {
+                holder.foodImage.setImageBitmap(decodedBitmap);
+            } else {
+                holder.foodImage.setImageResource(R.drawable.banana);
+            }
+        } else if (food.getImageResId() != null) {
+            // Load drawable image
+            holder.foodImage.setImageResource(food.getImageResId());
+        } else {
+            holder.foodImage.setImageResource(R.drawable.banana);
+        }
+
         holder.foodName.setText(food.getName());
         holder.ingContent.setText(food.getIngredients());
         holder.procContent.setText(food.getProcedures());
-
-        // Button Click - Open Details Acti1vity
-        holder.detailsButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(context, DetailsActivity.class);
-//            intent.putExtra("foodItem", food);
-//            context.startActivity(intent);
-        });
     }
+
+
 
     @Override
     public int getItemCount() {
