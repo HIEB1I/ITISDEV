@@ -219,11 +219,6 @@
 
     </LinearLayout>
 
-    <!-- Place of Storage -->
-
-
-    <!-- Name -->
-
     <Button
         android:id="@+id/btnEditEntry"
         android:layout_width="wrap_content"
@@ -231,7 +226,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
-        android:text="@string/edit_entry"
+        android:text="@string/edit_entry___"
         android:textColor="#e16162"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -271,24 +266,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/quantity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/quantity"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextQty"
-        app:layout_constraintEnd_toStartOf="@+id/storage"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDOI"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
         android:id="@+id/remarks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -307,10 +284,10 @@
         android:id="@+id/editTextUsername"
         android:layout_width="353dp"
         android:layout_height="84dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="8dp"
         android:autofillHints="username"
         android:background="@drawable/white_textbox"
-        android:hint="Share details about the items."
+        android:hint="@string/share_details_about_the_items"
         android:inputType="textPersonName"
         android:minHeight="48dp"
         android:padding="12dp"
@@ -324,7 +301,7 @@
         android:id="@+id/doe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="92dp"
         android:fontFamily="@font/poppins"
         android:gravity="center"
         android:lineSpacingExtra="0sp"
@@ -339,63 +316,36 @@
         android:layout_width="165dp"
         android:layout_height="46dp"
         android:layout_marginEnd="28dp"
-        android:layout_marginBottom="36dp"
-        android:autofillHints="expiryDate"
+        android:layout_marginBottom="19dp"
         android:background="@drawable/white_textbox"
-        android:inputType="date"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/editStorage"
+
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:hint="DOE"
+        android:paddingStart="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/inputEntryFragment"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/storage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="72dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="Place of storage"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/editStorage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDOE"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <EditText
-        android:id="@+id/editStorage"
-        android:layout_width="165dp"
-        android:layout_height="46dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="36dp"
-        android:autofillHints="storage"
-        android:background="@drawable/white_textbox"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
         android:id="@+id/editTextDOI"
         android:layout_width="165dp"
         android:layout_height="46dp"
         android:layout_marginStart="28dp"
-        android:layout_marginBottom="36dp"
-        android:autofillHints="doi"
+
+        android:layout_marginBottom="19dp"
         android:background="@drawable/white_textbox"
-        android:inputType="date"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextQty"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:hint="DOI"
+        android:paddingStart="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -419,7 +369,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:layout_marginBottom="4dp"
         android:fontFamily="@font/poppins"
         android:gravity="center"
         android:lineSpacingExtra="0sp"
@@ -430,21 +379,6 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <EditText
-        android:id="@+id/editTextQty"
-        android:layout_width="165dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="12dp"
-        android:autofillHints="quantity"
-        android:background="@drawable/white_textbox"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/remarks"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <View
         android:id="@+id/foodImageFrame"
@@ -456,6 +390,53 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <fragment
+        android:id="@+id/inputEntryFragment"
+        android:name="com.mobdeve.sustainabite.InputEntryFragment"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="-12dp"
+        app:layout_constraintBottom_toTopOf="@+id/remarks"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Number Input and Quantity Fragment -->
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/editTextUsername"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/quantityInput"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:padding="8dp"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/quantityEntryFragment"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <fragment
+            android:id="@+id/quantityEntryFragment"
+            android:name="com.mobdeve.sustainabite.QuantityEntryFragment"
+            android:layout_width="165dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/quantityInput"
+            app:layout_constraintStart_toEndOf="@+id/quantityInput" />
+
+
+    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

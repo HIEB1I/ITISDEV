@@ -36,7 +36,10 @@
         <activity android:name=".profile_edit" />
         <activity android:name=".AddRecipeActivity"/>
         <activity android:name=".inputEntry" />
+        <activity android:name=".editEntry" />
         <activity android:name=".Sort" />
+        <activity android:name=".ProductDetailsActivity" />
+
 
 
 

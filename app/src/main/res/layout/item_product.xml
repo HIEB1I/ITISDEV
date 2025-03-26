@@ -24,20 +24,36 @@
             android:scaleType="centerCrop"
             android:src="@drawable/banana" />
 
-        <!-- Quantity Tag Overlay -->
-        <TextView
-            android:id="@+id/itemQuantity"
+        <!-- Quantity Tag Overlay with Separate Value and Type -->
+        <LinearLayout
             android:layout_width="76dp"
             android:layout_height="34dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="8dp"
             android:background="@drawable/rounded_bg"
-            android:fontFamily="@font/poppins_semibold"
-            android:padding="4dp"
-            android:text="@string/_3_pcs"
-            android:textAlignment="center"
-            android:textColor="@android:color/black"
-            android:textSize="15sp" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/itemQty_Val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <TextView
+                android:id="@+id/itemQty_Type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pcs"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
 
     </FrameLayout>
 
@@ -66,7 +82,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/itemInputDate"
+                android:id="@+id/itemDOI"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/input_date_01_01_2025"
@@ -82,7 +98,7 @@
             android:gravity="end">
 
             <TextView
-                android:id="@+id/itemExpiryDate"
+                android:id="@+id/itemDOE"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/expiry_01_02_2025"
