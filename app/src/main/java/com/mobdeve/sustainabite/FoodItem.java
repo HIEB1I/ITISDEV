@@ -1,15 +1,17 @@
 package com.mobdeve.sustainabite;
 
 
+import android.graphics.Bitmap;
+
 public class FoodItem {
-    private int image;
+    private Bitmap image;
     private String name;
     private String kcal;
 
     private String ingredients;
     private String procedures;
 
-    public FoodItem(int image, String name, String kcal, String ingredients, String procedures) {
+    public FoodItem(Bitmap image, String name, String kcal, String ingredients, String procedures) {
         this.image = image;
         this.name = name;
         this.kcal = kcal;
@@ -17,7 +19,7 @@ public class FoodItem {
         this.procedures = procedures;
     }
 
-    public int getImage() {
+    public Bitmap getImage() {
         return image;
     }
 

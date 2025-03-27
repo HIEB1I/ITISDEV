@@ -51,7 +51,7 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
 
         FoodItem food = foodList.get(position);
-        holder.foodImage.setImageResource(food.getImage());
+        holder.foodImage.setImageBitmap(food.getImage());
         holder.foodName.setText(food.getName());
         holder.ingContent.setText(food.getIngredients());
         holder.procContent.setText(food.getProcedures());

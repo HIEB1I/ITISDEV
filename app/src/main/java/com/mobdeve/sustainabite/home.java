@@ -2,7 +2,12 @@ package com.mobdeve.sustainabite;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
@@ -10,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +24,7 @@ public class home extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FoodAdapter foodAdapter;
     private List<FoodItem> foodList;
+    DBManager dbManager = new DBManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,27 +40,35 @@ public class home extends AppCompatActivity {
 
         Log.d("UserPrefs", "Name: " + name);
         Log.d("UserPrefs", "User ID: " + userId);
+
       /*
-      boolean isLoggedIn = prefs.getBoolean("IS_LOGGED_IN", false);
         Log.d("UserPrefs", "User ID: " + userId);
         Log.d("UserPrefs", "Email: " + email);
         Log.d("UserPrefs", "Name: " + name);
         Log.d("UserPrefs", "Image URL: " + image);
         Log.d("UserPrefs", "Is Logged In: " + isLoggedIn);*/
 
+
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         foodList = new ArrayList<>();
-        foodList.add(new FoodItem(R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
-        foodList.add(new FoodItem(R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
-        foodList.add(new FoodItem(R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
-        foodList.add(new FoodItem(R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));
 
-        foodAdapter = new FoodAdapter(this, foodList);
-        recyclerView.setAdapter(foodAdapter);
+        dbManager.getFoodHome(new DBManager.FoodDataCallback() {
+            @Override
+            public void onFoodDataRetrieved(ArrayList<FoodItem> foodList) {
+                foodAdapter = new FoodAdapter(home.this, foodList);
+                recyclerView.setAdapter(foodAdapter);
+            }
+        });
+
     }
 
+    /*foodList.add(new FoodItem(R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
+        foodList.add(new FoodItem(R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
+        foodList.add(new FoodItem(R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
+        foodList.add(new FoodItem(R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));*/
 
 
     /*NAVIGATIONS*/

@@ -50,7 +50,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
 
         FoodItem food = foodList.get(position);
-        holder.foodImage.setImageResource(food.getImage());
+        holder.foodImage.setImageBitmap(food.getImage());
         holder.foodName.setText(food.getName());
         holder.foodKcal.setText(food.getKcal());
 

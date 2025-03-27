@@ -2,6 +2,8 @@ package com.mobdeve.sustainabite;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -9,6 +11,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +30,41 @@ public class DBManager {
         void onUserIDRetrieved(String newUserID);
     }
 
-// === USERS ===
+    public void getFoodHome(FoodDataCallback callback) {
+        firestore.collection("RECIPES").get().addOnCompleteListener(task -> {
+                ArrayList<FoodItem> foodList = new ArrayList<>();
+
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String rName = document.getString("RNAME");
+                    String rKCal = document.getString("RKCal");
+                    String rImageBase64 = document.getString("RImage");
+                    String rProcedure = ("");
+                    String rIngredients = ("");
+
+                    Bitmap rImage = base64ToBitmap(rImageBase64);
+
+                    foodList.add(new FoodItem(rImage, rName, rKCal, rProcedure, rIngredients));
+                }
+
+                callback.onFoodDataRetrieved(foodList);
+        });
+    }
+
+    public interface FoodDataCallback {
+        void onFoodDataRetrieved(ArrayList<FoodItem> foodList);
+    }
+
+    private Bitmap base64ToBitmap(String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            return null;
+        }
+        byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+        return android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+
+
+    // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
 
@@ -143,6 +182,7 @@ public class DBManager {
                     Log.d("Firestore", "Latest Food ID: " + latestFoodID);
                 });
     }
+
 
     // === RECIPES ===
     public void getLatestRecipeID() {
