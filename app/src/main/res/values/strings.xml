@@ -15,6 +15,7 @@
     <string name="profilePicture">Profile Picture *</string>
     <string name="hint_picture">Attach Image</string>
     <string name="password">Password *</string>
+    <string name="logout">Logout</string>
     <string name="hint_password">*****</string>
     <string name="confirmPassword">Confirm Password *</string>
     <string name="hint_cpassword">l3m0n</string>
