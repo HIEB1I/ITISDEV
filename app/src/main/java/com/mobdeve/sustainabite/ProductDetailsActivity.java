@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
@@ -29,8 +34,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.productName)).setText(productName);
         ((TextView) findViewById(R.id.productQty_Val)).setText(productQty_Val);
         ((TextView) findViewById(R.id.productQty_Type)).setText(productQty_Type);
-        ((TextView) findViewById(R.id.productDOI)).setText(productDOI);
-        ((TextView) findViewById(R.id.productDOE)).setText(productDOE);
+        ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(productDOI));
+        ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(productDOE));
         //((TextView) findViewById(R.id.productStorage)).setText(productStorage);
         //((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
         ((ImageView) findViewById(R.id.productImage)).setImageResource(productImage);
@@ -46,6 +51,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
     public void goToEditEntry(View view) {
         Intent intent = new Intent(this, editEntry.class);
         startActivity(intent);

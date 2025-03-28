@@ -12,9 +12,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DBManager {
@@ -292,6 +296,29 @@ public class DBManager {
                 });
     }
 
+    //format the date so that it shows month day, year
+
+    public static String convertDate(String inputDate){
+        try {
+
+            //This is the initial format of the date
+            SimpleDateFormat inputFormat = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
+
+
+            //Ideal outcome/format of the date.
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+
+            //This one makes the inputDate into a "date object"
+            Date date = inputFormat.parse(inputDate);
+
+            // Returns the date as the ideal format.
+            return outputFormat.format(date);
+
+        }catch(ParseException e){
+            e.printStackTrace();
+            return "Invalid date";
+        }
+    }
 }
 
 
