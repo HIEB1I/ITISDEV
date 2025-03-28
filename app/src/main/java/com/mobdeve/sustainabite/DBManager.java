@@ -274,15 +274,15 @@ public class DBManager {
                             // Integer quantity = document.getLong("FQuantity").intValue();
                             Long quantityLong = document.getLong("FQuantity");
                             int quantity = (quantityLong != null) ? quantityLong.intValue() : 0;
-                            String type = null;
                             String doi = document.getString("FDOI");
                             String doe = document.getString("FDOE");
+                            String qty_type = document.getString("FQuanType");
                             String storage = document.getString("FRemarks");
                             String remarks = document.getString("FSTORAGE");
                             int imageResId = R.drawable.banana;
 
                             Log.d("Firestore", "Food Id: " + FID + ", Name: " + name);
-                            Product product = new Product(name, quantity,type,doi,doe,storage,remarks,imageResId);
+                            Product product = new Product(name, quantity,qty_type,doi,doe,storage,remarks,imageResId);
                             productList.add(product);
                         }
                         listener.onProductsFetched(productList);
