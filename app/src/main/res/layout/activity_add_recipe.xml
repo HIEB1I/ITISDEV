@@ -209,7 +209,7 @@
                 <EditText
                     android:id="@+id/recipeNameInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:hint="Enter recipe name"
                     android:background="@android:drawable/editbox_background"
                     android:padding="10dp" />
@@ -217,20 +217,19 @@
                 <!-- Ingredients -->
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="58dp"
                     android:text="Ingredients"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:paddingTop="10dp"
                     android:paddingBottom="4dp" />
 
-                <EditText
-                    android:id="@+id/ingredientInput"
+                <LinearLayout
+                    android:id="@+id/ingredientLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter an ingredient"
-                    android:background="@android:drawable/editbox_background"
-                    android:padding="10dp" />
+                    android:orientation="vertical">
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/addIngredientButton"
@@ -254,7 +253,7 @@
                 <EditText
                     android:id="@+id/procedureInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:hint="Enter cooking steps"
                     android:background="@android:drawable/editbox_background"
                     android:padding="10dp"
@@ -275,7 +274,7 @@
                 <EditText
                     android:id="@+id/pictureInput"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:hint="Attach an image"
                     android:background="@android:drawable/editbox_background"
                     android:padding="10dp"

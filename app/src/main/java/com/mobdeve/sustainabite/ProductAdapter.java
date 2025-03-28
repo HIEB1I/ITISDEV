@@ -29,10 +29,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
         holder.itemName.setText(product.getName());
-        holder.itemQty_Val.setText(product.getQty_Val());
+        holder.itemQty_Val.setText(String.valueOf(product.getQty_Val())); // Since this is an integer, have to modify this code.
         holder.itemQty_Type.setText(product.getQty_Type());
-        holder.itemDOI.setText(product.getDOI());
-        holder.itemDOE.setText(product.getDOE());
+        holder.itemDOI.setText(DBManager.convertDate(product.getDOI()));
+        holder.itemDOE.setText(DBManager.convertDate(product.getDOE()));
         //holder.itemStorage.setText(product.getStorage());
         //holder.itemRemarks.setText(product.getRemarks());
         holder.itemImage.setImageResource(product.getImageResource());

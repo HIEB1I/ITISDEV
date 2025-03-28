@@ -2,7 +2,7 @@ package com.mobdeve.sustainabite;
 
 public class Product {
     private String name;
-    private String qty_val;
+    private int qty_val;
     private String qty_type;
     private String doi;
     private String doe;
@@ -10,7 +10,7 @@ public class Product {
     private String remarks;
     private int imageResource;
 
-    public Product(String name, String qty_val, String qty_type, String doi, String doe, String storage, String remarks, int imageResource) {
+    public Product(String name, int qty_val, String qty_type, String doi, String doe, String storage, String remarks, int imageResource) {
         this.name = name;
         this.qty_val = qty_val;
         this.qty_type = qty_type;
@@ -25,7 +25,7 @@ public class Product {
         return name;
     }
 
-    public String getQty_Val() {
+    public int getQty_Val() {
         return qty_val;
     }
 
