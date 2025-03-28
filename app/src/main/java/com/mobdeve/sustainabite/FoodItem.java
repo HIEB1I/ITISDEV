@@ -1,7 +1,9 @@
 package com.mobdeve.sustainabite;
 
 
-public class FoodItem {
+import java.io.Serializable;
+
+public class FoodItem implements Serializable {
     private int image;
     private String name;
     private String kcal;

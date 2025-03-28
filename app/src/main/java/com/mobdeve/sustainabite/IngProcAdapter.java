@@ -1,6 +1,7 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +30,11 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
 
         public FoodViewHolder(View view) {
             super(view);
-                foodImage = view.findViewById(R.id.foodImage);
-                foodName = view.findViewById(R.id.foodName);
-                ingContent = view.findViewById(R.id.ing_content);
-                procContent = view.findViewById(R.id.procedures_content);
-                detailsButton = view.findViewById(R.id.detailsButton);
+            foodImage = view.findViewById(R.id.foodImage);
+            foodName = view.findViewById(R.id.foodName);
+            ingContent = view.findViewById(R.id.ing_content);
+            procContent = view.findViewById(R.id.procedures_content);
+            detailsButton = view.findViewById(R.id.detailsButton);
 
 
         }
@@ -49,7 +50,6 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
 
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
-
         FoodItem food = foodList.get(position);
         holder.foodImage.setImageResource(food.getImage());
         holder.foodName.setText(food.getName());
@@ -57,11 +57,14 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
         holder.procContent.setText(food.getProcedures());
 
         // Button Click - Open Details Acti1vity
-        holder.detailsButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(context, DetailsActivity.class);
-//            intent.putExtra("foodItem", food);
-//            context.startActivity(intent);
-        });
+        View.OnClickListener listener = v -> {
+            Intent intent = new Intent(context, RecipeDetailsActivity.class);
+            intent.putExtra("foodItem", food);
+            context.startActivity(intent);
+        };
+
+        holder.itemView.setOnClickListener(listener);
+        holder.detailsButton.setOnClickListener(listener);
     }
 
     @Override

@@ -15,22 +15,22 @@
 
 
 
-        <TextView
-            android:id="@+id/foodName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:text="Food Name"/>
+    <TextView
+        android:id="@+id/foodName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:text="Food Name"/>
 
-        <TextView
-            android:id="@+id/foodKcal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#666"
-            android:text="100 kcal"/>
+    <TextView
+        android:id="@+id/foodKcal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#666"
+        android:text="100 kcal"/>
 
 
     <Button
