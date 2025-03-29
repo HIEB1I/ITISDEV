@@ -1,10 +1,13 @@
 package com.mobdeve.sustainabite;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class inputEntry extends AppCompatActivity {
@@ -77,7 +80,29 @@ public class inputEntry extends AppCompatActivity {
 
         String FRemarks = remarks.getText().toString().trim();
 
-        dbManager.addFoodToFirestore(FNAME, FDOI, FDOE, FQuantity, FQuanType, FSTORAGE, FRemarks);
+        dbManager.addFoodToFirestore(FNAME, FDOI, FDOE, FQuantity, FQuanType, FSTORAGE, FRemarks, new DBManager.OnFoodAddedListener(){
+            @Override
+            public void onSuccess() {
+                goFood(null);
+                Toast successMessage = Toast.makeText(inputEntry.this, "You have successfully added a new food item!", Toast.LENGTH_SHORT);
+                successMessage.show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("InputEntry", "Failed to add food", e);
+                Toast failedmessage = Toast.makeText(inputEntry.this, "Error in adding food.", Toast.LENGTH_SHORT);
+                failedmessage.show();
+            }
+        });
+
 
     }
+
+    /*NAVIGATIONS*/
+    public void goFood(View view) {
+        Intent intent = new Intent(this, foodManagement.class);
+        startActivity(intent);
+    }
+
 }

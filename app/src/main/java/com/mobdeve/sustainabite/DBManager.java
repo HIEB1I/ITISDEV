@@ -47,9 +47,15 @@ public class DBManager {
         void onError(Exception e);
     }
 
+
     public interface OnRecipeAddedListener {
         void onSuccess();
         void onFailure(Exception e);
+    }
+
+    public interface OnFoodAddedListener {
+        void onSuccess();
+        void onError(Exception e);
     }
 
     // === USERS ===
@@ -329,7 +335,7 @@ public class DBManager {
 
     //Code for adding Food
 
-    public void addFoodToFirestore(String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks){
+    public void addFoodToFirestore(String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, OnFoodAddedListener listener){
         getLatestFoodID(latestFoodID -> {
 
             String newFoodID = generateNextFoodID(latestFoodID); // Generate next ID
@@ -350,9 +356,11 @@ public class DBManager {
                     .set(foodData)
                     .addOnSuccessListener(documentReference -> {
                         Log.d("DBManager", "DocumentSnapshot added with ID: " + newFoodID);
+                        if (listener != null) listener.onSuccess();
                     })
                     .addOnFailureListener(e -> {
                         Log.w("DBManager", "Error adding document", e);
+                        if (listener != null) listener.onError(e);
                     });
         });
     }
