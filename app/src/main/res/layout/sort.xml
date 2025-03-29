@@ -1,35 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f7f7f7">
-
-
-    <!-- Icon Container to Center Icons -->
-
-
-    <!-- Banner at the top -->
-    <FrameLayout
-        android:id="@+id/banner"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/rounded_bottom_corners"
-        android:clipToOutline="true"
-        android:outlineProvider="background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/yellow_bg" />
-    </FrameLayout>
-
+    android:background="#F7F7F7">
 
     <!-- Menu Bar -->
     <View
@@ -181,61 +156,193 @@
 
     </LinearLayout>
 
-    <!-- Expiry Tag Layout with Toggle Switch -->
+    <ImageView
+        android:id="@+id/shadeBG"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/headerImageFrame"
+        app:layout_constraintBottom_toTopOf="@id/body"/>
+
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/headerImageFrame"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/yellow_bg"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
+
+
+
+    <!-- Content Container -->
     <LinearLayout
-        android:id="@+id/expiryTagLayout"
-        android:layout_width="355dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginBottom="128dp"
-        android:background="@drawable/white_textbox"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="parent">
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/white_rounded_top_corners"
+        android:orientation="vertical"
+        android:layout_marginTop="180dp"
+        android:padding="20dp"
+        app:layout_constraintBottom_toTopOf="@id/menuBar"
+        app:layout_constraintTop_toBottomOf="@id/headerImageFrame">
 
-        <!-- Expiry Tag Label -->
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/poppins"
-            android:paddingStart="20dp"
-            android:text="@string/expiry_tag"
-            android:textAlignment="viewStart"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <!-- Expiry Tag Toggle Switch -->
-        <Switch
-            android:id="@+id/expiryTagSwitch"
+        <Button
+            android:id="@+id/btnSort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:thumbTint="#FFFFFF"
-            android:trackTint="#D3D3D3"> </Switch>
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/transparent"
+            android:text="@string/sort_"
+            android:textColor="#020202"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/banner" />
+
+        <TextView
+            android:id="@+id/foodname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:lineSpacingExtra="0sp"
+            android:text="@string/name"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/editTextFoodname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="24dp"
+            android:autofillHints="foodname"
+            android:background="@drawable/white_textbox"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/doi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/doi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="-15dp"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:lineSpacingExtra="0sp"
+            android:text="@string/date_of_input"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/editTextDOI"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/white_textbox"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:hint="mm/dd/yyyy"
+            android:paddingStart="20dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
+
+        <TextView
+            android:id="@+id/doe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="-15dp"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:lineSpacingExtra="0sp"
+            android:text="@string/date_of_expiry"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/editTextDOE"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/white_textbox"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:hint="mm/dd/yyyy"
+            android:paddingStart="20dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
+
+    <!-- Expiry Tag Layout with Toggle Switch -->
+        <LinearLayout
+            android:id="@+id/expiryTagLayout"
+            android:layout_width="314dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginBottom="128dp"
+            android:layout_marginTop="-15dp"
+            android:background="@drawable/white_textbox"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/button2"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Expiry Tag Label -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins"
+                android:paddingStart="0dp"
+                android:text="@string/expiry_tag"
+                android:textAlignment="viewStart"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Expiry Tag Toggle Switch -->
+            <Switch
+                android:id="@+id/expiryTagSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:thumbTint="#FFFFFF"
+                android:trackTint="#D3D3D3"> </Switch>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
-
-    <Button
-        android:id="@+id/btnSort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/transparent"
-        android:text="@string/sort_"
-        android:textColor="#020202"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/banner" />
-
     <Button
         android:id="@+id/button2"
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="53dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="#417B49"
@@ -246,111 +353,6 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/editTextFoodname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="24dp"
-        android:autofillHints="foodname"
-        android:background="@drawable/white_textbox"
-        android:inputType="text"
-        android:minHeight="48dp"
-        android:padding="12dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/doi"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/doi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/date_of_input"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextDOI"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextDOE"
-        android:layout_width="355dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="28dp"
-
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/white_textbox"
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:hint="DOE"
-        android:paddingStart="20dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray"
-        app:layout_constraintBottom_toTopOf="@+id/expiryTagLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextDOI"
-        android:layout_width="355dp"
-        android:layout_height="48dp"
-
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/white_textbox"
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:hint="DOI"
-        android:paddingStart="20dp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/gray"
-        app:layout_constraintBottom_toTopOf="@+id/doe"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/doe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/date_of_expiry"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextDOE"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/foodname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:fontFamily="@font/poppins"
-        android:gravity="center"
-        android:lineSpacingExtra="0sp"
-        android:text="@string/name"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextFoodname"
-        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

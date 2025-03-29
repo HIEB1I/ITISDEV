@@ -49,24 +49,17 @@
     </LinearLayout>
 
 
-    <!-- Banner at the top -->
-    <FrameLayout
-        android:id="@+id/banner"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/headerImageFrame"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/rounded_bottom_corners"
-        android:clipToOutline="true"
-        android:outlineProvider="background"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/yellow_bg"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/yellow_bg" />
-    </FrameLayout>
 
 
     <!-- Menu Bar -->
@@ -224,14 +217,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
         android:text="@string/add_entry_"
-        android:textColor="#e16162"
+        android:textColor="#cb888d"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/banner" />
+        app:layout_constraintTop_toBottomOf="@+id/headerImageFrame" />
 
     <Button
         android:id="@+id/button2"
@@ -322,7 +314,7 @@
         android:clickable="false"
         android:cursorVisible="false"
         android:focusable="false"
-        android:hint="DOE"
+        android:hint="mm/dd/yyyy"
         android:paddingStart="20dp"
         android:textColor="@color/black"
         android:textColorHint="@color/gray"
@@ -341,7 +333,7 @@
         android:clickable="false"
         android:cursorVisible="false"
         android:focusable="false"
-        android:hint="DOI"
+        android:hint="mm/dd/yyyy"
         android:paddingStart="20dp"
         android:textColor="@color/black"
         android:textColorHint="@color/gray"

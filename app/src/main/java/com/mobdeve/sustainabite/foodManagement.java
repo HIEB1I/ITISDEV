@@ -24,26 +24,6 @@ public class foodManagement extends AppCompatActivity {
 
         dbManager = new DBManager();
 
-
-
-        /* IGNORE THIS CODE
-        // Sample Product Data
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product("Bananas","3","pc", "1/1/2025", "1/2/2025", "Pantry", "Ripe", R.drawable.banana));
-        productList.add(new Product("Egg", "12", "pc", "5/24/2025", "11/11/2026", "Cupboard", "Fresh from farm", R.drawable.egg));
-        productList.add(new Product("Rice", "1", "kg", "3/14/2015", "4/26/2024","Pantry","Jasmine", R.drawable.rice));
-        productList.add(new Product("Bananas","3","pc", "1/1/2025", "1/2/2025", "Pantry", "Ripe", R.drawable.banana));
-        productList.add(new Product("Egg", "12", "pc", "5/24/2025", "11/11/2026", "Cupboard", "Fresh from farm", R.drawable.egg));
-        productList.add(new Product("Rice", "1", "kg", "3/14/2015", "4/26/2024","Pantry","Jasmine", R.drawable.rice));
-        productList.add(new Product("Bananas","3","pc", "1/1/2025", "1/2/2025", "Pantry", "Ripe", R.drawable.banana));
-        productList.add(new Product("Egg", "12", "pc", "5/24/2025", "11/11/2026", "Cupboard", "Fresh from farm", R.drawable.egg));
-        productList.add(new Product("Rice", "1", "kg", "3/14/2015", "4/26/2024","Pantry","Jasmine", R.drawable.rice));
-
-        ProductAdapter productAdapter = new ProductAdapter(productList);
-
-        recyclerView.setAdapter(productAdapter);
-         */
-
         //Initialize the array for profucts.
         productList = new ArrayList<>();
         productAdapter = new ProductAdapter(productList);

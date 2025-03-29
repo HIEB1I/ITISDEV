@@ -14,6 +14,7 @@ public class Sort extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sort);
 
+        //uncomment evrything later
         // Initialize the EditText for DOE & DOI
         EditText editTextDOE = findViewById(R.id.editTextDOE);
         EditText editTextDOI = findViewById(R.id.editTextDOI);
@@ -33,4 +34,26 @@ public class Sort extends AppCompatActivity {
             }
         });
     }
+
+    /*NAVIGATIONS*/
+    public void goHome(View view) {
+        Intent intent = new Intent(this, home.class);
+        startActivity(intent);
+    }
+
+    public void goFood(View view) {
+        Intent intent = new Intent(this, foodManagement.class);
+        startActivity(intent);
+    }
+
+    public void goCommunity(View view) {
+        Intent intent = new Intent(this, community.class);
+        startActivity(intent);
+    }
+
+    public void goProfile(View view) {
+        Intent intent = new Intent(this, profile.class);
+        startActivity(intent);
+    }
+
 }
