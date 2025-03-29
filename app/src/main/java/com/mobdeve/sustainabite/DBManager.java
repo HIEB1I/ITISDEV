@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -56,10 +57,19 @@ public class DBManager {
         void onFailure(Exception e);
     }
 
-    // Callback interface for recipe update
     public interface OnRecipeListener {
         void onSuccess();
         void onFailure(Exception e);
+    }
+
+    public interface OnUserUpdateListener {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface OnUserDetailsFetchedListener {
+        void onUserDetailsFetched(String userId, String email, String name, String image);
+        void onError(String message);
     }
 
     // === USERS ===
@@ -165,7 +175,60 @@ public class DBManager {
         });
     }
 
+    // == SIGN OUT ==
+    public void logoutUser(Context context) {
+        // Clear user session from SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
+
+        FirebaseAuth.getInstance().signOut();
+
+        Log.d("Firestore", "User logged out successfully.");
+    }
+
     // === PROFILE ===
+    public void getCurrentUserDetails(Context context, OnUserDetailsFetchedListener listener) {
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        boolean isLoggedIn = prefs.getBoolean("IS_LOGGED_IN", false);
+
+        if (isLoggedIn) {
+            String userId = prefs.getString("USER_ID", "");
+            String email = prefs.getString("USER_EMAIL", "");
+            String name = prefs.getString("USER_NAME", "");
+            String image = prefs.getString("USER_IMAGE", "");
+
+            if (userId.isEmpty()) {
+                listener.onError("No user data found.");
+            } else {
+                listener.onUserDetailsFetched(userId, email, name, image);
+            }
+        } else {
+            listener.onError("User not logged in.");
+        }
+    }
+
+    // === PROFILE UPDATE ===
+    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, OnUserUpdateListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("UName", newUsername);
+        updatedData.put("UEmail", newEmail);
+        updatedData.put("UPass", newPassword);
+
+        db.collection("USERS").document(userId)
+                .update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "User profile updated successfully: " + userId);
+                    if (listener != null) listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update user profile: " + e.getMessage());
+                    if (listener != null) listener.onFailure(e);
+                });
+    }
 
 
     // === FOODS ===
