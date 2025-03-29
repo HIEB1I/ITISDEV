@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     private TextView foodName, ingContent, procContent, foodKcal;
     private ImageView foodImage;
     private Button editButton;
+    private Button deleteButton;
+
 
     private FoodItem foodItem;
 
@@ -31,6 +35,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         procContent = findViewById(R.id.procedures_content);
         foodKcal = findViewById(R.id.foodKcal);
         editButton = findViewById(R.id.editButton);
+        deleteButton = findViewById(R.id.deleteButton);
 
         foodItem = (FoodItem) getIntent().getSerializableExtra("foodItem");
 
@@ -53,8 +58,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             }
         }
 
-
         editButton.setOnClickListener(v -> showEditDialog());
+        deleteButton.setOnClickListener(v -> confirmDeleteRecipe());
     }
 
     private void showEditDialog() {
@@ -75,10 +80,28 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         builder.setTitle("Edit Recipe")
                 .setView(dialogView)
                 .setPositiveButton("Save", (dialog, which) -> {
-                    foodName.setText(editFoodName.getText().toString());
-                    ingContent.setText(editIngContent.getText().toString());
-                    procContent.setText(editProcContent.getText().toString());
-                    foodKcal.setText(editFoodKcal.getText().toString());
+                    String updatedName = editFoodName.getText().toString();
+                    String updatedKcal = editFoodKcal.getText().toString();
+                    String updatedIngredients = editIngContent.getText().toString();
+                    String updatedProcedures = editProcContent.getText().toString();
+
+                    foodName.setText(updatedName);
+                    ingContent.setText(updatedIngredients);
+                    procContent.setText(updatedProcedures);
+                    foodKcal.setText(updatedKcal);
+
+                    DBManager dbManager = new DBManager();
+                    dbManager.updateRecipeInFirestore(foodItem.getId(), updatedName, updatedKcal, updatedIngredients, updatedProcedures, new DBManager.OnRecipeListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(RecipeDetailsActivity.this, "Recipe updated successfully!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(RecipeDetailsActivity.this, "Failed to update recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
@@ -86,4 +109,41 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.yellow_rounded_box);
         dialog.show();
     }
+
+    private void confirmDeleteRecipe() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Recipe")
+                .setMessage("Are you sure you want to delete this recipe?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteRecipe())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void deleteRecipe() {
+        if (foodItem == null || foodItem.getId() == null || foodItem.getId().isEmpty()) {
+            Toast.makeText(this, "Error: Recipe ID not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DBManager dbManager = new DBManager();
+        dbManager.deleteRecipeFromFirestore(foodItem.getId(), new DBManager.OnRecipeListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(RecipeDetailsActivity.this, "Recipe deleted successfully!", Toast.LENGTH_SHORT).show();
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("recipe_deleted", true);
+                setResult(RESULT_OK, resultIntent);
+
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(RecipeDetailsActivity.this, "Failed to delete recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }

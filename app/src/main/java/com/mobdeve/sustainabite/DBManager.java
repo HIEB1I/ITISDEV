@@ -56,6 +56,12 @@ public class DBManager {
         void onFailure(Exception e);
     }
 
+    // Callback interface for recipe update
+    public interface OnRecipeListener {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
     // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
@@ -199,6 +205,7 @@ public class DBManager {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<FoodItem> foodItems = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String documentId = document.getId();
                         String name = document.getString("RNAME");
                         String kcal = document.getString("RCalories");
                         String ingredients = document.getString("RIngredients");
@@ -215,7 +222,7 @@ public class DBManager {
                             Log.e("Firestore", "No image data found for recipe: " + name);
                         }
 
-                        foodItems.add(new FoodItem(imageString, name, kcal, ingredients, procedures));
+                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures));
                     }
                     listener.onRecipesFetched(foodItems);
                 })
@@ -225,7 +232,6 @@ public class DBManager {
                 });
     }
 
-    // Fetch last Recipe ID and add a new one
     public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, String rCalories, OnRecipeAddedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         String uNum = prefs.getString("USER_ID", "U000"); // Retrieve stored UNum
@@ -280,8 +286,35 @@ public class DBManager {
         });
     }
 
+    public void updateRecipeInFirestore(String recipeId, String name, String kcal, String ingredients, String procedures, OnRecipeListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    // Method to decode Base64 string to Bitmap
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("RNAME", name);
+        updatedData.put("RCalories", kcal);
+        updatedData.put("RIngredients", ingredients);
+        updatedData.put("RProcedure", procedures);
+
+        db.collection("RECIPES").document(recipeId)
+                .update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Recipe updated successfully: " + recipeId);
+                    if (listener != null) listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update recipe: " + e.getMessage());
+                    if (listener != null) listener.onFailure(e);
+                });
+    }
+
+    public void deleteRecipeFromFirestore(String documentId, OnRecipeListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("RECIPES").document(documentId)
+                .delete()
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(e -> listener.onFailure(e));
+    }
+
     public static Bitmap decodeBase64ToBitmap(String base64String) {
         if (base64String == null || base64String.isEmpty()) {
             Log.e("DecodeBase64", "Empty Base64 string");

@@ -22,12 +22,15 @@ public class community extends AppCompatActivity {
     private List<FoodItem> foodList;
     private DBManager dbManager;
 
-    // Register ActivityResultLauncher to refresh list after adding recipe
-    private final ActivityResultLauncher<Intent> addRecipeLauncher =
+    // Register ActivityResultLauncher to refresh list after adding or deleting a recipe
+    private final ActivityResultLauncher<Intent> recipeLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    if (result.getData() != null && result.getData().getBooleanExtra("recipe_added", false)) {
-                        fetchRecipesFromFirestore(); // Refresh
+                    Intent data = result.getData();
+                    if (data != null) {
+                        if (data.getBooleanExtra("recipe_added", false) || data.getBooleanExtra("recipe_deleted", false)) {
+                            fetchRecipesFromFirestore(); // Refresh when a recipe is added or deleted
+                        }
                     }
                 }
             });
@@ -50,12 +53,12 @@ public class community extends AppCompatActivity {
         ingProcAdapter = new IngProcAdapter(this, foodList);
         recyclerView.setAdapter(ingProcAdapter);
 
-        fetchRecipesFromFirestore(); // Fetch data from Firestore
+        fetchRecipesFromFirestore();
 
         Button addRecipeButton = findViewById(R.id.addRecipeButton);
         addRecipeButton.setOnClickListener(v -> {
             Intent intent = new Intent(community.this, AddRecipeActivity.class);
-            addRecipeLauncher.launch(intent); // Start activity with launcher
+            recipeLauncher.launch(intent);
         });
     }
 

@@ -46,10 +46,10 @@ public class home extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         foodList = new ArrayList<>();
-        foodList.add(new FoodItem(R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
-        foodList.add(new FoodItem(R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
-        foodList.add(new FoodItem(R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
-        foodList.add(new FoodItem(R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));
 
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);

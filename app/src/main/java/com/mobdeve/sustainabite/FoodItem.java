@@ -3,6 +3,7 @@ package com.mobdeve.sustainabite;
 import java.io.Serializable;
 
 public class FoodItem implements Serializable {
+    private String id;
     private Integer imageResId;
     private String imageString;
     private String name;
@@ -11,7 +12,8 @@ public class FoodItem implements Serializable {
     private String procedures;
 
     // Constructor for drawable images
-    public FoodItem(int imageResId, String name, String kcal, String ingredients, String procedures) {
+    public FoodItem(String id, int imageResId, String name, String kcal, String ingredients, String procedures) {
+        this.id = id;
         this.imageResId = imageResId;
         this.imageString = null;
         this.name = name;
@@ -21,7 +23,8 @@ public class FoodItem implements Serializable {
     }
 
     // Constructor for Base64 images
-    public FoodItem(String imageString, String name, String kcal, String ingredients, String procedures) {
+    public FoodItem(String id, String imageString, String name, String kcal, String ingredients, String procedures) {
+        this.id = id;
         this.imageResId = null;
         this.imageString = imageString;
         this.name = name;
@@ -29,6 +32,8 @@ public class FoodItem implements Serializable {
         this.ingredients = ingredients;
         this.procedures = procedures;
     }
+
+    public String getId() { return id; }
 
     public Integer getImageResId() { return imageResId; }
 
@@ -42,6 +47,7 @@ public class FoodItem implements Serializable {
 
     public String getProcedures() { return procedures; }
 }
+
 
 /* main branch ver
 
