@@ -80,7 +80,7 @@ public class inputEntry extends AppCompatActivity {
 
         String FRemarks = remarks.getText().toString().trim();
 
-        dbManager.addFoodToFirestore(FNAME, FDOI, FDOE, FQuantity, FQuanType, FSTORAGE, FRemarks, new DBManager.OnFoodAddedListener(){
+        dbManager.addFoodToFirestore(this, FNAME, FDOI, FDOE, FQuantity, FQuanType, FSTORAGE, FRemarks, new DBManager.OnFoodAddedListener(){
             @Override
             public void onSuccess() {
                 goFood(null);

@@ -335,7 +335,10 @@ public class DBManager {
 
     //Code for adding Food
 
-    public void addFoodToFirestore(String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, OnFoodAddedListener listener){
+    public void addFoodToFirestore(Context context, String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, OnFoodAddedListener listener){
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String uNum = prefs.getString("USER_ID", "U000"); // Default to "U000" if not found
+
         getLatestFoodID(latestFoodID -> {
 
             String newFoodID = generateNextFoodID(latestFoodID); // Generate next ID
@@ -349,6 +352,7 @@ public class DBManager {
             foodData.put("FQuanType", FQuanType);
             foodData.put("FSTORAGE", FSTORAGE);
             foodData.put("FRemarks", FRemarks);
+            foodData.put("UNUM", uNum);
 
 
             firestore.collection("FOODS")
