@@ -40,16 +40,19 @@ public class DBManager {
 
     public interface OnRecipesFetchedListener {
         void onRecipesFetched(List<FoodItem> recipes);
+
         void onError(Exception e);
     }
 
     public interface OnProductsFetchedListener {
         void onProductsFetched(List<Product> foods);
+
         void onError(Exception e);
     }
 
     public interface OnRecipeAddedListener {
         void onSuccess();
+
         void onFailure(Exception e);
     }
 
@@ -156,6 +159,8 @@ public class DBManager {
         });
     }
 
+    // === PROFILE ===
+
 
     // === FOODS ===
     public void getLatestFoodID() {
@@ -188,24 +193,29 @@ public class DBManager {
     }
 
     public void fetchRecipes(OnRecipesFetchedListener listener) {
-        firestore.collection("RECIPES")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("RECIPES")
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<FoodItem> foodList = new ArrayList<>();
-                        for (DocumentSnapshot document : task.getResult()) {
-                            String name = document.getString("RNAME");
-                            String image = document.getString("RImage");
-                            String ingredients = document.getString("RIngredients");
-                            String procedure = document.getString("RProcedure");
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<FoodItem> foodItems = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String name = document.getString("RNAME");
+                        String kcal = document.getString("RCalories");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageString = document.getString("RImage");
 
-                            int imageResId = R.drawable.banana;
-
-                            foodList.add(new FoodItem(imageResId, name, image, ingredients, procedure));
+                        Bitmap imageBitmap = null;
+                        if (imageString != null && !imageString.isEmpty()) {
+                            imageBitmap = decodeBase64ToBitmap(imageString);
+                            if (imageBitmap == null) {
+                                Log.e("Firestore", "Failed to decode image for recipe: " + name);
+                            }
+                        } else {
+                            Log.e("Firestore", "No image data found for recipe: " + name);
                         }
-                        listener.onRecipesFetched(foodList);
-                    } else {
-                        listener.onError(task.getException());
+
+                        foodItems.add(new FoodItem(imageString, name, kcal, ingredients, procedures));
                     }
                     listener.onRecipesFetched(foodItems);
                 })
@@ -215,23 +225,18 @@ public class DBManager {
                 });
     }
 
-
-
     // Fetch last Recipe ID and add a new one
-    public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, OnRecipeAddedListener listener) {
-        // Retrieve user ID (UNum) from SharedPreferences
+    public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, String rCalories, OnRecipeAddedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String uNum = prefs.getString("UNum", "U000"); // Default to "U000" if not found
+        String uNum = prefs.getString("USER_ID", "U000"); // Retrieve stored UNum
 
         CollectionReference recipesRef = firestore.collection("RECIPES");
 
-        // Get last document ID and determine next ID
         recipesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 int maxId = 0;
-
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String docId = document.getId(); // e.g., "R001"
+                    String docId = document.getId();
                     if (docId.startsWith("R")) {
                         try {
                             int num = Integer.parseInt(docId.substring(1));
@@ -244,18 +249,19 @@ public class DBManager {
                     }
                 }
 
-                // New recipe ID (increment from last found)
+                // Generate new Recipe ID
                 String newRecipeId = "R" + String.format("%03d", maxId + 1);
 
-                // Recipe data
+                // Create Recipe Data
                 Map<String, Object> recipeData = new HashMap<>();
                 recipeData.put("RImage", rImage);
                 recipeData.put("RIngredients", rIngredients);
                 recipeData.put("RNAME", rName);
                 recipeData.put("RProcedure", rProcedure);
-                recipeData.put("UNum", uNum); // Assign logged-in user ID
+                recipeData.put("RCalories", rCalories);
+                recipeData.put("UNum", uNum);
 
-                // Add to Firestore
+                // Add Recipe to Firestore
                 recipesRef.document(newRecipeId)
                         .set(recipeData)
                         .addOnSuccessListener(unused -> {
@@ -274,8 +280,8 @@ public class DBManager {
         });
     }
 
-    // Method to decode Base64 string to Bitmap
 
+    // Method to decode Base64 string to Bitmap
     public static Bitmap decodeBase64ToBitmap(String base64String) {
         if (base64String == null || base64String.isEmpty()) {
             Log.e("DecodeBase64", "Empty Base64 string");
@@ -293,7 +299,7 @@ public class DBManager {
 
     // FOOD MANAGEMENT
     //Fetch all the Products (Food)
-    public void fetchProduct(OnProductsFetchedListener listener){
+    public void fetchProduct(OnProductsFetchedListener listener) {
         firestore.collection("FOODS")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -313,6 +319,32 @@ public class DBManager {
                             String remarks = document.getString("FSTORAGE");
                             int imageResId = R.drawable.banana;
 
+                        }
+                    }
+                });
+    }
+
+    public static String convertDate(String inputDate) {
+        try {
+
+            //This is the initial format of the date
+            SimpleDateFormat inputFormat = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
+
+
+            //Ideal outcome/format of the date.
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+
+            //This one makes the inputDate into a "date object"
+            Date date = inputFormat.parse(inputDate);
+
+            // Returns the date as the ideal format.
+            return outputFormat.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Invalid date";
+        }
+    }
 }
 
 

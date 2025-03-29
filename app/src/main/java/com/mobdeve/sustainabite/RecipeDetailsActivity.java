@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +12,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RecipeDetailsActivity extends AppCompatActivity{
+public class RecipeDetailsActivity extends AppCompatActivity {
 
     private TextView foodName, ingContent, procContent, foodKcal;
     private ImageView foodImage;
     private Button editButton;
 
     private FoodItem foodItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,19 +35,29 @@ public class RecipeDetailsActivity extends AppCompatActivity{
         foodItem = (FoodItem) getIntent().getSerializableExtra("foodItem");
 
         if (foodItem != null) {
-            // foodImage.setImageResource(foodItem.getImage());
             foodName.setText(foodItem.getName());
             ingContent.setText(foodItem.getIngredients());
             procContent.setText(foodItem.getProcedures());
-            foodKcal.setText(foodItem.getKcal());
+
+            if (foodItem.getKcal() != null && !foodItem.getKcal().isEmpty()) {
+                foodKcal.setText(foodItem.getKcal() + " kcal");
+            } else {
+                foodKcal.setText("No kcal data available");
+            }
+
+            Bitmap bitmap = DBManager.decodeBase64ToBitmap(foodItem.getImageString());
+            if (bitmap != null) {
+                foodImage.setImageBitmap(bitmap);
+            } else {
+                foodImage.setImageResource(R.drawable.banana);
+            }
         }
 
-        editButton.setOnClickListener(v -> showEditDialog());
 
+        editButton.setOnClickListener(v -> showEditDialog());
     }
 
     private void showEditDialog() {
-
         LayoutInflater inflater = LayoutInflater.from(this);
         View dialogView = inflater.inflate(R.layout.edit_recipe, null);
 
@@ -74,6 +86,4 @@ public class RecipeDetailsActivity extends AppCompatActivity{
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.yellow_rounded_box);
         dialog.show();
     }
-
-
 }

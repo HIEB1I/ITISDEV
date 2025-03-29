@@ -1,12 +1,14 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.Gravity;
 import android.view.View;
@@ -23,13 +25,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import android.text.TextUtils;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Bitmap selectedBitmap;
 
-    private EditText recipeNameInput, procedureInput;
+    private EditText recipeNameInput, procedureInput, caloriesInput;
     private Button addRecipeButton, addIngredientButton, attachImageButton;
     private LinearLayout ingredientLayout;
     private List<EditText> ingredientInputs = new ArrayList<>();
@@ -48,6 +51,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         addRecipeButton = findViewById(R.id.addRecipeButton);
         addIngredientButton = findViewById(R.id.addIngredientButton);
         ingredientLayout = findViewById(R.id.ingredientLayout);
+        caloriesInput = findViewById(R.id.caloriesInput);
 
         addIngredientButton.setOnClickListener(v -> addIngredientField());
         attachImageButton.setOnClickListener(v -> openGallery());
@@ -96,30 +100,30 @@ public class AddRecipeActivity extends AppCompatActivity {
     private void addRecipe() {
         String rName = recipeNameInput.getText().toString().trim();
         String rProcedure = procedureInput.getText().toString().trim();
+        String rCalories = caloriesInput.getText().toString().trim();
 
-        if (rName.isEmpty() || rProcedure.isEmpty() || ingredientInputs.isEmpty() || selectedBitmap == null) {
+        if (rName.isEmpty() || rProcedure.isEmpty() || ingredientInputs.isEmpty() || selectedBitmap == null || rCalories.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields!", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Collect ingredients and format
-        StringBuilder ingredientsBuilder = new StringBuilder();
+        // Retrieve user ID
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String uNum = prefs.getString("USER_ID", "U000");
+
+        // Collect ingredients as a list
+        List<String> ingredientsList = new ArrayList<>();
         for (EditText ingredientInput : ingredientInputs) {
             String ingredient = ingredientInput.getText().toString().trim();
             if (!ingredient.isEmpty()) {
-                if (ingredientsBuilder.length() > 0) {
-                    ingredientsBuilder.append(", ");
-                }
-                ingredientsBuilder.append(ingredient);
+                ingredientsList.add(ingredient);
             }
         }
-        String rIngredients = ingredientsBuilder.toString();
+        String rIngredients = TextUtils.join(", ", ingredientsList);
 
-        // Convert Bitmap to Base64 string
         String rImage = bitmapToBase64(selectedBitmap);
 
-        // Save recipe to Firestore
-        dbManager.addRecipeToFirestore(this, rImage, rIngredients, rName, rProcedure, new DBManager.OnRecipeAddedListener() {
+        dbManager.addRecipeToFirestore(this, rImage, rIngredients, rName, rProcedure, rCalories, new DBManager.OnRecipeAddedListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(AddRecipeActivity.this, "Recipe Added Successfully!", Toast.LENGTH_SHORT).show();
@@ -133,6 +137,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // Convert Bitmap to Base64 String
     private String bitmapToBase64(Bitmap bitmap) {

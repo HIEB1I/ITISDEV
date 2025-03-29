@@ -184,7 +184,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:textSize="20sp"/>
 
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"
@@ -241,6 +241,7 @@
                     android:backgroundTint="#d5d5d5" />
 
                 <!-- Procedures -->
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -262,34 +263,72 @@
                     android:inputType="textMultiLine" />
 
                 <!-- Picture -->
-                <TextView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="4dp"
+                        android:text="Upload Image"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_weight="1"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="4dp"
+                        android:text="Calories"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Picture"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="4dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/attachImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Attach Image"
-                    android:backgroundTint="#d5d5d5"
-                    android:drawableEnd="@drawable/baseline_attach_file_24"
-                    android:drawablePadding="8dp"
-                    android:layout_gravity="center"/>
+                    <!-- Attach Image Button -->
+                    <Button
+                        android:id="@+id/attachImageButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Attach Image"
+                        android:backgroundTint="#d5d5d5"
+                        android:drawableEnd="@drawable/baseline_attach_file_24"
+                        android:drawablePadding="8dp" />
+
+                    <!-- Calories Input -->
+                    <EditText
+                        android:id="@+id/caloriesInput"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="0"
+                        android:background="@android:drawable/editbox_background"
+                        android:hint="(kCal)"
+                        android:padding="10dp" />
+                </LinearLayout>
 
 
                 <Button
                     android:id="@+id/addRecipeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#3e7d47"
-                    android:layout_marginVertical="30dp"
                     android:layout_gravity="center"
-                    android:text="+ Add Recipe"/>
+                    android:layout_marginVertical="30dp"
+                    android:backgroundTint="#3e7d47"
+                    android:text="+ Add Recipe" />
 
             </LinearLayout>
 
