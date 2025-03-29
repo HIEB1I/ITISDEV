@@ -36,6 +36,12 @@ public class InputEntryFragment extends Fragment {
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
     }
 
+    //added this to get the data from the fragment.
+
+    public String getSelectedStorage(){
+        return binding.autoCompleteTextView.getText().toString();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -154,18 +157,45 @@ public class DBManager {
 
 
     // === FOODS ===
-    public void getLatestFoodID() {
+    public void getLatestFoodID(OnSuccessListener<String> onSuccessListener) {
         firestore.collection("FOODS")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    String latestFoodID = null;
+                    String latestFoodID = "F000"; // Default if empty
+                    int maxNum = 0;
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        latestFoodID = document.getId();
+                        String docId = document.getId(); // Gets the ID of the document
+                        if (docId.startsWith("F")) { //if the document ID starts with F...
+                            try {
+                                int num = Integer.parseInt(docId.substring(1)); //Gets the number from the string
+                                if (num > maxNum) {
+                                    maxNum = num; // Get the highest number
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.e("Firestore", "Invalid Food ID format: " + docId);
+                            }
+                        }
                     }
-
-                    Log.d("Firestore", "Latest Food ID: " + latestFoodID);
+                    latestFoodID = "F" + String.format("%03d", maxNum); // Format as "FXXX"
+                    Log.d("Firestore", "Manually Found Latest Food ID: " + latestFoodID);
+                    onSuccessListener.onSuccess(latestFoodID);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching latest Food ID", e);
+                    onSuccessListener.onSuccess("F000"); // Default fallback
                 });
+    }
+
+    private String generateNextFoodID (String lastID){
+        try {
+            //Get number after F00
+            int lastNumber = Integer.parseInt(lastID.substring(1));
+            return String.format("F%03d", lastNumber+1);
+        }catch (NumberFormatException e) {
+            Log.e("Firestore", "Error parsing Food ID", e);
+            return "F000"; // Fallback
+        }
     }
 
     // === RECIPES ===
@@ -296,13 +326,44 @@ public class DBManager {
                 });
     }
 
+
+    //Code for adding Food
+
+    public void addFoodToFirestore(String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks){
+        getLatestFoodID(latestFoodID -> {
+
+            String newFoodID = generateNextFoodID(latestFoodID); // Generate next ID
+
+            Map<String, Object> foodData = new HashMap<>();
+            foodData.put("FDOE", FDOE);
+            foodData.put("FDOI", FDOI);
+            foodData.put("FNAME", FNAME);
+            foodData.put("FNUM",latestFoodID);
+            foodData.put("FQuantity", FQuantity);
+            foodData.put("FQuanType", FQuanType);
+            foodData.put("FSTORAGE", FSTORAGE);
+            foodData.put("FRemarks", FRemarks);
+
+
+            firestore.collection("FOODS")
+                    .document(newFoodID)
+                    .set(foodData)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d("DBManager", "DocumentSnapshot added with ID: " + newFoodID);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w("DBManager", "Error adding document", e);
+                    });
+        });
+    }
+
     //format the date so that it shows month day, year
 
     public static String convertDate(String inputDate){
         try {
 
             //This is the initial format of the date
-            SimpleDateFormat inputFormat = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
 
             //Ideal outcome/format of the date.

@@ -38,6 +38,12 @@ public class QuantityEntryFragment extends Fragment {
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
     }
 
+    //added this to get the data from the fragment.
+
+    public String getSelectedQuantity(){
+        return binding.autoCompleteTextView.getText().toString();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
