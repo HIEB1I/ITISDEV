@@ -7,24 +7,17 @@
     android:layout_height="match_parent"
     android:background="#F7F7F7">
 
-    <FrameLayout
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/headerImageFrame"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/rounded_bottom_corners"
-        android:clipToOutline="true"
-        android:outlineProvider="background"
+        android:src="@drawable/yellow_bg"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/yellow_bg" />
-
-    </FrameLayout>
     <com.google.android.material.card.MaterialCardView
         android:layout_width="130dp"
         android:layout_height="130dp"
@@ -45,6 +38,33 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <ImageView
+        android:id="@+id/logoutIcon"
+        android:layout_width="22dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="7dp"
+        android:onClick="goLogout"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logout"
+        app:layout_constraintEnd_toStartOf="@+id/logout"
+        app:layout_constraintTop_toBottomOf="@+id/headerImageFrame" />
+
+    <TextView
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="center"
+        android:lineSpacingExtra="0sp"
+        android:text="@string/logout"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        android:onClick="goLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerImageFrame" />
 
     <TextView
         android:id="@+id/sampleUsername"

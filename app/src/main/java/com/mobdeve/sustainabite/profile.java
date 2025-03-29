@@ -39,4 +39,9 @@ public class profile extends AppCompatActivity {
         Intent intent = new Intent(this, profile.class);
         startActivity(intent);
     }
+
+    public void goLogout(View view) {
+        Intent intent = new Intent(this, logIn.class);
+        startActivity(intent);
+    }
 }

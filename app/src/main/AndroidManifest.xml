@@ -39,6 +39,9 @@
         <activity android:name=".editEntry" />
         <activity android:name=".Sort" />
         <activity android:name=".ProductDetailsActivity" />
+        <activity android:name=".RecipeDetailsActivity" />
+        <activity android:name=".NotificationsActivity" />
+
 
 
 

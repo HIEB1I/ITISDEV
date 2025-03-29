@@ -41,7 +41,12 @@ public class community extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
         foodList = new ArrayList<>();
+        // foodList.add(new FoodItem(R.drawable.spinach_omelette, "Spinach Omelette", "Kcal 250", getString(R.string.ingredients1), getString(R.string.procedures1)));
+        // foodList.add(new FoodItem(R.drawable.fried_rice, "Fried Rice", "Kcal 180", getString(R.string.ingredients2), getString(R.string.procedures2)));
+
+
         ingProcAdapter = new IngProcAdapter(this, foodList);
         recyclerView.setAdapter(ingProcAdapter);
 
@@ -92,4 +97,5 @@ public class community extends AppCompatActivity {
     public void goProfile(View view) {
         startActivity(new Intent(this, profile.class));
     }
+
 }

@@ -1,6 +1,7 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
 
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
+
         FoodItem food = foodList.get(position);
 
         Log.d("Adapter", "Loading image for: " + food.getName());
@@ -73,9 +75,17 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
         holder.foodName.setText(food.getName());
         holder.ingContent.setText(food.getIngredients());
         holder.procContent.setText(food.getProcedures());
+
+        // Button Click - Open Details Acti1vity
+        View.OnClickListener listener = v -> {
+            Intent intent = new Intent(context, RecipeDetailsActivity.class);
+            intent.putExtra("foodItem", food);
+            context.startActivity(intent);
+        };
+
+        holder.itemView.setOnClickListener(listener);
+        holder.detailsButton.setOnClickListener(listener);
     }
-
-
 
     @Override
     public int getItemCount() {

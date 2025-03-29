@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,6 +53,15 @@ public class home extends AppCompatActivity {
 
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);
+
+        ImageView notifIcon = findViewById(R.id.notif_icon);
+        notifIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(home.this, NotificationsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

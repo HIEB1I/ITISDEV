@@ -12,9 +12,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.graphics.Bitmap;
@@ -36,6 +40,11 @@ public class DBManager {
 
     public interface OnRecipesFetchedListener {
         void onRecipesFetched(List<FoodItem> recipes);
+        void onError(Exception e);
+    }
+
+    public interface OnProductsFetchedListener {
+        void onProductsFetched(List<Product> foods);
         void onError(Exception e);
     }
 
@@ -179,29 +188,24 @@ public class DBManager {
     }
 
     public void fetchRecipes(OnRecipesFetchedListener listener) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("RECIPES")
+        firestore.collection("RECIPES")
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<FoodItem> foodItems = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String name = document.getString("RNAME");
-                        String kcal = document.getString("kcal");
-                        String ingredients = document.getString("RIngredients");
-                        String procedures = document.getString("RProcedure");
-                        String imageString = document.getString("RImage");
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<FoodItem> foodList = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String name = document.getString("RNAME");
+                            String image = document.getString("RImage");
+                            String ingredients = document.getString("RIngredients");
+                            String procedure = document.getString("RProcedure");
 
-                        Bitmap imageBitmap = null;
-                        if (imageString != null && !imageString.isEmpty()) {
-                            imageBitmap = decodeBase64ToBitmap(imageString);
-                            if (imageBitmap == null) {
-                                Log.e("Firestore", "Failed to decode image for recipe: " + name);
-                            }
-                        } else {
-                            Log.e("Firestore", "No image data found for recipe: " + name);
+                            int imageResId = R.drawable.banana;
+
+                            foodList.add(new FoodItem(imageResId, name, image, ingredients, procedure));
                         }
-
-                        foodItems.add(new FoodItem(imageString, name, kcal, ingredients, procedures));
+                        listener.onRecipesFetched(foodList);
+                    } else {
+                        listener.onError(task.getException());
                     }
                     listener.onRecipesFetched(foodItems);
                 })
@@ -215,8 +219,9 @@ public class DBManager {
 
     // Fetch last Recipe ID and add a new one
     public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, OnRecipeAddedListener listener) {
+        // Retrieve user ID (UNum) from SharedPreferences
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String uNum = prefs.getString("UNum", "U000");
+        String uNum = prefs.getString("UNum", "U000"); // Default to "U000" if not found
 
         CollectionReference recipesRef = firestore.collection("RECIPES");
 
@@ -226,7 +231,7 @@ public class DBManager {
                 int maxId = 0;
 
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    String docId = document.getId();
+                    String docId = document.getId(); // e.g., "R001"
                     if (docId.startsWith("R")) {
                         try {
                             int num = Integer.parseInt(docId.substring(1));
@@ -239,7 +244,7 @@ public class DBManager {
                     }
                 }
 
-                // New recipe ID increment
+                // New recipe ID (increment from last found)
                 String newRecipeId = "R" + String.format("%03d", maxId + 1);
 
                 // Recipe data
@@ -248,7 +253,7 @@ public class DBManager {
                 recipeData.put("RIngredients", rIngredients);
                 recipeData.put("RNAME", rName);
                 recipeData.put("RProcedure", rProcedure);
-                recipeData.put("UNum", uNum);
+                recipeData.put("UNum", uNum); // Assign logged-in user ID
 
                 // Add to Firestore
                 recipesRef.document(newRecipeId)
@@ -269,7 +274,6 @@ public class DBManager {
         });
     }
 
-
     // Method to decode Base64 string to Bitmap
 
     public static Bitmap decodeBase64ToBitmap(String base64String) {
@@ -287,7 +291,27 @@ public class DBManager {
         }
     }
 
+    // FOOD MANAGEMENT
+    //Fetch all the Products (Food)
+    public void fetchProduct(OnProductsFetchedListener listener){
+        firestore.collection("FOODS")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Product> productList = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String FID = document.getId();
+                            String name = document.getString("FNAME");
 
+                            // Integer quantity = document.getLong("FQuantity").intValue();
+                            Long quantityLong = document.getLong("FQuantity");
+                            int quantity = (quantityLong != null) ? quantityLong.intValue() : 0;
+                            String doi = document.getString("FDOI");
+                            String doe = document.getString("FDOE");
+                            String qty_type = document.getString("FQuanType");
+                            String storage = document.getString("FRemarks");
+                            String remarks = document.getString("FSTORAGE");
+                            int imageResId = R.drawable.banana;
 
 }
 
