@@ -3,20 +3,20 @@ package com.mobdeve.sustainabite;
 import java.util.List;
 
 public class SearchResult {
-    private String title;
-    private List<String> results;
+    private String name;
+    private String secondaryInfo;
 
-    public SearchResult(String title, List<String> results) {
-        this.title = title;
-        this.results = results;
+    public SearchResult(String name, String secondaryInfo) {
+        this.name = name;
+        this.secondaryInfo = secondaryInfo;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public List<String> getResults() {
-        return results;
+    public String getSecondaryInfo() {
+        return secondaryInfo;
     }
 }
 

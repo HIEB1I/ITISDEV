@@ -18,7 +18,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(String item);
+        void onItemClick(String name);
     }
 
     public SearchResultsAdapter(Context context, List<SearchResult> searchResults, OnItemClickListener listener) {
@@ -36,26 +36,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SearchResult searchResult = searchResults.get(position);
-        holder.titleTextView.setText(searchResult.getTitle());
 
-        // Clear any previous views to prevent duplication
-        holder.resultsLayout.removeAllViews();
+        holder.nameTextView.setText(searchResult.getName());
+        holder.secondaryTextView.setText(searchResult.getSecondaryInfo());
 
-        // Add individual results dynamically
-        for (String result : searchResult.getResults()) {
-            TextView resultTextView = new TextView(context);
-            resultTextView.setText(result);
-            resultTextView.setTextSize(14);
-            resultTextView.setPadding(10, 5, 10, 5);
-            resultTextView.setBackgroundResource(android.R.drawable.list_selector_background);
-            resultTextView.setClickable(true);
-
-            // Handle clicks on each item
-            resultTextView.setOnClickListener(v -> listener.onItemClick(result));
-
-            // Add TextView dynamically to the layout
-            holder.resultsLayout.addView(resultTextView);
-        }
+        // Make name clickable
+        holder.nameTextView.setOnClickListener(v -> listener.onItemClick(searchResult.getName()));
     }
 
     @Override
@@ -64,13 +50,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
-        LinearLayout resultsLayout;
+        TextView nameTextView, secondaryTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.titleTextView);
-            resultsLayout = itemView.findViewById(R.id.resultsLayout);
+            nameTextView = itemView.findViewById(R.id.nameTextView);
+            secondaryTextView = itemView.findViewById(R.id.secondaryTextView);
         }
     }
 }

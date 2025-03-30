@@ -7,13 +7,14 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,91 +54,102 @@ public class DBManager {
     public void finder(String word, RecipeCallback callback) {
         List<String> results = new ArrayList<>();
 
-        // Query 1: Search in RNAME
-        firestore.collection("RECIPES")
+        // Create all queries
+        Task<QuerySnapshot> query1 = firestore.collection("RECIPES")
                 .whereGreaterThanOrEqualTo("RNAME", word)
                 .whereLessThanOrEqualTo("RNAME", word + "\uf8ff")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            results.add(document.getString("RNAME"));
-                        }
-                    }
+                .get();
 
-                    // Query 2: Search in RCalories
-                    firestore.collection("RECIPES")
-                            .whereGreaterThanOrEqualTo("RCalories", word)
-                            .whereLessThanOrEqualTo("RCalories", word + "\uf8ff")
-                            .get()
-                            .addOnCompleteListener(task2 -> {
-                                if (task2.isSuccessful() && task2.getResult() != null) {
-                                    for (QueryDocumentSnapshot document : task2.getResult()) {
-                                        String calorieResult = document.getString("RNAME");
-                                        if (!results.contains(calorieResult)) {
-                                            results.add(calorieResult);
+        Task<QuerySnapshot> query2 = firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RCalories", word)
+                .whereLessThanOrEqualTo("RCalories", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query3 = firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RIngredients", word)
+                .whereLessThanOrEqualTo("RIngredients", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query4 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FNAME", word)
+                .whereLessThanOrEqualTo("FNAME", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query5 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FSTORAGE", word)
+                .whereLessThanOrEqualTo("FSTORAGE", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query6 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FQuantity", word)
+                .whereLessThanOrEqualTo("FQuantity", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query7 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FDOE", word)
+                .whereLessThanOrEqualTo("FDOE", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query8 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FDOI", word)
+                .whereLessThanOrEqualTo("FDOI", word + "\uf8ff")
+                .get();
+
+// Run all queries in parallel
+        Tasks.whenAllComplete(query1, query2, query3, query4, query5, query6, query7, query8)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (Task<?> completedTask : task.getResult()) {
+                            if (completedTask instanceof Task<?>) {
+                                QuerySnapshot snapshot = (QuerySnapshot) ((Task<?>) completedTask).getResult();
+                                if (snapshot != null) {
+                                    for (QueryDocumentSnapshot document : snapshot) {
+                                        String foundName = document.getString("RNAME");
+                                        if (foundName == null) {
+                                            foundName = document.getString("FNAME");
+                                        }
+
+                                        String secondaryinfo = document.getString("RCalories");
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("RIngredients");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FSTORAGE");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FQuantity");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FDOI");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FDOE");
+                                        }
+
+                                        if (foundName != null && !results.contains(foundName)) {
+                                            results.add(foundName + " - " + (secondaryinfo != null ? secondaryinfo : "No Info"));
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
 
-                                // Query 3: Search in RIngredients
-                                firestore.collection("RECIPES")
-                                        .whereGreaterThanOrEqualTo("RIngredients", word)
-                                        .whereLessThanOrEqualTo("RIngredients", word + "\uf8ff")
-                                        .get()
-                                        .addOnCompleteListener(task3 -> {
-                                            if (task3.isSuccessful() && task3.getResult() != null) {
-                                                for (QueryDocumentSnapshot document : task3.getResult()) {
-                                                    String ingredientResult = document.getString("RNAME");
-                                                    if (!results.contains(ingredientResult)) {
-                                                        results.add(ingredientResult);
-                                                    }
-                                                }
-                                            }
+                    // If no results found, add "N/A"
+                    if (results.isEmpty()) {
+                        results.add("N/A");
+                    }
 
-                                            // If no results found, return "N/A"
-                                            if (results.isEmpty()) {
-                                                results.add("N/A");
-                                            }
-
-                                            // Return the merged results
-                                            callback.onRecipeRetrieved(results);
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.e("DBManager", "Error fetching ingredients", e);
-                                            callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
-                                        });
-
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("DBManager", "Error fetching calories", e);
-                                callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
-                            });
-
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("DBManager", "Error fetching recipes", e);
-                    callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
+                    // Return results via callback
+                    callback.onRecipeRetrieved(results);
                 });
-    }
-
-/*
-    public void finder(String word, RecipeCallback callback) {
-        firestore.collection("RECIPES").get(RCalories,RIngredients, RNAME) somewhat equal word
-        return the result and the document id
-
-        firestore.collection("FOODS").get(FNAME,FQuanType, FQuantity, FRemarks, FStorage) somewhat equal word
-        return the result and the document id
-
 
     }
-*/
-
 
 
     public void getFoodHome(FoodDataCallback callback) {
         firestore.collection("RECIPES").get().addOnCompleteListener(task -> {
-                ArrayList<FoodItem> foodList = new ArrayList<>();
+                ArrayList<FoodHome> foodList = new ArrayList<>();
 
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String rName = document.getString("RNAME");
@@ -148,7 +160,7 @@ public class DBManager {
 
                     Bitmap rImage = base64ToBitmap(rImageBase64);
 
-                    foodList.add(new FoodItem(rImage, rName, rKCal, rProcedure, rIngredients));
+                    foodList.add(new FoodHome(rImage, rName, rKCal, rProcedure, rIngredients));
                 }
 
                 callback.onFoodDataRetrieved(foodList);
@@ -156,7 +168,7 @@ public class DBManager {
     }
 
     public interface FoodDataCallback {
-        void onFoodDataRetrieved(ArrayList<FoodItem> foodList);
+        void onFoodDataRetrieved(ArrayList<FoodHome> foodList);
     }
 
     private Bitmap base64ToBitmap(String base64String) {

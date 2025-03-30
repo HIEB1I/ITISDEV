@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class home extends AppCompatActivity {
@@ -30,7 +29,7 @@ public class home extends AppCompatActivity {
     private SearchResultsAdapter searchResultsAdapter;
     private List<SearchResult> searchResults;
     private EditText searchBar;
-    private ImageView searchIcon;
+    private ImageView searchIcon, xbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,7 @@ public class home extends AppCompatActivity {
 
         dbManager.getFoodHome(new DBManager.FoodDataCallback() {
             @Override
-            public void onFoodDataRetrieved(ArrayList<FoodItem> foodList) {
+            public void onFoodDataRetrieved(ArrayList<FoodHome> foodList) {
                 foodAdapter = new FoodAdapter(home.this, foodList);
                 recyclerView.setAdapter(foodAdapter);
             }
@@ -72,6 +71,7 @@ public class home extends AppCompatActivity {
         /*NEWWW*/
         searchBar = findViewById(R.id.search_bar);
         searchIcon = findViewById(R.id.search_icon);
+        xbutton = findViewById(R.id.xbutton);
 
         searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,8 +84,10 @@ public class home extends AppCompatActivity {
         });
                 searchResultsRecyclerView.setAdapter(searchResultsAdapter);
                 searchResultsRecyclerView.setVisibility(View.GONE);
+                xbutton.setVisibility(View.GONE);
 
         searchIcon.setOnClickListener(v -> performSearch());
+        xbutton.setOnClickListener(v -> clearSearchResults());
     }
 
 
@@ -103,19 +105,25 @@ public class home extends AppCompatActivity {
             @Override
             public void onRecipeRetrieved(List<String> foundSearch) {
                 if (foundSearch.isEmpty()) {
-                    foundSearch.add("N/A");
+                    foundSearch.add("N/A - No Info");
                 }
 
-                searchResults.add(new SearchResult("Search Result", foundSearch));
+                for (String result : foundSearch) {
+                    String[] parts = result.split(" - ", 2);
+                    String name = parts[0];
+                    String secondaryInfo = (parts.length > 1) ? parts[1] : "No Info";
+                    searchResults.add(new SearchResult(name, secondaryInfo));
+                }
 
                 searchResultsAdapter.notifyDataSetChanged();
                 searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                xbutton.setVisibility(View.VISIBLE);
             }
         });
 
-        // Handle individual search result clicks
-        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, item -> {
-            Toast.makeText(home.this, "Clicked: " + item, Toast.LENGTH_SHORT).show();
+        // Handle clicks
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, name -> {
+            Toast.makeText(home.this, "Clicked: " + name, Toast.LENGTH_SHORT).show();
             // Add action (e.g., navigate to details page)
         });
 
@@ -123,6 +131,10 @@ public class home extends AppCompatActivity {
     }
 
 
+    private void clearSearchResults() {
+        searchResultsRecyclerView.setVisibility(View.GONE);
+        xbutton.setVisibility(View.GONE);
+    }
 
     /*NAVIGATIONS*/
     public void goHome(View view) {
