@@ -44,6 +44,13 @@ public class QuantityEntryFragment extends Fragment {
         return binding.autoCompleteTextView.getText().toString();
     }
 
+    //this is to set the selected quantity and gather it from the database.
+    public void setSelectedQuantity(String quantityType){
+        if (binding != null && quantityType != null){
+            binding.autoCompleteTextView.setText(quantityType, false);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,6 +57,11 @@ public class DBManager {
     public interface OnFoodAddedListener {
         void onSuccess();
         void onError(Exception e);
+    }
+
+    public interface CheckFoodIDValidity{
+        void onSuccess(String storage, String remarks);
+        void onFailure(Exception e);
     }
 
     // === USERS ===
@@ -369,6 +375,28 @@ public class DBManager {
         });
     }
 
+    //Get the specific food details
+    public void fetchSpecificFood(String FID, CheckFoodIDValidity callback){
+        if (FID == null || FID.isEmpty()){
+            callback.onFailure(new Exception("Food ID is invalid."));
+            return;
+        }
+
+        DocumentReference Food = firestore.collection("FOODS").document(FID);
+
+        Food.get().addOnCompleteListener(task -> {
+           if (task.isSuccessful() && task.getResult().exists()){
+               DocumentSnapshot document = task.getResult();
+               String storage = document.getString("FSTORAGE");
+               String remarks = document.getString("FRemarks");
+               callback.onSuccess(storage, remarks);
+           }else{
+               callback.onFailure(new Exception("No food item exists."));
+           }
+        });
+
+    }
+
     //format the date so that it shows month day, year
 
     public static String convertDate(String inputDate){
@@ -392,6 +420,8 @@ public class DBManager {
             return "Invalid date";
         }
     }
+
+
 }
 
 

@@ -17,11 +17,15 @@ import java.util.Locale;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
+    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_details);
+
+
+        dbManager = new DBManager();
 
 
         // Retrieve Data from Intent
@@ -31,10 +35,13 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productQty_Type = getIntent().getStringExtra("productQty_Type");
         String productDOI = getIntent().getStringExtra("productDOI");
         String productDOE = getIntent().getStringExtra("productDOE");
-        String productStorage = getIntent().getStringExtra("productStorage");
-        String productRemarks = getIntent().getStringExtra("productRemarks");
+
         int productImage = getIntent().getIntExtra("productImage", 0);
         Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
+
+
+
+
         // Bind Data to Views
         ((TextView) findViewById(R.id.productName)).setText(productName);
         ((TextView) findViewById(R.id.productQty_Val)).setText(productQty_Val);
@@ -44,6 +51,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         //((TextView) findViewById(R.id.productStorage)).setText(productStorage);
         //((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
         ((ImageView) findViewById(R.id.productImage)).setImageResource(productImage);
+
+
 
         // Find the button by its ID
         Button btnBack = findViewById(R.id.btnBack);
@@ -70,10 +79,39 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
 
-
+// this allows the user to go to the edit page and also sends data over to there
     public void goToEditEntry(){
         Intent intent = new Intent(this, editEntry.class);
+        intent.putExtra("foodId", getIntent().getStringExtra("foodId"));
+        intent.putExtra("productName", getIntent().getStringExtra("productName"));
+        intent.putExtra("productQty_Val", getIntent().getStringExtra("productQty_Val"));
+        intent.putExtra("productQty_Type", getIntent().getStringExtra("productQty_Type"));
+        intent.putExtra("productDOI", getIntent().getStringExtra("productDOI"));
+        intent.putExtra("productDOE", getIntent().getStringExtra("productDOE"));
+        intent.putExtra("productImage", getIntent().getIntExtra("productImage", 0));
 
-        startActivity(intent);
+
+        String FID = getIntent().getStringExtra("foodId");
+
+        //specifically for storage and remarks
+        dbManager.fetchSpecificFood(FID, new DBManager.CheckFoodIDValidity(){
+            @Override
+
+            public void onSuccess(String storage, String remarks){
+                intent.putExtra("productStorage", storage);
+                intent.putExtra("productRemarks", remarks);
+                Log.d("Firestore", "Storage: " + storage);
+                Log.d("Firestore", "Remarks: " + remarks);
+                startActivity(intent); // start the activity
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("FirestoreError", "Error fetching food details: " + e.getMessage());
+                startActivity(intent); // Start even if Firestore data fails
+
+            }
+        });
+
     };
 }

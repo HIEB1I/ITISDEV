@@ -14,7 +14,7 @@ import android.content.Intent;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
-    private String foodId; //Store the food ID.
+    private String foodId;//==
 
     public ProductAdapter(List<Product> productList) {
         this.productList = productList;
@@ -48,7 +48,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             Intent intent = new Intent(view.getContext(), ProductDetailsActivity.class);
             intent.putExtra("foodId", product.getFid());
             intent.putExtra("productName", product.getName());
-            intent.putExtra("productQty_Val", product.getQty_Val());
+            intent.putExtra("productQty_Val", String.valueOf(product.getQty_Val()));
             intent.putExtra("productQty_Type", product.getQty_Type());
             intent.putExtra("productDOI", product.getDOI());
             intent.putExtra("productDOE", product.getDOE());

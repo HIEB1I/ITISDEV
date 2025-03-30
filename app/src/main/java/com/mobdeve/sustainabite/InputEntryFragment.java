@@ -47,4 +47,11 @@ public class InputEntryFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    //this is to set the selected quantity and gather it from the database.
+    public void setSelectedStorage(String storageType){
+        if (binding != null && storageType != null){
+            binding.autoCompleteTextView.setText(storageType, false);
+        }
+    }
 }
