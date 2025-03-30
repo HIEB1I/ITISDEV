@@ -347,7 +347,7 @@ public class DBManager {
             foodData.put("FDOE", FDOE);
             foodData.put("FDOI", FDOI);
             foodData.put("FNAME", FNAME);
-            foodData.put("FNUM",latestFoodID);
+            foodData.put("FNUM",newFoodID);
             foodData.put("FQuantity", FQuantity);
             foodData.put("FQuanType", FQuanType);
             foodData.put("FSTORAGE", FSTORAGE);

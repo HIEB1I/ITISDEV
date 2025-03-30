@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,12 +51,24 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 finish(); // Closes this activity and returns to the previous one
             }
         });
+
+        //Find Image button by ID
+        ImageButton editButton = findViewById(R.id.btnEditEntry);
+
+        editButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        goToEditEntry();
+                    }
+                });
     }
 
 
 
-    public void goToEditEntry(View view) {
+    public void goToEditEntry(){
         Intent intent = new Intent(this, editEntry.class);
+
         startActivity(intent);
-    }
+    };
 }
