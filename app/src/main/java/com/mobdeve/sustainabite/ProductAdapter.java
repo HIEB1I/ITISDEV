@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.content.Intent;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
+    private String foodId; //Store the food ID.
 
     public ProductAdapter(List<Product> productList) {
         this.productList = productList;
@@ -27,7 +29,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
+
         Product product = productList.get(position);
+
+        Log.d("FirestoreID", "Product ID: " + product.getFid());
+
         holder.itemName.setText(product.getName());
         holder.itemQty_Val.setText(String.valueOf(product.getQty_Val())); // Since this is an integer, have to modify this code.
         holder.itemQty_Type.setText(product.getQty_Type());
@@ -40,6 +46,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         // Navigate to Product Details on Click
         holder.itemFrame.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), ProductDetailsActivity.class);
+            intent.putExtra("foodId", product.getFid());
             intent.putExtra("productName", product.getName());
             intent.putExtra("productQty_Val", product.getQty_Val());
             intent.putExtra("productQty_Type", product.getQty_Type());

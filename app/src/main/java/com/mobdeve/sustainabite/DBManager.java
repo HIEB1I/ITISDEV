@@ -322,7 +322,7 @@ public class DBManager {
                             int imageResId = R.drawable.banana;
 
                             Log.d("Firestore", "Food Id: " + FID + ", Name: " + name);
-                            Product product = new Product(name, quantity,qty_type,doi,doe,storage,remarks,imageResId);
+                            Product product = new Product(name, FID, quantity,qty_type,doi,doe,storage,remarks,imageResId); //added FID here so that food ID can be stored on intent.
                             productList.add(product);
                         }
                         listener.onProductsFetched(productList);

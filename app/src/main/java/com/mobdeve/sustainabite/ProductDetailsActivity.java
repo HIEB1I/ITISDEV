@@ -3,6 +3,7 @@ package com.mobdeve.sustainabite;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,13 +17,16 @@ import java.util.Locale;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_details);
 
+
         // Retrieve Data from Intent
         String productName = getIntent().getStringExtra("productName");
+        String FID = getIntent().getStringExtra("foodId"); //Puts a FoodID on the intent
         String productQty_Val= getIntent().getStringExtra("productQty_Val");
         String productQty_Type = getIntent().getStringExtra("productQty_Type");
         String productDOI = getIntent().getStringExtra("productDOI");
@@ -30,7 +34,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productStorage = getIntent().getStringExtra("productStorage");
         String productRemarks = getIntent().getStringExtra("productRemarks");
         int productImage = getIntent().getIntExtra("productImage", 0);
-
+        Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
         // Bind Data to Views
         ((TextView) findViewById(R.id.productName)).setText(productName);
         ((TextView) findViewById(R.id.productQty_Val)).setText(productQty_Val);
@@ -55,6 +59,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         //Find Image button by ID
         ImageButton editButton = findViewById(R.id.btnEditEntry);
 
+        //onClickListener for editButton
         editButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
