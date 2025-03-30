@@ -210,13 +210,20 @@ public class DBManager {
     }
 
     // === PROFILE UPDATE ===
-    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, OnUserUpdateListener listener) {
+    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("UName", newUsername);
         updatedData.put("UEmail", newEmail);
-        updatedData.put("UPass", newPassword);
+
+        if (!newPassword.isEmpty()) {
+            updatedData.put("UPass", newPassword);
+        }
+
+        if (encodedImage != null && !encodedImage.isEmpty()) {
+            updatedData.put("UImage", encodedImage);
+        }
 
         db.collection("USERS").document(userId)
                 .update(updatedData)
@@ -229,7 +236,6 @@ public class DBManager {
                     if (listener != null) listener.onFailure(e);
                 });
     }
-
 
     // === FOODS ===
     public void getLatestFoodID() {
