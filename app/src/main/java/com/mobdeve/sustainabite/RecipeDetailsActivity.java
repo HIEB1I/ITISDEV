@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
 
-    private TextView foodName, ingContent, procContent, foodKcal;
+    private TextView foodName, ingContent, procContent, foodKcal, recipeDetailsOwner;
     private ImageView foodImage;
     private Button editButton;
     private Button deleteButton;
@@ -36,6 +36,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         foodKcal = findViewById(R.id.foodKcal);
         editButton = findViewById(R.id.editButton);
         deleteButton = findViewById(R.id.deleteButton);
+        recipeDetailsOwner = findViewById(R.id.recipeDetailsOwner);
 
         foodItem = (FoodItem) getIntent().getSerializableExtra("foodItem");
 
@@ -56,10 +57,32 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             } else {
                 foodImage.setImageResource(R.drawable.banana);
             }
+
+            if (foodItem.getUNum() != null && !foodItem.getUNum().isEmpty()) {
+                fetchOwnerName(foodItem.getUNum());
+            } else {
+                recipeDetailsOwner.setText("Unknown Owner");
+            }
+
         }
 
         editButton.setOnClickListener(v -> showEditDialog());
         deleteButton.setOnClickListener(v -> confirmDeleteRecipe());
+    }
+
+    private void fetchOwnerName(String ownerId) {
+        DBManager.getUserById(ownerId, new DBManager.UserCallback() {
+            @Override
+            public void onUserRetrieved(String ownerName) {
+                recipeDetailsOwner.setText("@" + ownerName);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                recipeDetailsOwner.setText("Unknown Owner");
+                Toast.makeText(RecipeDetailsActivity.this, "Failed to load owner name", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showEditDialog() {
@@ -143,7 +166,25 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                 Toast.makeText(RecipeDetailsActivity.this, "Failed to delete recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
+    /* NAVIGATIONS */
+    public void goHome(View view) {
+        startActivity(new Intent(this, home.class));
+    }
+
+    public void goFood(View view) {
+        startActivity(new Intent(this, foodManagement.class));
+    }
+
+    public void goCommunity(View view) {
+        startActivity(new Intent(this, community.class));
+    }
+
+    public void goProfile(View view) {
+        startActivity(new Intent(this, profile.class));
+    }
 
 }

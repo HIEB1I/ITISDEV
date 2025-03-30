@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F7F7F7">
@@ -168,37 +169,56 @@
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/headerImageFrame"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:src="@drawable/yellow_bg"
+        android:layout_height="70dp"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/yellow_bg"
         app:layout_constraintEnd_toEndOf="parent"
-        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners" />
 
 
 
     <!-- Content Container -->
+
     <LinearLayout
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="180dp"
         android:background="@drawable/white_rounded_top_corners"
         android:orientation="vertical"
-        android:layout_marginTop="180dp"
         android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@id/menuBar"
-        app:layout_constraintTop_toBottomOf="@id/headerImageFrame">
+        app:layout_constraintTop_toBottomOf="@id/headerImageFrame"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="0dp">
 
 
-        <TextView
-            android:id="@+id/foodName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textColor="#000"
-            android:text="Food Name"
-            android:layout_marginTop="10dp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/foodName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Food Name"
+                android:textColor="#000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/recipeDetailsOwner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textAlignment="textEnd"
+                android:textSize="16sp"
+                android:textStyle="italic" />
+        </LinearLayout>
 
 
         <ScrollView
@@ -215,23 +235,23 @@
                     android:id="@+id/foodKcal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:text="100 kcal"
                     android:textColor="#fec76f"
-                    android:text="100 kcal"/>
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/ing_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="Ingredients"/>
+                    android:text="Ingredients"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/procedures_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:text="Procedures"/>
+                    android:text="Procedures"
+                    android:textSize="20sp" />
 
 
             </LinearLayout>

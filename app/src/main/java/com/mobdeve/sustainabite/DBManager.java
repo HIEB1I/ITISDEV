@@ -72,6 +72,11 @@ public class DBManager {
         void onError(String message);
     }
 
+    public interface UserCallback {
+        void onUserRetrieved(String ownerName);
+        void onError(Exception e);
+    }
+
     // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
@@ -188,6 +193,20 @@ public class DBManager {
         Log.d("Firestore", "User logged out successfully.");
     }
 
+    public static void getUserById(String userId, UserCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("USERS").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String ownerName = documentSnapshot.getString("UName");
+                        callback.onUserRetrieved(ownerName);
+                    } else {
+                        callback.onUserRetrieved("Unknown Owner");
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
     // === PROFILE ===
     public void getCurrentUserDetails(Context context, OnUserDetailsFetchedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -267,12 +286,12 @@ public class DBManager {
                 });
     }
 
-    public void fetchRecipes(OnRecipesFetchedListener listener) {
+    public void fetchRecipes(Context context,OnRecipesFetchedListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("RECIPES")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<FoodItem> foodItems = new ArrayList<>();
+                    List<FoodItem> recipes = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String documentId = document.getId();
                         String name = document.getString("RNAME");
@@ -280,6 +299,7 @@ public class DBManager {
                         String ingredients = document.getString("RIngredients");
                         String procedures = document.getString("RProcedure");
                         String imageString = document.getString("RImage");
+                        String UNum = document.getString("UNum");
 
                         Bitmap imageBitmap = null;
                         if (imageString != null && !imageString.isEmpty()) {
@@ -291,9 +311,10 @@ public class DBManager {
                             Log.e("Firestore", "No image data found for recipe: " + name);
                         }
 
-                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures));
+                        FoodItem foodItem = new FoodItem(documentId, imageString, name, kcal, ingredients, procedures, UNum);
+                        recipes.add(foodItem);
                     }
-                    listener.onRecipesFetched(foodItems);
+                    listener.onRecipesFetched(recipes);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error fetching recipes", e);
@@ -325,6 +346,7 @@ public class DBManager {
                         String ingredients = document.getString("RIngredients");
                         String procedures = document.getString("RProcedure");
                         String imageString = document.getString("RImage");
+                        String UNum = document.getString("UNum");
 
                         Bitmap imageBitmap = null;
                         if (imageString != null && !imageString.isEmpty()) {
@@ -336,7 +358,7 @@ public class DBManager {
                             Log.e("Firestore", "No image data found for recipe: " + name);
                         }
 
-                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures));
+                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures, UNum));
                     }
                     listener.onRecipesFetched(foodItems);
                 })

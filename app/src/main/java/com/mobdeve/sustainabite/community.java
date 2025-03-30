@@ -63,14 +63,9 @@ public class community extends AppCompatActivity {
     }
 
     private void fetchRecipesFromFirestore() {
-        Log.d("Firestore", "fetchRecipesFromFirestore() called"); // Debug Log
-        dbManager.fetchRecipes(new DBManager.OnRecipesFetchedListener() {
+        dbManager.fetchRecipes(this, new DBManager.OnRecipesFetchedListener() {
             @Override
             public void onRecipesFetched(List<FoodItem> recipes) {
-                Log.d("Firestore", "Recipes fetched: " + recipes.size());
-                for (FoodItem recipe : recipes) {
-                    Log.d("Firestore", "Fetched recipe: " + recipe.getName() + " | ImageString: " + recipe.getImageString());
-                }
                 foodList.clear();
                 foodList.addAll(recipes);
                 ingProcAdapter.notifyDataSetChanged();
@@ -82,6 +77,7 @@ public class community extends AppCompatActivity {
             }
         });
     }
+
 
 
     /* NAVIGATIONS */
