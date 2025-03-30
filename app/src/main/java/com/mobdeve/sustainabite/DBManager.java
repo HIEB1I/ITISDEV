@@ -301,9 +301,55 @@ public class DBManager {
                 });
     }
 
+    public void fetchFilteredRecipes(Context context, OnRecipesFetchedListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String currentUserId = prefs.getString("USER_ID", "");
+
+        if (currentUserId.isEmpty()) {
+            Log.e("Firestore", "Current user ID not found in SharedPreferences");
+            listener.onError(new Exception("User ID not found"));
+            return;
+        }
+
+        db.collection("RECIPES")
+                .whereEqualTo("UNum", currentUserId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<FoodItem> foodItems = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String documentId = document.getId();
+                        String name = document.getString("RNAME");
+                        String kcal = document.getString("RCalories");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageString = document.getString("RImage");
+
+                        Bitmap imageBitmap = null;
+                        if (imageString != null && !imageString.isEmpty()) {
+                            imageBitmap = decodeBase64ToBitmap(imageString);
+                            if (imageBitmap == null) {
+                                Log.e("Firestore", "Failed to decode image for recipe: " + name);
+                            }
+                        } else {
+                            Log.e("Firestore", "No image data found for recipe: " + name);
+                        }
+
+                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures));
+                    }
+                    listener.onRecipesFetched(foodItems);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching recipes", e);
+                    listener.onError(e);
+                });
+    }
+
+
     public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, String rCalories, OnRecipeAddedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String uNum = prefs.getString("USER_ID", "U000"); // Retrieve stored UNum
+        String uNum = prefs.getString("USER_ID", "U000");
 
         CollectionReference recipesRef = firestore.collection("RECIPES");
 
@@ -327,7 +373,6 @@ public class DBManager {
                 // Generate new Recipe ID
                 String newRecipeId = "R" + String.format("%03d", maxId + 1);
 
-                // Create Recipe Data
                 Map<String, Object> recipeData = new HashMap<>();
                 recipeData.put("RImage", rImage);
                 recipeData.put("RIngredients", rIngredients);
