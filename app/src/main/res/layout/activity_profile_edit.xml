@@ -7,24 +7,17 @@
     android:layout_height="match_parent"
     android:background="#F7F7F7">
 
-    <FrameLayout
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/headerImageFrame"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/rounded_bottom_corners"
-        android:clipToOutline="true"
-        android:outlineProvider="background"
+        android:src="@drawable/yellow_bg"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/yellow_bg" />
-
-    </FrameLayout>
     <com.google.android.material.card.MaterialCardView
         android:layout_width="130dp"
         android:layout_height="130dp"
@@ -38,10 +31,21 @@
 
 
         <ImageView
+            android:id="@+id/samplePhoto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/sample_profile" />
+
+        <Button
+            android:id="@+id/editPhoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:alpha="0.80"
+            android:backgroundTint="#407B49"
+            android:text="+"
+            android:textSize="24sp" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -254,7 +258,7 @@
             android:layout_marginTop="5dp"
             android:autofillHints="password"
             android:background="@drawable/white_textbox"
-            android:hint="@string/hint_cpassword"
+            android:hint="*****"
             android:inputType="textPassword"
             android:minHeight="48dp"
             android:padding="12dp"

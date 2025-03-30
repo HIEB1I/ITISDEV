@@ -1,6 +1,7 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,10 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
         public FoodViewHolder(View view) {
             super(view);
-                foodImage = view.findViewById(R.id.foodImage);
-                foodName = view.findViewById(R.id.foodName);
-                foodKcal = view.findViewById(R.id.foodKcal);
-                detailsButton = view.findViewById(R.id.detailsButton);
-
-
+            foodImage = view.findViewById(R.id.foodImage);
+            foodName = view.findViewById(R.id.foodName);
+            foodKcal = view.findViewById(R.id.foodKcal);
+            detailsButton = view.findViewById(R.id.detailsButton);
         }
     }
 
@@ -48,19 +47,27 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FoodViewHolder holder, int position) {
-
         FoodItem food = foodList.get(position);
-        holder.foodImage.setImageBitmap(food.getImage());
+
+        if (food.getImageResId() != null) {
+            holder.foodImage.setImageResource(food.getImageResId());
+        } else if (food.getImageString() != null && !food.getImageString().isEmpty()) {
+            // Convert Base64 string to Bitmap and set to ImageView
+            Bitmap bitmap = DBManager.decodeBase64ToBitmap(food.getImageString());
+            holder.foodImage.setImageBitmap(bitmap);
+        } else {
+            holder.foodImage.setImageResource(R.drawable.banana);
+        }
+
         holder.foodName.setText(food.getName());
         holder.foodKcal.setText(food.getKcal());
 
-        // Button Click - Open Details Acti1vity
+        // Button Click - Open Details Activity
         holder.detailsButton.setOnClickListener(v -> {
-//            Intent intent = new Intent(context, DetailsActivity.class);
-//            intent.putExtra("foodItem", food);
-//            context.startActivity(intent);
+            // Implement opening details
         });
     }
+
 
     @Override
     public int getItemCount() {
