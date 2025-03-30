@@ -2,21 +2,19 @@ package com.mobdeve.sustainabite;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class home extends AppCompatActivity {
@@ -25,6 +23,14 @@ public class home extends AppCompatActivity {
     private FoodAdapter foodAdapter;
     private List<FoodItem> foodList;
     DBManager dbManager = new DBManager();
+
+
+    /*NEWWW*/
+    private RecyclerView searchResultsRecyclerView;
+    private SearchResultsAdapter searchResultsAdapter;
+    private List<SearchResult> searchResults;
+    private EditText searchBar;
+    private ImageView searchIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +69,59 @@ public class home extends AppCompatActivity {
             }
         });
 
+        /*NEWWW*/
+        searchBar = findViewById(R.id.search_bar);
+        searchIcon = findViewById(R.id.search_icon);
+
+        searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
+        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        searchResults = new ArrayList<>();
+
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, item -> {
+            Toast.makeText(home.this, "Clicked: " + item, Toast.LENGTH_SHORT).show();
+            // You can navigate to another activity or show more details here
+        });
+                searchResultsRecyclerView.setAdapter(searchResultsAdapter);
+                searchResultsRecyclerView.setVisibility(View.GONE);
+
+        searchIcon.setOnClickListener(v -> performSearch());
     }
 
-    /*foodList.add(new FoodItem(R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
-        foodList.add(new FoodItem(R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
-        foodList.add(new FoodItem(R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
-        foodList.add(new FoodItem(R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));*/
+
+    private void performSearch() {
+        String query = searchBar.getText().toString().trim();
+
+        if (query.isEmpty()) {
+            Toast.makeText(this, "Enter a search term", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        searchResults.clear();
+
+        dbManager.finder(query, new DBManager.RecipeCallback() {
+            @Override
+            public void onRecipeRetrieved(List<String> foundSearch) {
+                if (foundSearch.isEmpty()) {
+                    foundSearch.add("N/A");
+                }
+
+                searchResults.add(new SearchResult("Search Result", foundSearch));
+
+                searchResultsAdapter.notifyDataSetChanged();
+                searchResultsRecyclerView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Handle individual search result clicks
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, item -> {
+            Toast.makeText(home.this, "Clicked: " + item, Toast.LENGTH_SHORT).show();
+            // Add action (e.g., navigate to details page)
+        });
+
+        searchResultsRecyclerView.setAdapter(searchResultsAdapter);
+    }
+
 
 
     /*NAVIGATIONS*/

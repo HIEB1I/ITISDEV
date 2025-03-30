@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DBManager {
@@ -30,13 +32,102 @@ public class DBManager {
         void onUserIDRetrieved(String newUserID);
     }
 
+    public interface RecipeCallback {
+        void onRecipeRetrieved(List<String> recipes);
+    }
+
+    public void finder(String word, RecipeCallback callback) {
+        List<String> results = new ArrayList<>();
+
+        // Query 1: Search in RNAME
+        firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RNAME", word)
+                .whereLessThanOrEqualTo("RNAME", word + "\uf8ff")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            results.add(document.getString("RNAME"));
+                        }
+                    }
+
+                    // Query 2: Search in RCalories
+                    firestore.collection("RECIPES")
+                            .whereGreaterThanOrEqualTo("RCalories", word)
+                            .whereLessThanOrEqualTo("RCalories", word + "\uf8ff")
+                            .get()
+                            .addOnCompleteListener(task2 -> {
+                                if (task2.isSuccessful() && task2.getResult() != null) {
+                                    for (QueryDocumentSnapshot document : task2.getResult()) {
+                                        String calorieResult = document.getString("RNAME");
+                                        if (!results.contains(calorieResult)) {
+                                            results.add(calorieResult);
+                                        }
+                                    }
+                                }
+
+                                // Query 3: Search in RIngredients
+                                firestore.collection("RECIPES")
+                                        .whereGreaterThanOrEqualTo("RIngredients", word)
+                                        .whereLessThanOrEqualTo("RIngredients", word + "\uf8ff")
+                                        .get()
+                                        .addOnCompleteListener(task3 -> {
+                                            if (task3.isSuccessful() && task3.getResult() != null) {
+                                                for (QueryDocumentSnapshot document : task3.getResult()) {
+                                                    String ingredientResult = document.getString("RNAME");
+                                                    if (!results.contains(ingredientResult)) {
+                                                        results.add(ingredientResult);
+                                                    }
+                                                }
+                                            }
+
+                                            // If no results found, return "N/A"
+                                            if (results.isEmpty()) {
+                                                results.add("N/A");
+                                            }
+
+                                            // Return the merged results
+                                            callback.onRecipeRetrieved(results);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("DBManager", "Error fetching ingredients", e);
+                                            callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
+                                        });
+
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("DBManager", "Error fetching calories", e);
+                                callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
+                            });
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DBManager", "Error fetching recipes", e);
+                    callback.onRecipeRetrieved(Collections.singletonList("Error retrieving data"));
+                });
+    }
+
+/*
+    public void finder(String word, RecipeCallback callback) {
+        firestore.collection("RECIPES").get(RCalories,RIngredients, RNAME) somewhat equal word
+        return the result and the document id
+
+        firestore.collection("FOODS").get(FNAME,FQuanType, FQuantity, FRemarks, FStorage) somewhat equal word
+        return the result and the document id
+
+
+    }
+*/
+
+
+
     public void getFoodHome(FoodDataCallback callback) {
         firestore.collection("RECIPES").get().addOnCompleteListener(task -> {
                 ArrayList<FoodItem> foodList = new ArrayList<>();
 
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String rName = document.getString("RNAME");
-                    String rKCal = document.getString("RKCal");
+                    String rKCal = document.getString("RCalories");
                     String rImageBase64 = document.getString("RImage");
                     String rProcedure = ("");
                     String rIngredients = ("");
