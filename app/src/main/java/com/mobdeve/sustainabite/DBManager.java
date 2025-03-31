@@ -59,6 +59,11 @@ public class DBManager {
         void onError(Exception e);
     }
 
+    public interface OnFoodUpdatedListener  {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
     public interface CheckFoodIDValidity{
         void onSuccess(String storage, String remarks);
         void onFailure(Exception e);
@@ -395,6 +400,40 @@ public class DBManager {
            }
         });
 
+    }
+
+    //Code for updating the actual food data
+    public void updateFoodInFirestore(Context context, String foodId, String FNAME,
+                                      String FDOI, String FDOE, Integer FQuantity, String FQuanType,
+                                      String FSTORAGE, String FRemarks, OnFoodUpdatedListener listener){
+        //check if foodId exists
+        if (foodId == null || foodId.isEmpty()){
+            Log.e("DBManager", "Invalid Food ID: Cannot update this one.");
+            return;
+        }
+
+        //Data for updating
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("FDOE", FDOE);
+        updatedData.put("FDOI", FDOI);
+        updatedData.put("FNAME", FNAME);
+        updatedData.put("FQuantity", FQuantity);
+        updatedData.put("FQuanType", FQuanType);
+        updatedData.put("FSTORAGE", FSTORAGE);
+        updatedData.put("FRemarks", FRemarks);
+
+        //This code will do the firestore update itself
+        firestore.collection("FOODS")
+                .document(foodId)
+                .update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("DBManager", "Food entry updated successfully");
+                    if (listener != null) listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DBManager", "Error updating food entry", e);
+                    if (listener != null) listener.onError(e);
+                });
     }
 
     //format the date so that it shows month day, year

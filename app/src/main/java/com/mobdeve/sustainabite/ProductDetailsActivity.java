@@ -102,16 +102,45 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 intent.putExtra("productRemarks", remarks);
                 Log.d("Firestore", "Storage: " + storage);
                 Log.d("Firestore", "Remarks: " + remarks);
-                startActivity(intent); // start the activity
+                startActivityForResult(intent,1); // start the activity, with a result expected
             }
 
             @Override
             public void onFailure(Exception e) {
                 Log.e("FirestoreError", "Error fetching food details: " + e.getMessage());
-                startActivity(intent); // Start even if Firestore data fails
+                startActivityForResult(intent, 1); // Start even if Firestore data fails
 
             }
+
+
         });
 
     };
+    //this method will refresh the data to ensure that the latest details are there
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data!=null){
+            //Obtain the new values
+
+            String updatedProductName = data.getStringExtra("updatedFoodName");
+            String updatedProductDOI = data.getStringExtra("updatedFoodDOI");
+            String updatedProductDOE = data.getStringExtra("updatedFoodDOE");
+            int updatedProductQuantity = data.getIntExtra("updatedFoodQuantity", 0);
+            String updatedQuantityType = data.getStringExtra("updatedFoodQuantityType");
+
+
+            // Bind Updated Data to Views
+            ((TextView) findViewById(R.id.productName)).setText(updatedProductName);
+            ((TextView) findViewById(R.id.productQty_Val)).setText(String.valueOf(updatedProductQuantity));
+            ((TextView) findViewById(R.id.productQty_Type)).setText(updatedQuantityType);
+            ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(updatedProductDOI));
+            ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(updatedProductDOE));
+
+            Log.d("ProductDetailsActivity", "Updated Name: " + updatedProductName);
+
+        }
+    }
+
 }
