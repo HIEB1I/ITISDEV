@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,9 +13,17 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class profile extends AppCompatActivity {
 
+    private RecyclerView recyclerView;
+    private IngProcAdapter ingProcAdapter;
+    private List<FoodItem> foodList = new ArrayList<>();
     private TextView userNameTextView, userEmailTextView;
     private ImageView profileImageView;
     private DBManager dbManager;
@@ -40,7 +49,13 @@ public class profile extends AppCompatActivity {
         profileImageView = findViewById(R.id.samplePhoto);
 
         dbManager = new DBManager();
+        recyclerView = findViewById(R.id.profileRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        ingProcAdapter = new IngProcAdapter(this, foodList);
+        recyclerView.setAdapter(ingProcAdapter);
+
+        fetchRecipesFromFirestore();
         fetchUserProfile();
     }
 
@@ -65,6 +80,32 @@ public class profile extends AppCompatActivity {
             }
         });
     }
+
+    private void fetchRecipesFromFirestore() {
+        Log.d("Firestore", "fetchRecipesFromFirestore() called"); // Debug Log
+        dbManager.fetchFilteredRecipes(this, new DBManager.OnRecipesFetchedListener() {
+            @Override
+            public void onRecipesFetched(List<FoodItem> recipes) {
+                Log.d("Firestore", "Recipes fetched: " + recipes.size());
+
+                for (FoodItem recipe : recipes) {
+                    Log.d("Firestore", "Fetched recipe: " + recipe.getName() + " | ImageString: " + recipe.getImageString());
+                }
+
+                foodList.clear();
+                foodList.addAll(recipes);
+
+                ingProcAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Firestore", "Error fetching recipes", e);
+            }
+        });
+    }
+
+
 
     /* NAVIGATIONS */
     public void goEdit(View view) {
