@@ -215,6 +215,10 @@ public class DBManager {
         }
     }
 
+    public CollectionReference getProductCollection(){
+        return firestore.collection("FOODS");
+    }
+
     // === RECIPES ===
     public void getLatestRecipeID() {
         firestore.collection("RECIPES")

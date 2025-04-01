@@ -102,7 +102,9 @@ public class inputEntry extends AppCompatActivity {
     /*NAVIGATIONS*/
     public void goFood(View view) {
         Intent intent = new Intent(this, foodManagement.class);
-        startActivity(intent);
+        setResult(RESULT_OK, intent);
+        finish(); // Closes this activity and returns to previous one.
+
     }
 
 }

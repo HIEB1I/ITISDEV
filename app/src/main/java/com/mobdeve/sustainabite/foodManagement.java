@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,15 +59,19 @@ public class foodManagement extends AppCompatActivity {
     }
 
     //Fetch the set of products that are in Firestore.
+
     private void fetchProductsFromFirestore(){
+        //Clear Data first in order to ensure that it does not show the old data.
+        productList.clear();
+        productAdapter.notifyDataSetChanged();
         dbManager.fetchProduct(new DBManager.OnProductsFetchedListener() {
             @Override
+
             public void onProductsFetched(List<Product> products) {
                 Log.d("Firestore", "Fetched " + products.size() + " products.");
                 for (Product product : products) {
                     Log.d("Firestore", "Product: " + product.getName());
                 }
-                productList.clear();
                 productList.addAll(products);
                 productAdapter.notifyDataSetChanged();
             }
@@ -76,6 +82,33 @@ public class foodManagement extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        fetchProductsFromFirestore();
+    }
+
+
+    /*
+ //Automatically fetches the set of products in firestore.
+    private void fetchProductsFromFirestoreAutomatically() {
+        dbManager.getProductCollection().addSnapshotListener((querySnapshot, e) -> {
+           if (e!=null){
+               Log.e("Firestore", "Error fetching food", e);
+               return;
+           }
+
+           if(querySnapshot!=null){
+               productList.clear();
+               for (DocumentSnapshot document : querySnapshot.getDocuments()){
+                   Product product = document.toObject(Product.class);
+                   productList.add(product);
+               }
+           }
+           productAdapter.notifyDataSetChanged();
+        });
+    }
+*/
     /*NAVIGATIONS*/
     public void goHome(View view) {
         Intent intent = new Intent(this, home.class);
