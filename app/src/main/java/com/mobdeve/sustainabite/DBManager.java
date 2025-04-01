@@ -5,10 +5,13 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,15 +44,14 @@ public class DBManager {
 
     public interface OnRecipesFetchedListener {
         void onRecipesFetched(List<FoodItem> recipes);
-
         void onError(Exception e);
     }
 
     public interface OnProductsFetchedListener {
         void onProductsFetched(List<Product> foods);
-
         void onError(Exception e);
     }
+
 
     public interface OnRecipeAddedListener {
         void onSuccess();
@@ -64,6 +66,21 @@ public class DBManager {
 
     public interface OnUserUpdateListener {
         void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface OnFoodAddedListener {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    public interface OnFoodUpdatedListener  {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    public interface CheckFoodIDValidity{
+        void onSuccess(String storage, String remarks, String foodImage);
         void onFailure(Exception e);
     }
 
@@ -257,18 +274,49 @@ public class DBManager {
     }
 
     // === FOODS ===
-    public void getLatestFoodID() {
+    public void getLatestFoodID(OnSuccessListener<String> onSuccessListener) {
         firestore.collection("FOODS")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    String latestFoodID = null;
+                    String latestFoodID = "F000"; // Default if empty
+                    int maxNum = 0;
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        latestFoodID = document.getId();
+                        String docId = document.getId(); // Gets the ID of the document
+                        if (docId.startsWith("F")) { //if the document ID starts with F...
+                            try {
+                                int num = Integer.parseInt(docId.substring(1)); //Gets the number from the string
+                                if (num > maxNum) {
+                                    maxNum = num; // Get the highest number
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.e("Firestore", "Invalid Food ID format: " + docId);
+                            }
+                        }
                     }
-
-                    Log.d("Firestore", "Latest Food ID: " + latestFoodID);
+                    latestFoodID = "F" + String.format("%03d", maxNum); // Format as "FXXX"
+                    Log.d("Firestore", "Manually Found Latest Food ID: " + latestFoodID);
+                    onSuccessListener.onSuccess(latestFoodID);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching latest Food ID", e);
+                    onSuccessListener.onSuccess("F000"); // Default fallback
                 });
+    }
+
+    private String generateNextFoodID (String lastID){
+        try {
+            //Get number after F00
+            int lastNumber = Integer.parseInt(lastID.substring(1));
+            return String.format("F%03d", lastNumber+1);
+        }catch (NumberFormatException e) {
+            Log.e("Firestore", "Error parsing Food ID", e);
+            return "F000"; // Fallback
+        }
+    }
+
+    public CollectionReference getProductCollection(){
+        return firestore.collection("FOODS");
     }
 
     // === RECIPES ===
@@ -486,18 +534,125 @@ public class DBManager {
                             String qty_type = document.getString("FQuanType");
                             String storage = document.getString("FRemarks");
                             String remarks = document.getString("FSTORAGE");
-                            int imageResId = R.drawable.banana;
+                            String imageResId = document.getString("FImage");
 
+                            Log.d("Firestore", "Food Id: " + FID + ", Name: " + name);
+                            Product product = new Product(name, FID, quantity,qty_type,doi,doe,storage,remarks,imageResId); //added FID here so that food ID can be stored on intent.
+                            productList.add(product);
                         }
+                        // lets listener know that there are products being fetched.
+                        listener.onProductsFetched(productList);
+                    } else {
+                        listener.onError(task.getException());
                     }
+
                 });
     }
+
+
+    //Code for adding Food
+
+    public void addFoodToFirestore(Context context, String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, String FImage, OnFoodAddedListener listener){
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String uNum = prefs.getString("USER_ID", "U000"); // Default to "U000" if not found
+
+        getLatestFoodID(latestFoodID -> {
+
+            String newFoodID = generateNextFoodID(latestFoodID); // Generate next ID
+
+            Map<String, Object> foodData = new HashMap<>();
+            foodData.put("FDOE", FDOE);
+            foodData.put("FDOI", FDOI);
+            foodData.put("FNAME", FNAME);
+            foodData.put("FNUM",newFoodID);
+            foodData.put("FQuantity", FQuantity);
+            foodData.put("FQuanType", FQuanType);
+            foodData.put("FSTORAGE", FSTORAGE);
+            foodData.put("FRemarks", FRemarks);
+            foodData.put("UNUM", uNum);
+            foodData.put("FImage", FImage);
+
+
+
+            firestore.collection("FOODS")
+                    .document(newFoodID)
+                    .set(foodData)
+                    .addOnSuccessListener(documentReference -> {
+                        Log.d("DBManager", "DocumentSnapshot added with ID: " + newFoodID);
+                        if (listener != null) listener.onSuccess();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.w("DBManager", "Error adding document", e);
+                        if (listener != null) listener.onError(e);
+                    });
+        });
+    }
+
+    //Get the specific food details
+    public void fetchSpecificFood(String FID, CheckFoodIDValidity callback){
+        if (FID == null || FID.isEmpty()){
+            callback.onFailure(new Exception("Food ID is invalid."));
+            return;
+        }
+
+        DocumentReference Food = firestore.collection("FOODS").document(FID);
+
+        Food.get().addOnCompleteListener(task -> {
+           if (task.isSuccessful() && task.getResult().exists()){
+               DocumentSnapshot document = task.getResult();
+               String storage = document.getString("FSTORAGE");
+               String remarks = document.getString("FRemarks");
+               String imageResource = document.getString("FImage");
+               callback.onSuccess(storage, remarks, imageResource);
+           }else{
+               callback.onFailure(new Exception("No food item exists."));
+           }
+        });
+
+    }
+
+    //Code for updating the actual food data
+    public void updateFoodInFirestore(Context context, String foodId, String FNAME,
+                                      String FDOI, String FDOE, Integer FQuantity, String FQuanType,
+                                      String FSTORAGE, String FRemarks, String FImage, OnFoodUpdatedListener listener){
+        //check if foodId exists
+        if (foodId == null || foodId.isEmpty()){
+            Log.e("DBManager", "Invalid Food ID: Cannot update this one.");
+            return;
+        }
+
+        //Data for updating
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("FDOE", FDOE);
+        updatedData.put("FDOI", FDOI);
+        updatedData.put("FNAME", FNAME);
+        updatedData.put("FQuantity", FQuantity);
+        updatedData.put("FQuanType", FQuanType);
+        updatedData.put("FSTORAGE", FSTORAGE);
+        updatedData.put("FRemarks", FRemarks);
+        updatedData.put("FImage", FImage);
+
+        //This code will do the firestore update itself
+        firestore.collection("FOODS")
+                .document(foodId)
+                .update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("DBManager", "Food entry updated successfully");
+                    if (listener != null) listener.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DBManager", "Error updating food entry", e);
+                    if (listener != null) listener.onError(e);
+                });
+    }
+
+    //format the date so that it shows month day, year
 
     public static String convertDate(String inputDate) {
         try {
 
             //This is the initial format of the date
-            SimpleDateFormat inputFormat = new SimpleDateFormat("M/d/yyyy", Locale.ENGLISH);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
 
             //Ideal outcome/format of the date.
@@ -514,6 +669,8 @@ public class DBManager {
             return "Invalid date";
         }
     }
+
+
 }
 
 
