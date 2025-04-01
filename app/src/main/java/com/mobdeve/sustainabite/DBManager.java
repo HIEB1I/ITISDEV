@@ -44,13 +44,11 @@ public class DBManager {
 
     public interface OnRecipesFetchedListener {
         void onRecipesFetched(List<FoodItem> recipes);
-
         void onError(Exception e);
     }
 
     public interface OnProductsFetchedListener {
         void onProductsFetched(List<Product> foods);
-
         void onError(Exception e);
     }
 
@@ -469,7 +467,12 @@ public class DBManager {
                             Product product = new Product(name, FID, quantity,qty_type,doi,doe,storage,remarks,imageResId); //added FID here so that food ID can be stored on intent.
                             productList.add(product);
                         }
+                        // lets listener know that there are products being fetched.
+                        listener.onProductsFetched(productList);
+                    } else {
+                        listener.onError(task.getException());
                     }
+
                 });
     }
 
