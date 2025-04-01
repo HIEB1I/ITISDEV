@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,13 +46,22 @@ public class home extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         foodList = new ArrayList<>();
-        foodList.add(new FoodItem(R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
-        foodList.add(new FoodItem(R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
-        foodList.add(new FoodItem(R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
-        foodList.add(new FoodItem(R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", ""));
+        foodList.add(new FoodItem(null, R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", ""));
 
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);
+
+        ImageView notifIcon = findViewById(R.id.notif_icon);
+        notifIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(home.this, NotificationsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

@@ -12,36 +12,33 @@
 
 
     <!-- Banner at the top -->
-    <FrameLayout
-        android:id="@+id/banner"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/headerImageFrame"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/rounded_bottom_corners"
-        android:clipToOutline="true"
-        android:outlineProvider="background"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/yellow_bg"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/yellow_bg" />
-    </FrameLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners"/>
 
 
 
-    <ImageView
+
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/productImage"
         android:layout_width="335dp"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_marginBottom="80dp"
-        android:backgroundTint="#AFACAC"
+        android:src="@mipmap/ic_launcher"
         android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/RoundedImage"
         app:layout_constraintBottom_toTopOf="@+id/productQtyContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <TextView
         android:id="@+id/productName"
@@ -63,7 +60,7 @@
         android:id="@+id/productDOE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="84dp"
+        android:layout_marginEnd="50dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="DOE"
         android:textColor="@android:color/black"
@@ -79,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="400dp"
         android:fontFamily="@font/poppins"
-        android:text="Date of Input"
+        android:text="Date of Expiry"
         android:textColor="@android:color/black"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,7 +89,7 @@
         android:id="@+id/productDOI"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
+        android:layout_marginStart="50dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="DOI"
         android:textColor="@android:color/black"
@@ -312,13 +309,14 @@
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
         android:background="@android:color/transparent"
         android:text="@string/back_button"
         android:textColor="#858080"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/banner" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btnEditEntry"
@@ -331,7 +329,7 @@
         android:onClick="goToEditEntry"
         android:src="@android:drawable/ic_menu_edit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/banner" />
+        app:layout_constraintTop_toBottomOf="@+id/headerImageFrame" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
