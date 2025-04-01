@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +42,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.itemDOE.setText(DBManager.convertDate(product.getDOE()));
         //holder.itemStorage.setText(product.getStorage());
         //holder.itemRemarks.setText(product.getRemarks());
-        holder.itemImage.setImageResource(product.getImageResource());
 
+        String imageString = product.getImageString();
+        if (imageString!= null && !imageString.isEmpty()){
+            Bitmap bitmap = DBManager.decodeBase64ToBitmap(imageString);
+            if (bitmap != null){
+                holder.itemImage.setImageBitmap(bitmap);
+            }else{
+                holder.itemImage.setImageResource(R.drawable.banana);
+
+            }
+        }
         // Navigate to Product Details on Click
         holder.itemFrame.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), ProductDetailsActivity.class);
@@ -54,7 +64,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             intent.putExtra("productDOE", product.getDOE());
             //intent.putExtra("productStorage", product.getStorage());
             //intent.putExtra("productRemarks", product.getRemarks());
-            intent.putExtra("productImage", product.getImageResource());
+            intent.putExtra("productImage", product.getImageString());
             view.getContext().startActivity(intent);
         });
     }

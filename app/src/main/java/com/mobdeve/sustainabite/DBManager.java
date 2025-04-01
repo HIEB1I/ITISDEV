@@ -461,7 +461,7 @@ public class DBManager {
                             String qty_type = document.getString("FQuanType");
                             String storage = document.getString("FRemarks");
                             String remarks = document.getString("FSTORAGE");
-                            int imageResId = R.drawable.banana;
+                            String imageResId = document.getString("FImage");
 
                             Log.d("Firestore", "Food Id: " + FID + ", Name: " + name);
                             Product product = new Product(name, FID, quantity,qty_type,doi,doe,storage,remarks,imageResId); //added FID here so that food ID can be stored on intent.
@@ -479,7 +479,7 @@ public class DBManager {
 
     //Code for adding Food
 
-    public void addFoodToFirestore(Context context, String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, OnFoodAddedListener listener){
+    public void addFoodToFirestore(Context context, String FNAME, String FDOI, String FDOE, Integer FQuantity, String FQuanType, String FSTORAGE, String FRemarks, String FImage, OnFoodAddedListener listener){
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         String uNum = prefs.getString("USER_ID", "U000"); // Default to "U000" if not found
 
@@ -497,6 +497,8 @@ public class DBManager {
             foodData.put("FSTORAGE", FSTORAGE);
             foodData.put("FRemarks", FRemarks);
             foodData.put("UNUM", uNum);
+            foodData.put("FImage", FImage);
+
 
 
             firestore.collection("FOODS")

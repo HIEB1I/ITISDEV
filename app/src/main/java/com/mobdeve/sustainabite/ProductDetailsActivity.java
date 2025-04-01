@@ -2,6 +2,7 @@ package com.mobdeve.sustainabite;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +37,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productDOI = getIntent().getStringExtra("productDOI");
         String productDOE = getIntent().getStringExtra("productDOE");
 
-        int productImage = getIntent().getIntExtra("productImage", 0);
+        String productImageBase64 = getIntent().getStringExtra("productImage");
         Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
 
 
@@ -50,7 +51,16 @@ public class ProductDetailsActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(productDOE));
         //((TextView) findViewById(R.id.productStorage)).setText(productStorage);
         //((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
-        ((ImageView) findViewById(R.id.productImage)).setImageResource(productImage);
+
+            Bitmap bitmap = DBManager.decodeBase64ToBitmap(productImageBase64);
+            if (bitmap != null){
+                ((ImageView)  findViewById(R.id.productImage)).setImageBitmap(bitmap);
+            }else{
+                ((ImageView) findViewById(R.id.productImage)).setImageResource(R.drawable.banana);
+
+            }
+
+        //((ImageView) findViewById(R.id.productImage)).setImageResource(productImage);
 
 
 
