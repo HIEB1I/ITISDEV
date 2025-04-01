@@ -68,7 +68,6 @@ public class home extends AppCompatActivity {
             }
         });
 
-        /*NEWWW*/
         searchBar = findViewById(R.id.search_bar);
         searchIcon = findViewById(R.id.search_icon);
         xbutton = findViewById(R.id.xbutton);
@@ -78,10 +77,6 @@ public class home extends AppCompatActivity {
 
         searchResults = new ArrayList<>();
 
-        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, item -> {
-            Toast.makeText(home.this, "Clicked: " + item, Toast.LENGTH_SHORT).show();
-            // You can navigate to another activity or show more details here
-        });
                 searchResultsRecyclerView.setAdapter(searchResultsAdapter);
                 searchResultsRecyclerView.setVisibility(View.GONE);
                 xbutton.setVisibility(View.GONE);
@@ -122,9 +117,12 @@ public class home extends AppCompatActivity {
         });
 
         // Handle clicks
-        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, name -> {
-            Toast.makeText(home.this, "Clicked: " + name, Toast.LENGTH_SHORT).show();
-            // Add action (e.g., navigate to details page)
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, searchResult -> {
+            //Toast.makeText(home.this, "Clicked: " + searchResult.getName(), Toast.LENGTH_SHORT).show();
+            Log.d("UserPrefs", "SEARCH: " + searchResult);
+            Intent intent = new Intent(home.this, RecipeDetailsActivity2.class);
+            intent.putExtra("RECIPE_ID", searchResult);
+            startActivity(intent);
         });
 
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);

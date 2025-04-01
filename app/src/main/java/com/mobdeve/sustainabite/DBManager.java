@@ -47,6 +47,57 @@ public class DBManager {
         void onUserIDRetrieved(String newUserID);
     }
 
+    public interface OnRecipeLoadedListener {
+        void onSuccess(String name, String ingredients, String procedures, String imageBase64, String kcal, String ownerName);
+        void onFailure(Exception e);
+    }
+
+    public void getRecipeById(String recipeId, OnRecipeLoadedListener listener) {
+        firestore.collection("RECIPES")
+                .whereEqualTo("RNAME", recipeId) // Corrected query
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        // Assuming recipeId is unique, get the first document
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+
+                        String name = document.getString("RNAME");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageBase64 = document.getString("RImage");
+                        String kcal = document.getString("RCalories");
+                        String ownerId = document.getString("UNum");
+
+                        // Fetch owner name from USERS collection
+                        firestore.collection("USERS").document(ownerId).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    String ownerName = userDoc.exists() ? userDoc.getString("UName") : "Unknown Owner";
+                                    listener.onSuccess(name, ingredients, procedures, imageBase64, kcal, ownerName);
+                                })
+                                .addOnFailureListener(listener::onFailure);
+                    } else {
+                        listener.onFailure(new Exception("Recipe not found"));
+                    }
+                })
+                .addOnFailureListener(listener::onFailure);
+    }
+
+
+    public static Bitmap decodeBase64ToBitmap(String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            Log.e("DecodeBase64", "Empty Base64 string");
+            return null;
+        }
+
+        try {
+            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            Log.e("DecodeBase64", "Failed to decode Base64 string", e);
+            return null;
+        }
+    }
+
     public interface RecipeCallback {
         void onRecipeRetrieved(List<String> recipes);
     }
@@ -145,6 +196,7 @@ public class DBManager {
                 });
 
     }
+
 
 
     public void getFoodHome(FoodDataCallback callback) {
@@ -595,20 +647,7 @@ public class DBManager {
                 .addOnFailureListener(e -> listener.onFailure(e));
     }
 
-    public static Bitmap decodeBase64ToBitmap(String base64String) {
-        if (base64String == null || base64String.isEmpty()) {
-            Log.e("DecodeBase64", "Empty Base64 string");
-            return null;
-        }
 
-        try {
-            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-        } catch (Exception e) {
-            Log.e("DecodeBase64", "Failed to decode Base64 string", e);
-            return null;
-        }
-    }
 
     // FOOD MANAGEMENT
     //Fetch all the Products (Food)
