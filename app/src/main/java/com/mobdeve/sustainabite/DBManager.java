@@ -80,7 +80,7 @@ public class DBManager {
     }
 
     public interface CheckFoodIDValidity{
-        void onSuccess(String storage, String remarks);
+        void onSuccess(String storage, String remarks, String foodImage);
         void onFailure(Exception e);
     }
 
@@ -529,7 +529,8 @@ public class DBManager {
                DocumentSnapshot document = task.getResult();
                String storage = document.getString("FSTORAGE");
                String remarks = document.getString("FRemarks");
-               callback.onSuccess(storage, remarks);
+               String imageResource = document.getString("FImage");
+               callback.onSuccess(storage, remarks, imageResource);
            }else{
                callback.onFailure(new Exception("No food item exists."));
            }
@@ -540,7 +541,7 @@ public class DBManager {
     //Code for updating the actual food data
     public void updateFoodInFirestore(Context context, String foodId, String FNAME,
                                       String FDOI, String FDOE, Integer FQuantity, String FQuanType,
-                                      String FSTORAGE, String FRemarks, OnFoodUpdatedListener listener){
+                                      String FSTORAGE, String FRemarks, String FImage, OnFoodUpdatedListener listener){
         //check if foodId exists
         if (foodId == null || foodId.isEmpty()){
             Log.e("DBManager", "Invalid Food ID: Cannot update this one.");
@@ -556,6 +557,7 @@ public class DBManager {
         updatedData.put("FQuanType", FQuanType);
         updatedData.put("FSTORAGE", FSTORAGE);
         updatedData.put("FRemarks", FRemarks);
+        updatedData.put("FImage", FImage);
 
         //This code will do the firestore update itself
         firestore.collection("FOODS")

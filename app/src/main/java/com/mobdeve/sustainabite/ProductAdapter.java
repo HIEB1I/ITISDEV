@@ -50,7 +50,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 holder.itemImage.setImageBitmap(bitmap);
             }else{
                 holder.itemImage.setImageResource(R.drawable.banana);
-
             }
         }
         // Navigate to Product Details on Click

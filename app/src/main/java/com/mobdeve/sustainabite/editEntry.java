@@ -6,11 +6,29 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.widget.ImageView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import androidx.annotation.Nullable;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 
 public class editEntry extends AppCompatActivity {
     private EditText addFoodName, remarks, quantityInput, editTextDOE, editTextDOI;
-    private String productName, productQty_Val, productQty_Type,productDOI, productDOE, productStorage, productRemarks, foodId;
+    private String productName, productQty_Val, productQty_Type,productDOI, productDOE, productStorage, productRemarks, productImageResource, foodId;
+    private ImageView foodImageView;
+
+    private Bitmap selectedBitmap;
+    private static final int PICK_IMAGE_REQUEST = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +40,8 @@ public class editEntry extends AppCompatActivity {
         quantityInput = findViewById(R.id.quantityInput);
         editTextDOE = findViewById(R.id.editTextDOE);
         editTextDOI = findViewById(R.id.editTextDOI);
+
+        foodImageView = findViewById(R.id.ic_gallery);
 
         //not allowed to edit DOI.
         editTextDOI.setEnabled(false);
@@ -50,6 +70,9 @@ public class editEntry extends AppCompatActivity {
         productStorage = getIntent().getStringExtra("productStorage");
         productRemarks = getIntent().getStringExtra("productRemarks");
         foodId = getIntent().getStringExtra("foodId");
+        productImageResource = getIntent().getStringExtra("productImage");
+
+        Log.d("EditEntry", "Image Resource: " + productImageResource);
 
         addFoodName.setText(productName);
         editTextDOI.setText(productDOI);
@@ -58,6 +81,19 @@ public class editEntry extends AppCompatActivity {
         quantityFragment.setSelectedQuantity(productQty_Type);
         storageFragment.setSelectedStorage(productStorage);
         remarks.setText(productRemarks);
+
+        //Load image
+        if (productImageResource!= null && !productImageResource.isEmpty()){
+            Bitmap bitmap = DBManager.decodeBase64ToBitmap(productImageResource);
+            if (bitmap != null){
+                foodImageView.setImageBitmap(bitmap);
+            }else{
+                foodImageView.setImageResource(R.drawable.banana);
+            }
+        }
+
+        foodImageView.getLayoutParams().width = 300;
+        foodImageView.getLayoutParams().height = 300;
 
 
         // Set an OnClickListener to go back to the previous activity
@@ -75,8 +111,46 @@ public class editEntry extends AppCompatActivity {
             }
         });
 
+        // Pressing image leads you to gallery
+        foodImageView.setOnClickListener(new View.OnClickListener(){
+           @Override
+            public void onClick(View v){
+               openGallery();
+           }
+        });
+
 
     }
+//OPENS THE GALLERY
+    private void openGallery(){
+        Log.d("InputEntry", "Gallery button clicked!"); // Debugging
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    //Code for adding the image to the box
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null &&  data.getData() != null){
+                Uri imageUri = data.getData();
+                try {
+                    selectedBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    foodImageView.setImageBitmap(selectedBitmap);
+                    foodImageView.getLayoutParams().width = 300;
+                    foodImageView.getLayoutParams().height = 300;
+                    foodImageView.requestLayout();
+
+                    Log.d("editEntry", "Image selected and displayed");
+
+                } catch (IOException e) {
+                    Log.e("editEntry", "Error loading image", e);
+                }
+        } else {
+            Log.d("editEntry", "No image selected or result canceled");
+        }
+    }
+
     private void updateFood(){
         //check if foodId exists
         if (foodId == null || foodId.isEmpty()){
@@ -114,9 +188,11 @@ public class editEntry extends AppCompatActivity {
         Integer finalUpdatedFQuantity = updatedFQuantity;
         String finalUpdatedFQuanType = updatedFQuanType;
         String finalUpdatedFSTORAGE = updatedFSTORAGE;
+        String updatedFImage = (selectedBitmap != null) ? bitmapToBase64(selectedBitmap) : null;
+
 
         dbManager.updateFoodInFirestore(this, foodId, updatedFNAME, updatedFDOI, updatedFDOE,
-                finalUpdatedFQuantity, finalUpdatedFQuanType, finalUpdatedFSTORAGE, updatedFRemarks, new DBManager.OnFoodUpdatedListener() {
+                finalUpdatedFQuantity, finalUpdatedFQuanType, finalUpdatedFSTORAGE, updatedFRemarks, updatedFImage, new DBManager.OnFoodUpdatedListener() {
                     @Override
                     public void onSuccess() {
                         Log.d("EditEntry", "Food has been updated.");
@@ -129,6 +205,7 @@ public class editEntry extends AppCompatActivity {
                         resultIntent.putExtra("updatedFoodQuantityType", finalUpdatedFQuanType);
                         resultIntent.putExtra("updatedFoodStorage", finalUpdatedFSTORAGE);
                         resultIntent.putExtra("updatedFoodRemarks", updatedFRemarks);
+                        resultIntent.putExtra("updatedFoodImage", updatedFImage);
                         resultIntent.putExtra("updated", true); // notify update
                         setResult(RESULT_OK, resultIntent);
 
@@ -141,5 +218,12 @@ public class editEntry extends AppCompatActivity {
                         Log.e("EditEntry", "Error in updating food..");
                     }
                 });
+    }
+    // Convert Bitmap to Base64 String
+    private String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 }

@@ -52,7 +52,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         //((TextView) findViewById(R.id.productStorage)).setText(productStorage);
         //((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
 
-            Bitmap bitmap = DBManager.decodeBase64ToBitmap(productImageBase64);
+        Bitmap bitmap = DBManager.decodeBase64ToBitmap(productImageBase64);
             if (bitmap != null){
                 ((ImageView)  findViewById(R.id.productImage)).setImageBitmap(bitmap);
             }else{
@@ -98,7 +98,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         intent.putExtra("productQty_Type", getIntent().getStringExtra("productQty_Type"));
         intent.putExtra("productDOI", getIntent().getStringExtra("productDOI"));
         intent.putExtra("productDOE", getIntent().getStringExtra("productDOE"));
-        intent.putExtra("productImage", getIntent().getIntExtra("productImage", 0));
+       // intent.putExtra("productImage", getIntent().getStringExtra("productImage"));
 
 
         String FID = getIntent().getStringExtra("foodId");
@@ -107,11 +107,13 @@ public class ProductDetailsActivity extends AppCompatActivity {
         dbManager.fetchSpecificFood(FID, new DBManager.CheckFoodIDValidity(){
             @Override
 
-            public void onSuccess(String storage, String remarks){
+            public void onSuccess(String storage, String remarks ,String productImage){
                 intent.putExtra("productStorage", storage);
                 intent.putExtra("productRemarks", remarks);
+                intent.putExtra("productImage", productImage);
                 Log.d("Firestore", "Storage: " + storage);
                 Log.d("Firestore", "Remarks: " + remarks);
+                Log.d("Firestore", "Image Resource: " + productImage);
                 startActivityForResult(intent,1); // start the activity, with a result expected
             }
 
@@ -139,6 +141,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             String updatedProductDOE = data.getStringExtra("updatedFoodDOE");
             int updatedProductQuantity = data.getIntExtra("updatedFoodQuantity", 0);
             String updatedQuantityType = data.getStringExtra("updatedFoodQuantityType");
+            String updatedProductImage = data.getStringExtra("updatedFoodImage");
 
 
             // Bind Updated Data to Views
@@ -148,6 +151,18 @@ public class ProductDetailsActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(updatedProductDOI));
             ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(updatedProductDOE));
 
+
+            ImageView productImageView = findViewById(R.id.productImage);
+
+            //put updated product image if it's not null
+            if (updatedProductImage!= null && !updatedProductImage.isEmpty()){
+                Bitmap bitmap = DBManager.decodeBase64ToBitmap(updatedProductImage);
+                if (bitmap != null){
+                    productImageView.setImageBitmap(bitmap);
+                }else{
+                    productImageView.setImageResource(R.drawable.banana);
+                }
+            }
             Log.d("ProductDetailsActivity", "Updated Name: " + updatedProductName);
 
         }
