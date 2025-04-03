@@ -35,8 +35,8 @@ public class RecipeDetailsActivity2 extends AppCompatActivity {
         ingContent = findViewById(R.id.ing_content);
         procContent = findViewById(R.id.procedures_content);
         foodKcal = findViewById(R.id.foodKcal);
-        editButton = findViewById(R.id.editButton);
-        deleteButton = findViewById(R.id.deleteButton);
+        //editButton = findViewById(R.id.editButton);
+        //deleteButton = findViewById(R.id.deleteButton);
         recipeDetailsOwner = findViewById(R.id.recipeDetailsOwner);
 
         // Retrieve recipe ID from intent

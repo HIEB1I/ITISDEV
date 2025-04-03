@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -55,13 +56,43 @@ public class DBManager {
         void onFailure(Exception e);
     }
 
-    public void getRecipeById(String recipeId, OnRecipeLoadedListener listener) {
-        firestore.collection("RECIPES")
-                .whereEqualTo("RNAME", recipeId) // Corrected query
+    public interface SearchFoodLoadedListener {
+        void onSuccess(String FName, String FID, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage);
+        void onFailure(Exception e);
+    }
+
+    public void getProductById(String foodName, SearchFoodLoadedListener listener) {
+        Log.d("UserPrefs", "DB Query for FOOD_NAME: " + foodName);
+
+        firestore.collection("FOODS")
+                .whereEqualTo("FNAME", foodName) // Make sure foodName matches the database field
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Assuming recipeId is unique, get the first document
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                        String FID = document.getId();
+                        String FName = document.getString("FNAME");
+                        String FQuanType = document.getString("FQuanType");
+                        String FQuantity = String.valueOf(document.getLong("FQuantity"));
+                        String FDOE = document.getString("FDOE");
+                        String FDOI = document.getString("FDOI");
+                        String FImage = document.getString("FImage");
+
+                        listener.onSuccess(FID, FName, FQuanType, FQuantity, FDOE, FDOI, FImage);
+                    } else {
+                        listener.onFailure(new Exception("No matching product found"));
+                    }
+                })
+                .addOnFailureListener(listener::onFailure);
+    }
+
+    public void getRecipeById(String recipeId, OnRecipeLoadedListener listener) {
+        firestore.collection("RECIPES")
+                .whereEqualTo("RNAME", recipeId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+
                         DocumentSnapshot document = querySnapshot.getDocuments().get(0);
 
                         String name = document.getString("RNAME");
@@ -71,7 +102,6 @@ public class DBManager {
                         String kcal = document.getString("RCalories");
                         String ownerId = document.getString("UNum");
 
-                        // Fetch owner name from USERS collection
                         firestore.collection("USERS").document(ownerId).get()
                                 .addOnSuccessListener(userDoc -> {
                                     String ownerName = userDoc.exists() ? userDoc.getString("UName") : "Unknown Owner";

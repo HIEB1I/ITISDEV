@@ -118,10 +118,11 @@ public class home extends AppCompatActivity {
 
         // Handle clicks
         searchResultsAdapter = new SearchResultsAdapter(this, searchResults, searchResult -> {
-            //Toast.makeText(home.this, "Clicked: " + searchResult.getName(), Toast.LENGTH_SHORT).show();
             Log.d("UserPrefs", "SEARCH: " + searchResult);
-            Intent intent = new Intent(home.this, RecipeDetailsActivity2.class);
-            intent.putExtra("RECIPE_ID", searchResult);
+            Intent intent = new Intent(home.this, ProductDetailsActivity2.class);
+            intent.putExtra("FOOD_NAME", searchResult);
+            /*Intent intent = new Intent(home.this, RecipeDetailsActivity2.class);
+            intent.putExtra("RECIPE_ID", searchResult);*/
             startActivity(intent);
         });
 
