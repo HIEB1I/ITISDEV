@@ -1,6 +1,7 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,14 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
 
         holder.detailsButton.setOnClickListener(v -> {
             // Implement details button action
+        });
+
+
+        holder.detailsButton.setOnClickListener(v -> {
+            String chosenRecipe = food.getName();
+            Intent intent = new Intent(context, RecipeDetailsActivity2.class);
+            intent.putExtra("RECIPE_ID", chosenRecipe);
+            context.startActivity(intent);
         });
     }
 

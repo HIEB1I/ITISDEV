@@ -46,15 +46,6 @@ public class home extends AppCompatActivity {
         Log.d("UserPrefs", "Name: " + name);
         Log.d("UserPrefs", "User ID: " + userId);
 
-      /*
-        Log.d("UserPrefs", "User ID: " + userId);
-        Log.d("UserPrefs", "Email: " + email);
-        Log.d("UserPrefs", "Name: " + name);
-        Log.d("UserPrefs", "Image URL: " + image);
-        Log.d("UserPrefs", "Is Logged In: " + isLoggedIn);*/
-
-
-
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -63,10 +54,11 @@ public class home extends AppCompatActivity {
         dbManager.getFoodHome(new DBManager.FoodDataCallback() {
             @Override
             public void onFoodDataRetrieved(ArrayList<FoodHome> foodList) {
-                foodAdapter = new FoodAdapter(home.this, foodList);
+                foodAdapter = new FoodAdapter(home.this, foodList);  // Pass context
                 recyclerView.setAdapter(foodAdapter);
             }
         });
+
 
         searchBar = findViewById(R.id.search_bar);
         searchIcon = findViewById(R.id.search_icon);
@@ -116,19 +108,27 @@ public class home extends AppCompatActivity {
             }
         });
 
-        // Handle clicks
         searchResultsAdapter = new SearchResultsAdapter(this, searchResults, searchResult -> {
-            Log.d("UserPrefs", "SEARCH: " + searchResult);
-            Intent intent = new Intent(home.this, ProductDetailsActivity2.class);
-            intent.putExtra("FOOD_NAME", searchResult);
-            /*Intent intent = new Intent(home.this, RecipeDetailsActivity2.class);
-            intent.putExtra("RECIPE_ID", searchResult);*/
-            startActivity(intent);
+            Log.d("UserPrefs", "SEARCH: " + searchResult);  // Fixed: Removed .getName()
+
+            dbManager.getUserId(searchResult, new DBManager.FirestoreCallback() {
+                @Override
+                public void onUserIDRetrieved(String resultType) {
+                    Intent intent;
+                    if (resultType.equals("Food Exists")) {
+                        intent = new Intent(home.this, ProductDetailsActivity2.class);
+                        intent.putExtra("FOOD_NAME", searchResult);
+                    } else {
+                        intent = new Intent(home.this, RecipeDetailsActivity2.class);
+                        intent.putExtra("RECIPE_ID", searchResult);
+                    }
+                    startActivity(intent);
+                }
+            });
         });
 
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
     }
-
 
     private void clearSearchResults() {
         searchResultsRecyclerView.setVisibility(View.GONE);

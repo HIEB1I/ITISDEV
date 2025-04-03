@@ -61,6 +61,24 @@ public class DBManager {
         void onFailure(Exception e);
     }
 
+    public void getUserId(String foodName, FirestoreCallback callback) {
+        firestore.collection("FOODS")
+                .whereEqualTo("FNAME", foodName)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        callback.onUserIDRetrieved("Food Exists");
+                    } else {
+                        callback.onUserIDRetrieved("Recipe Exists");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DBManager", "Error fetching data", e);
+                    callback.onUserIDRetrieved("Error");
+                });
+    }
+
+
     public void getProductById(String foodName, SearchFoodLoadedListener listener) {
         Log.d("UserPrefs", "DB Query for FOOD_NAME: " + foodName);
 
@@ -229,7 +247,6 @@ public class DBManager {
                 });
 
     }
-
 
 
     public void getFoodHome(FoodDataCallback callback) {
