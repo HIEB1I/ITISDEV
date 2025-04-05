@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -17,9 +20,13 @@ import java.util.List;
 
 public class community extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerView, searchResultsRV;
     private IngProcAdapter ingProcAdapter;
     private List<FoodItem> foodList;
+    private List<SearchResult> searchResults;
+    private EditText searchBar;
+    private ImageView searchButton;
+    private SearchResultsAdapter searchResultsAdapter;
     private DBManager dbManager;
 
     private final ActivityResultLauncher<Intent> recipeLauncher =
@@ -59,6 +66,36 @@ public class community extends AppCompatActivity {
             Intent intent = new Intent(community.this, AddRecipeActivity.class);
             recipeLauncher.launch(intent);
         });
+
+        searchResultsRV = findViewById(R.id.searchResultsRV);
+        searchResultsRV.setLayoutManager(new LinearLayoutManager(this));
+
+        searchBar = findViewById(R.id.search_bar);
+        searchButton = findViewById(R.id.search_button);
+
+        searchResults = new ArrayList<>();
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, searchResult -> {
+            dbManager.getUserId(searchResult, new DBManager.FirestoreCallback() {
+                @Override
+                public void onUserIDRetrieved(String resultType) {
+                    Intent intent;
+                    if (resultType.equals("Food Exists")) {
+                        intent = new Intent(community.this, ProductDetailsActivity2.class);
+                        intent.putExtra("FOOD_NAME", searchResult);
+                    } else {
+                        intent = new Intent(community.this, RecipeDetailsActivity2.class);
+                        intent.putExtra("RECIPE_ID", searchResult);
+                    }
+                    startActivity(intent);
+                }
+            });
+        });
+
+        searchResultsRV.setAdapter(searchResultsAdapter);
+
+        searchButton.setOnClickListener(v -> performSearch());
+
+
     }
 
     private void fetchRecipesFromFirestore() {
@@ -77,8 +114,35 @@ public class community extends AppCompatActivity {
         });
     }
 
+    private void performSearch() {
+        String query = searchBar.getText().toString().trim();
 
+        if (query.isEmpty()) {
+            Toast.makeText(this, "Enter a search term", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        searchResults.clear();
+
+        dbManager.finder(query, new DBManager.RecipeCallback() {
+            @Override
+            public void onRecipeRetrieved(List<String> foundSearch) {
+                if (foundSearch.isEmpty()) {
+                    foundSearch.add("N/A - No Info");
+                }
+
+                for (String result : foundSearch) {
+                    String[] parts = result.split(" - ", 2);
+                    String name = parts[0];
+                    String secondaryInfo = (parts.length > 1) ? parts[1] : "No Info";
+                    searchResults.add(new SearchResult(name, secondaryInfo));
+                }
+
+                searchResultsAdapter.notifyDataSetChanged();
+                searchResultsRV.setVisibility(View.VISIBLE);
+            }
+        });
+    }
     /* NAVIGATIONS */
     public void goHome(View view) {
         startActivity(new Intent(this, home.class));
