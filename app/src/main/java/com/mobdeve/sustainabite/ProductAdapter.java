@@ -9,16 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 import java.util.List;
 import android.content.Intent;
 
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
-    private String foodId;//==
+    private List<Product> fullProductList; //backup in case something happens to old productList
+    private String foodId;
 
     public ProductAdapter(List<Product> productList) {
         this.productList = productList;
+        this.fullProductList = new ArrayList<>(productList); //backup in case something happens to old productList
     }
 
     @NonNull
@@ -93,4 +97,35 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 
-}
+    // RESETS THE LIST IF THE FILTERS DON'T WORK.
+    public void resetList() {
+        productList = new ArrayList<>(fullProductList);
+        notifyDataSetChanged();
+    }
+
+    // FILTERS FORT SORT.JAVA
+
+        public void sortByName(String filter, List<Product> fullProducts) {
+            List<Product> filteredList = new ArrayList<>();
+
+            Log.d("SortFilter", "Filter: " + filter);
+            Log.d("SortFilter", "Full product list size: " + fullProducts.size());
+
+            for (Product product : fullProducts) {
+                Log.d("SortFilter", "Comparing: " + product.getName() + " with filter: " + filter);
+
+                if (product.getName().toLowerCase().trim().startsWith(filter.toLowerCase().trim())) {
+                    filteredList.add(product);
+                }
+            }
+            //  Replace productList reference entirely (don’t just modify contents)
+            this.productList = new ArrayList<>(filteredList);
+
+            // Update the product list in the adapter
+            productList.clear();
+            productList.addAll(filteredList);
+            notifyDataSetChanged();
+            Log.d("SortFilter", "Filtered list size: " + filteredList.size());
+        }
+    }
+

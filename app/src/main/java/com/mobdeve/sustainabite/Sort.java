@@ -2,12 +2,23 @@ package com.mobdeve.sustainabite;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Switch;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Sort extends AppCompatActivity {
+
+    private EditText editTextFoodName, editTextDOI, editTextDOE;
+    private ImageView deleteName, deleteDateInput, deleteDateExpiry;
+    private Switch expiryTagSwitch;
+    private Button showResultsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,9 +26,21 @@ public class Sort extends AppCompatActivity {
         setContentView(R.layout.sort);
 
         //uncomment evrything later
-        // Initialize the EditText for DOE & DOI
-        EditText editTextDOE = findViewById(R.id.editTextDOE);
-        EditText editTextDOI = findViewById(R.id.editTextDOI);
+        // Initialize the EditTexts
+        editTextFoodName = findViewById(R.id.editTextFoodname);
+        editTextDOE = findViewById(R.id.editTextDOE);
+        editTextDOI = findViewById(R.id.editTextDOI);
+
+        //Initialize delete buttons
+        deleteName = findViewById(R.id.deleteName);
+        deleteDateInput = findViewById(R.id.deleteDateInput);
+        deleteDateExpiry = findViewById(R.id.deleteDateExpiry);
+
+        //Initialize expiry tag switch
+        expiryTagSwitch = findViewById(R.id.expiryTagSwitch);
+
+        //Initialize the button that starts the sort.
+        showResultsButton = findViewById(R.id.button2);
 
         // Create and apply the date handler
         DOE_date_handler doeDateHandler = new DOE_date_handler(this, editTextDOE);
@@ -33,7 +56,80 @@ public class Sort extends AppCompatActivity {
                 finish(); // Closes this activity and returns to the previous one
             }
         });
+        //Hide all the delete buttons
+        deleteName.setVisibility(View.GONE);
+        deleteDateInput.setVisibility(View.GONE);
+        deleteDateExpiry.setVisibility(View.GONE);
+
+        //text watchers
+        setupTextWatcher(editTextFoodName, deleteName, editTextDOE, editTextDOI);
+        setupTextWatcher(editTextDOE, deleteDateExpiry, editTextFoodName, editTextDOI);
+        setupTextWatcher(editTextDOI, deleteDateInput, editTextDOE, editTextFoodName);
+
+        // Set delete button click listeners
+        deleteName.setOnClickListener(v -> editTextFoodName.setText(""));
+        deleteDateInput.setOnClickListener(v -> editTextDOI.setText(""));
+        deleteDateExpiry.setOnClickListener(v -> editTextDOE.setText(""));
+
+        //Results for the result button.
+        showResultsButton.setOnClickListener(v -> {
+            String filterName = editTextFoodName.getText().toString().trim();
+            Intent intent = new Intent();
+            intent.putExtra("filterName", filterName);
+            Log.d("SortFilter", "Sending filter: " + filterName); // Log filterName
+            setResult(RESULT_OK, intent);
+            finish();
+        });
+
     }
+
+
+//set up a textWatcher method for the edit texts and the delete buttons. this also disables others
+    private void setupTextWatcher(EditText editText, ImageView deleteButton, EditText... others){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()>0){
+                    deleteButton.setVisibility(View.VISIBLE);
+                    disableOtherEditTexts(editText, others);
+
+                }else{
+                    deleteButton.setVisibility(View.GONE);
+                    enableAllEditTexts();
+                }
+            }
+        });
+    }
+
+    // Disable all EditTexts except the one currently being edited
+    private void disableOtherEditTexts(EditText active, EditText... others) {
+        for (EditText editText : others) {
+            editText.setEnabled(false);
+            editText.setBackgroundColor(getResources().getColor(R.color.gray, null)); // change background
+            editText.setAlpha(0.5f); // Reduce opacity
+        }
+    }
+
+    // Re-enable all EditTexts when a field is cleared
+    private void enableAllEditTexts() {
+        editTextFoodName.setEnabled(true);
+        editTextDOI.setEnabled(true);
+        editTextDOE.setEnabled(true);
+
+    }
+
+
+
 
     /*NAVIGATIONS*/
     public void goHome(View view) {

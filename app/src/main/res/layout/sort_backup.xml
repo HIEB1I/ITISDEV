@@ -185,12 +185,11 @@
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="180dp"
         android:background="@drawable/white_rounded_top_corners"
         android:orientation="vertical"
+        android:layout_marginTop="180dp"
         android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@id/menuBar"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerImageFrame">
 
         <Button
@@ -219,44 +218,26 @@
             android:text="@string/name"
             android:textColor="#000000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
-        <LinearLayout
-            android:id="@+id/SortNameLL"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/editTextFoodname"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/editTextFoodname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="28dp"
-                android:layout_marginEnd="28dp"
-                android:layout_marginBottom="24dp"
-                android:layout_weight="1"
-                android:autofillHints="foodname"
-                android:background="@drawable/white_textbox"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:padding="12dp"
-                android:textColor="#000000"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@+id/doi"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageView
-                android:id="@+id/deleteName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="10dp"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/delete" />
-
-        </LinearLayout>
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="24dp"
+            android:autofillHints="foodname"
+            android:background="@drawable/white_textbox"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/doi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/doi"
@@ -270,39 +251,23 @@
             android:text="@string/date_of_input"
             android:textColor="#000000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
-        <LinearLayout
-            android:id="@+id/SortDateInputLL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/editTextDOI"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginStart="28dp"
-                android:layout_marginEnd="28dp"
-                android:layout_marginBottom="24dp"
-                android:layout_weight="1"
-                android:background="@drawable/white_textbox"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:focusable="false"
-                android:hint="mm/dd/yyyy"
-                android:paddingStart="20dp"
-                android:textColor="@color/black"
-                android:textColorHint="@color/gray" />
-
-            <ImageView
-                android:id="@+id/deleteDateInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/delete" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/editTextDOI"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/white_textbox"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:hint="mm/dd/yyyy"
+            android:paddingStart="20dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
 
         <TextView
             android:id="@+id/doe"
@@ -316,48 +281,32 @@
             android:text="@string/date_of_expiry"
             android:textColor="#000000"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
-        <LinearLayout
-            android:id="@+id/SortDateExpLL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/editTextDOE"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginStart="28dp"
-                android:layout_marginEnd="28dp"
-                android:layout_marginBottom="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/white_textbox"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:focusable="false"
-                android:hint="mm/dd/yyyy"
-                android:paddingStart="20dp"
-                android:textColor="@color/black"
-                android:textColorHint="@color/gray" />
-
-            <ImageView
-                android:id="@+id/deleteDateExpiry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/delete" />
-        </LinearLayout>
-
-        <!-- Expiry Tag Layout with Toggle Switch -->
-        <LinearLayout
-            android:id="@+id/expiryTagLayout"
+        <EditText
+            android:id="@+id/editTextDOE"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="-15dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/white_textbox"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:hint="mm/dd/yyyy"
+            android:paddingStart="20dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
+
+    <!-- Expiry Tag Layout with Toggle Switch -->
+        <LinearLayout
+            android:id="@+id/expiryTagLayout"
+            android:layout_width="314dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="28dp"
             android:layout_marginBottom="128dp"
+            android:layout_marginTop="-15dp"
             android:background="@drawable/white_textbox"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -384,7 +333,7 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:thumbTint="#FFFFFF"
-                android:trackTint="#D3D3D3"></Switch>
+                android:trackTint="#D3D3D3"> </Switch>
 
         </LinearLayout>
 
