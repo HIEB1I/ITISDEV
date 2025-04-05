@@ -74,9 +74,17 @@ public class Sort extends AppCompatActivity {
         //Results for the result button.
         showResultsButton.setOnClickListener(v -> {
             String filterName = editTextFoodName.getText().toString().trim();
+            String filterDOI = editTextDOI.getText().toString().trim();
+            String filterDOE = editTextDOE.getText().toString().trim();
+
             Intent intent = new Intent();
             intent.putExtra("filterName", filterName);
-            Log.d("SortFilter", "Sending filter: " + filterName); // Log filterName
+            intent.putExtra("filterDOI", filterDOI); // Add DOI filter to intent
+            intent.putExtra("filterDOE", filterDOE); // Add DOE filter to intent
+            Log.d("SortFilter", "Sending filterName: " + filterName); // Log filterName
+            Log.d("SortFilter", "Sending filterDOI: " + filterDOI); // Log DOI
+            Log.d("SortFilter", "Sending filterDOE: " + filterDOE); // Log DOE
+
             setResult(RESULT_OK, intent);
             finish();
         });
@@ -126,7 +134,25 @@ public class Sort extends AppCompatActivity {
         editTextDOI.setEnabled(true);
         editTextDOE.setEnabled(true);
 
+        // restore original hints
+        editTextDOI.setHint("mm/dd/yyyy");
+        editTextDOE.setHint("mm/dd/yyyy");
+
+        // restore white textbox background
+        editTextFoodName.setBackgroundResource(R.drawable.white_textbox);
+        editTextDOI.setBackgroundResource(R.drawable.white_textbox);
+        editTextDOE.setBackgroundResource(R.drawable.white_textbox);
+
+        // set text color to black
+        editTextFoodName.setTextColor(getResources().getColor(R.color.black));
+        editTextDOI.setTextColor(getResources().getColor(R.color.black));
+        editTextDOE.setTextColor(getResources().getColor(R.color.black));
+
+        // set hint color to gray
+        editTextDOI.setHintTextColor(getResources().getColor(R.color.gray));
+        editTextDOE.setHintTextColor(getResources().getColor(R.color.gray));
     }
+
 
 
 

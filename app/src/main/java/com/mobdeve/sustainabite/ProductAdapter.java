@@ -10,8 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import android.content.Intent;
 
 
@@ -97,10 +101,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 
-    // RESETS THE LIST IF THE FILTERS DON'T WORK.
+    // RESETS THE LIST
     public void resetList() {
-        productList = new ArrayList<>(fullProductList);
-        notifyDataSetChanged();
+       productList = new ArrayList<>(fullProductList);
+       notifyDataSetChanged();
     }
 
     // FILTERS FORT SORT.JAVA
@@ -119,6 +123,74 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 }
             }
             //  Replace productList reference entirely (don’t just modify contents)
+            this.productList = new ArrayList<>(filteredList);
+
+            // Update the product list in the adapter
+            productList.clear();
+            productList.addAll(filteredList);
+            notifyDataSetChanged();
+            Log.d("SortFilter", "Filtered list size: " + filteredList.size());
+        }
+
+        public void sortByDOI(String filterDOI, List<Product> fullProducts){
+            List<Product> filteredList = new ArrayList<>();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault()); // Date format
+
+            Log.d("SortFilter", "DOI Filter: " + filterDOI);
+            Log.d("SortFilter", "Full product list size: " + fullProducts.size());
+
+            for (Product product : fullProducts) {
+                Log.d("SortFilter", "Comparing DOI: " + product.getDOI() + " with filter: " + filterDOI);
+
+                try {
+                    // Parse the product's DOI and the user's input DOI
+                    Date productDOI = dateFormat.parse(product.getDOI());
+                    Date inputtedDOI = dateFormat.parse(filterDOI);
+
+                    // If the dates match, add the product to the filtered list
+                    if (productDOI != null && inputtedDOI != null && productDOI.equals(inputtedDOI)) {
+                        filteredList.add(product);
+                    }
+                } catch (Exception e) {
+                    Log.e("SortFilter", "Error parsing DOI", e);
+                }
+            }
+
+            // Replace productList reference entirely (don’t just modify contents)
+            this.productList = new ArrayList<>(filteredList);
+
+            // Update the product list in the adapter
+            productList.clear();
+            productList.addAll(filteredList);
+            notifyDataSetChanged();
+            Log.d("SortFilter", "Filtered list size: " + filteredList.size());
+        }
+
+        public void sortByDOE(String filterDOE, List<Product> fullProducts){
+            List<Product> filteredList = new ArrayList<>();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault()); // Date format
+
+            Log.d("SortFilter", "DOE Filter: " + filterDOE);
+            Log.d("SortFilter", "Full product list size: " + fullProducts.size());
+
+            for (Product product : fullProducts) {
+                Log.d("SortFilter", "Comparing DOE: " + product.getDOI() + " with filter: " + filterDOE);
+
+                try {
+                    // Parse the product's DOE and the user's input DOE
+                    Date productDOE = dateFormat.parse(product.getDOE());
+                    Date inputtedDOE = dateFormat.parse(filterDOE);
+
+                    // If the dates match, add the product to the filtered list
+                    if (productDOE != null && inputtedDOE != null && productDOE.equals(inputtedDOE)) {
+                        filteredList.add(product);
+                    }
+                } catch (Exception e) {
+                    Log.e("SortFilter", "Error parsing DOE", e);
+                }
+            }
+
+            // Replace productList reference entirely (don’t just modify contents)
             this.productList = new ArrayList<>(filteredList);
 
             // Update the product list in the adapter

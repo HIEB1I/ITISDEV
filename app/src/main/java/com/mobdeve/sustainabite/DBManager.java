@@ -79,6 +79,12 @@ public class DBManager {
         void onError(Exception e);
     }
 
+    // For when gathering specific food item.
+    public interface OnFoodDetailsFetchedListener {
+        void onSuccess(Product product);
+        void onError(Exception e);
+    }
+
     public interface CheckFoodIDValidity{
         void onSuccess(String storage, String remarks, String foodImage);
         void onFailure(Exception e);
@@ -572,7 +578,55 @@ public class DBManager {
                     if (listener != null) listener.onError(e);
                 });
     }
+//this is to fetch one specific food.
+    public void fetchFoodDetailsFromFirestore(Context context, String foodId, final OnFoodDetailsFetchedListener listener) {
+        // Access the food collection
+        DocumentReference foodDocRef = firestore.collection("FOODS").document(foodId);
+        Log.d("DBManager", "Fetched FoodID: " + foodId);
+        // Fetch food details from Firestore
+        foodDocRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Log the document data to check if it's coming through
+                        Log.d("FirestoreDocument", "Document fields: " + documentSnapshot.getData());
 
+                        // Manually map fields from the Firestore document to the Product object
+                        String foodName = documentSnapshot.getString("FNAME");
+                        String fImage = documentSnapshot.getString("FIMAGE");
+                        String qtyValue = documentSnapshot.get("FQuantity") != null ? documentSnapshot.get("FQuantity").toString() : "N/A";
+                        String qtyType = documentSnapshot.getString("FQuanType");
+                        String storage = documentSnapshot.getString("FSTORAGE");
+                        String remarks = documentSnapshot.getString("FRemarks");
+                        String fdoe = documentSnapshot.getString("FDOE");
+                        String fdoi = documentSnapshot.getString("FDOI");
+                        String fID = documentSnapshot.getString("FNum");
+
+                        // Manually set these values into the Product object
+                        Product product = new Product();
+                        product.setName(foodName);
+                        product.setImageString(fImage);
+                        product.setQty_Val(Integer.parseInt(qtyValue));  // Assuming qtyValue is numeric
+                        product.setQty_Type(qtyType);
+                        product.setStorage(storage);
+                        product.setRemarks(remarks);
+                        product.setDOE(fdoe);
+                        product.setDOI(fdoi);
+                        product.setFoodId(fID); // Assuming this is a unique ID field
+
+                        // Log the specific product details to check the mapping
+                        Log.d("DBManager", "Fetched Product: " + product.getName());
+
+                        // Pass the product object to the listener
+                        listener.onSuccess(product);
+
+                    } else {
+                        listener.onError(new Exception("Food not found"));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    listener.onError(e);
+                });
+    }
     //format the date so that it shows month day, year
 
     public static String convertDate(String inputDate) {

@@ -29,6 +29,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
         dbManager = new DBManager();
 
 
+
+        //Log.d("Filter", "Filters received: " + filterName + filterDOI +filterDOE);
+
         // Retrieve Data from Intent
         String productName = getIntent().getStringExtra("productName");
         String FID = getIntent().getStringExtra("foodId"); //Puts a FoodID on the intent
@@ -98,7 +101,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         intent.putExtra("productQty_Type", getIntent().getStringExtra("productQty_Type"));
         intent.putExtra("productDOI", getIntent().getStringExtra("productDOI"));
         intent.putExtra("productDOE", getIntent().getStringExtra("productDOE"));
-       // intent.putExtra("productImage", getIntent().getStringExtra("productImage"));
+        intent.putExtra("productImage", getIntent().getStringExtra("productImage"));
 
 
         String FID = getIntent().getStringExtra("foodId");
@@ -164,9 +167,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 }
             }
             Log.d("ProductDetailsActivity", "Updated Name: " + updatedProductName);
-
         }
+        setResult(RESULT_OK);
     }
+
+
     /*NAVIGATIONS*/
     public void goHome(View view) {
         Intent intent = new Intent(this, home.class);

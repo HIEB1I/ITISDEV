@@ -30,6 +30,7 @@ public class foodManagement extends AppCompatActivity {
         //Initialize the array for products.
         productList = new ArrayList<>();
         fullProductList = new ArrayList<>();
+
         productAdapter = new ProductAdapter(productList);
 
         // Initialize RecyclerView
@@ -37,7 +38,7 @@ public class foodManagement extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(productAdapter);
 
-        fetchProductsFromFirestore();
+        // fetchProductsFromFirestore(); -> I removed this because it is a duplicate entry from onResume();
     }
 
     //Fetch the set of products that are in Firestore.
@@ -59,6 +60,7 @@ public class foodManagement extends AppCompatActivity {
                 fullProductList.addAll(products);
 
                 // Check if fullProductList is populated correctly
+                Log.d("Firestore", "Product list size after fetch: " + productList.size());
                 Log.d("Firestore", "Full product list size after fetch: " + fullProductList.size());
 
 
@@ -86,7 +88,12 @@ public class foodManagement extends AppCompatActivity {
         // Check if we're returning from the Sort activity with a valid result
         if (requestCode == 1 && resultCode == RESULT_OK && data != null){
             String nameFilter = data.getStringExtra("filterName");  // Get the filter string from the result
-            Log.d("SortFilter", "Received filter: " + nameFilter);
+            String DOIfilter = data.getStringExtra("filterDOI"); // DOI Filter String
+            String DOEfilter = data.getStringExtra("filterDOE"); // DOE Filter String
+            Log.d("SortFilter", "Received name filter: " + nameFilter);
+            Log.d("SortFilter", "Received DOI filter: " + DOIfilter);
+            Log.d("SortFilter", "Received DOE filter: " + DOEfilter);
+
 
             // Always fetch fresh data from Firestore to prevent duplicate entries
             dbManager.fetchProduct(new DBManager.OnProductsFetchedListener() {
@@ -99,9 +106,17 @@ public class foodManagement extends AppCompatActivity {
                     // Add fetched products to fullProductList for filtering reference
                     fullProductList.addAll(products);
 
-                    // If there's a valid filter, apply it to the updated list
+                    //If the Name Filter is not null, sort by Name
                     if (nameFilter != null && !nameFilter.isEmpty()) {
                         productAdapter.sortByName(nameFilter, fullProductList);
+                    }
+                    //If the DOI Filter is not null, sort by DOI
+                    else if (DOIfilter != null && !DOIfilter.isEmpty()){
+                        productAdapter.sortByDOI(DOIfilter, fullProductList);
+                    }
+                    //If the DOE Filter is not null, sort by DOE
+                    else if(DOEfilter != null && !DOEfilter.isEmpty()){
+                        productAdapter.sortByDOE(DOEfilter, fullProductList);
                     }
                     // Otherwise, reset to show all products
                     else {
