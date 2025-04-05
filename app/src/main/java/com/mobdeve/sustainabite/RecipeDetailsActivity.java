@@ -66,6 +66,22 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         }
 
+        DBManager dbManager = new DBManager();
+        dbManager.getCurrentUserDetails(this, new DBManager.OnUserDetailsFetchedListener() {
+            @Override
+            public void onUserDetailsFetched(String userId, String email, String name, String image) {
+                if (!userId.equals(foodItem.getUNum())) {
+                    editButton.setVisibility(View.GONE);
+                    deleteButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(RecipeDetailsActivity.this, "Failed to get current user details", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         editButton.setOnClickListener(v -> showEditDialog());
         deleteButton.setOnClickListener(v -> confirmDeleteRecipe());
     }

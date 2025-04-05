@@ -28,13 +28,13 @@ public class profile extends AppCompatActivity {
     private ImageView profileImageView;
     private DBManager dbManager;
 
-    // Register ActivityResultLauncher to refresh profile after editing
+
     private final ActivityResultLauncher<Intent> profileLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null && data.getBooleanExtra("profile_updated", false)) {
-                        fetchUserProfile(); // Refresh user profile
+                        fetchUserProfile();
                     }
                 }
             });
@@ -52,7 +52,7 @@ public class profile extends AppCompatActivity {
         recyclerView = findViewById(R.id.profileRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ingProcAdapter = new IngProcAdapter(this, foodList);
+        ingProcAdapter = new IngProcAdapter(this, foodList, null);
         recyclerView.setAdapter(ingProcAdapter);
 
         fetchRecipesFromFirestore();

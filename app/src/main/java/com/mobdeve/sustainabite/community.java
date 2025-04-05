@@ -22,14 +22,13 @@ public class community extends AppCompatActivity {
     private List<FoodItem> foodList;
     private DBManager dbManager;
 
-    // Register ActivityResultLauncher to refresh list after adding or deleting a recipe
     private final ActivityResultLauncher<Intent> recipeLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null) {
                         if (data.getBooleanExtra("recipe_added", false) || data.getBooleanExtra("recipe_deleted", false)) {
-                            fetchRecipesFromFirestore(); // Refresh when a recipe is added or deleted
+                            fetchRecipesFromFirestore();
                         }
                     }
                 }
@@ -50,7 +49,7 @@ public class community extends AppCompatActivity {
         // foodList.add(new FoodItem(R.drawable.fried_rice, "Fried Rice", "Kcal 180", getString(R.string.ingredients2), getString(R.string.procedures2)));
 
 
-        ingProcAdapter = new IngProcAdapter(this, foodList);
+        ingProcAdapter = new IngProcAdapter(this, foodList, recipeLauncher);
         recyclerView.setAdapter(ingProcAdapter);
 
         fetchRecipesFromFirestore();

@@ -281,8 +281,6 @@ public class DBManager {
         return android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-
-
     public interface OnRecipesFetchedListener {
         void onRecipesFetched(List<FoodItem> recipes);
         void onError(Exception e);
@@ -335,7 +333,6 @@ public class DBManager {
         void onError(Exception e);
     }
 
-    // === USERS ===
     // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
@@ -488,7 +485,7 @@ public class DBManager {
     }
 
     // === PROFILE UPDATE ===
-    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
+    public void updateUserProfile(Context context, String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> updatedData = new HashMap<>();
@@ -506,6 +503,13 @@ public class DBManager {
         db.collection("USERS").document(userId)
                 .update(updatedData)
                 .addOnSuccessListener(aVoid -> {
+                    SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("USER_NAME", newUsername);
+                    editor.putString("USER_EMAIL", newEmail);
+                    editor.putString("USER_IMAGE", encodedImage);
+                    editor.apply();
+
                     Log.d("Firestore", "User profile updated successfully: " + userId);
                     if (listener != null) listener.onSuccess();
                 })
