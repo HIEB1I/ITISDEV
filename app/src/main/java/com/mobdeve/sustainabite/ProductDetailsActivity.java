@@ -59,7 +59,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             if (bitmap != null){
                 ((ImageView)  findViewById(R.id.productImage)).setImageBitmap(bitmap);
             }else{
-                ((ImageView) findViewById(R.id.productImage)).setImageResource(R.drawable.banana);
+                ((ImageView) findViewById(R.id.productImage)).setImageResource(R.drawable.noimage);
 
             }
 
@@ -163,7 +163,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 if (bitmap != null){
                     productImageView.setImageBitmap(bitmap);
                 }else{
-                    productImageView.setImageResource(R.drawable.banana);
+                    productImageView.setImageResource(R.drawable.noimage);
                 }
             }
             Log.d("ProductDetailsActivity", "Updated Name: " + updatedProductName);

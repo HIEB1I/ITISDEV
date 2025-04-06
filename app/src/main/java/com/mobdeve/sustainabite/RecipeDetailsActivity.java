@@ -55,7 +55,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             if (bitmap != null) {
                 foodImage.setImageBitmap(bitmap);
             } else {
-                foodImage.setImageResource(R.drawable.banana);
+                foodImage.setImageResource(R.drawable.noimage);
             }
 
             if (foodItem.getUNum() != null && !foodItem.getUNum().isEmpty()) {
