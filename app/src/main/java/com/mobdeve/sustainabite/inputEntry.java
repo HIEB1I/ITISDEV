@@ -162,4 +162,30 @@ public class inputEntry extends AppCompatActivity {
 
     }
 
+
+    public void goHome(View view) {
+        Intent intent = new Intent(this, home.class);
+        startActivity(intent);
+    }
+
+
+    public void goCommunity(View view) {
+        Intent intent = new Intent(this, community.class);
+        startActivity(intent);
+    }
+
+    public void goProfile(View view) {
+        Intent intent = new Intent(this, profile.class);
+        startActivity(intent);
+    }
+
+    public void goToInputEntry(View view) {
+        Intent intent = new Intent(this, inputEntry.class);
+        startActivity(intent);
+    }
+
+    public void goToSort(View view) {
+        Intent intent = new Intent(this, Sort.class);
+        startActivity(intent);
+    }
 }
