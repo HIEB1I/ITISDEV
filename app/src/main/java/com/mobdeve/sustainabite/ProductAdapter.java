@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,6 +58,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         //holder.itemStorage.setText(product.getStorage());
         //holder.itemRemarks.setText(product.getRemarks());
 
+
+        if (isExpired(itemDOE)) {
+            holder.expiredLayout.setVisibility(View.VISIBLE);  // Show "Expired" text
+            Log.d("ProductAdapter", "Item is expired: " + product.getName());
+        } else {
+            holder.expiredLayout.setVisibility(View.INVISIBLE);  // Hide "Expired" text
+            Log.d("ProductAdapter", "Item is not expired: " + product.getName());
+        }
+
         String imageString = product.getImageString();
         if (imageString!= null && !imageString.isEmpty()){
             Bitmap bitmap = DBManager.decodeBase64ToBitmap(imageString);
@@ -80,6 +90,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             intent.putExtra("productImage", product.getImageString());
             view.getContext().startActivity(intent);
         });
+
+
     }
 
 
@@ -91,7 +103,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, itemQty_Val, itemQty_Type, itemDOI, itemDOE;
         ImageView itemImage;
-        View itemFrame; // Added itemFrame
+        View itemFrame;
+        LinearLayout expiredLayout;
 
         public ProductViewHolder(View itemView) {
             super(itemView);
@@ -104,20 +117,36 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             //itemStorage = itemView.findViewById(R.id.itemStorage);
             //itemRemarks = itemView.findViewById(R.id.itemRemarks);
             itemImage = itemView.findViewById(R.id.itemImage);
+            // Initialize the "Expired" overlay layout
+            expiredLayout = itemView.findViewById(R.id.LinearLayout_textExpired);
         }
     }
 
-        // RESETS THE LIST
-        public void resetList() {
-           productList = new ArrayList<>(fullProductList);
-           notifyDataSetChanged();
-        }
+    // Helper function to check if the item is expired
+    private boolean isExpired(String expiryDateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy", Locale.getDefault()); // Format of the date in the TextView
+        try {
+            // Parse the expiry date string into a Date object
+            Date expiryDate = sdf.parse(expiryDateString);
 
-        public void setFilteredProducts(List<Product> filtered) {
-            this.productList.clear();
-            this.productList.addAll(filtered);
-            notifyDataSetChanged();
-        }
+            // Get the current date
+            Date currentDate = new Date();
 
+            // Log the current date and expiry date for debugging
+            Log.d("ExpiryCheck", "Current Date: " + sdf.format(currentDate) + " | Expiry Date: " + expiryDateString);
+
+            // Compare expiry date with current date
+            boolean isExpired = expiryDate != null && expiryDate.before(currentDate); // If the expiry date is before today's date, it is expired
+
+            // Log whether the item is expired
+            Log.d("ExpiryCheck", "Is Expired: " + isExpired);
+
+            return isExpired;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("ExpiryCheck", "Error parsing date: " + expiryDateString);
+            return false; // Default to not expired if date parsing fails
+        }
+    }
 }
 
