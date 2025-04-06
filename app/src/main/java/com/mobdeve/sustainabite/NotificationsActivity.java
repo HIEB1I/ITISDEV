@@ -68,13 +68,25 @@ public class NotificationsActivity extends AppCompatActivity {
 
                                     Date now = new Date();
 
-                                    // Check if expired
-                                    if (expiryDate.before(now)) {
-                                        String imageBase64 = foodImageBase64 != null && !foodImageBase64.isEmpty() ? foodImageBase64 : null;
+                                    // Calculate the difference in days between current date and expiry date
+                                    long diffInMillis = expiryDate.getTime() - now.getTime();
+                                    long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);  // Convert milliseconds to days
+
+                                    Log.d("diffCalculator", "diffInDays: " + diffInDays);
+                                    // If the item is expired or within 3 days of expiration, notify
+                                    if (diffInDays <= 3) {  // Check if expiration is within 3 days or if it's already expired
+                                        String imageBase64 = foodImageBase64 != null && !foodImageBase64.isEmpty() ? foodImageBase64 : ""; // default to empty string if no image
+
+                                        String notificationText;
+                                        if (diffInDays <= 0) {
+                                            notificationText = foodName + " has expired!";
+                                        } else {
+                                            notificationText = foodName + " will expire in " + diffInDays + " day(s).";
+                                        }
 
                                         notificationList.add(new NotificationItem(
                                                 imageBase64,
-                                                foodName + " has expired!",
+                                                notificationText,
                                                 new SimpleDateFormat("hh:mm a").format(now)
                                         ));
                                     }
