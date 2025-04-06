@@ -93,6 +93,9 @@ public class editEntry extends AppCompatActivity {
         }
 
  */
+
+        productImageResource = getIntent().getStringExtra("productImage");
+
         foodId = getIntent().getStringExtra("foodId");
         Log.d("editEntry", "FoodId: " + foodId);
 
@@ -226,8 +229,9 @@ public class editEntry extends AppCompatActivity {
         Integer finalUpdatedFQuantity = updatedFQuantity;
         String finalUpdatedFQuanType = updatedFQuanType;
         String finalUpdatedFSTORAGE = updatedFSTORAGE;
-        String updatedFImage = (selectedBitmap != null) ? bitmapToBase64(selectedBitmap) : null;
 
+        // Check if no image was selected, retain the existing image
+        String updatedFImage = (selectedBitmap != null) ? bitmapToBase64(selectedBitmap) : (productImageResource != null ? productImageResource : "");
         Product updatedProduct = new Product(
                 updatedFNAME,
                 getIntent().getStringExtra("foodId"),  // Assuming this ID is passed from ProductDetailsActivity
@@ -277,5 +281,36 @@ public class editEntry extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    /*NAVIGATIONS*/
+    public void goHome(View view) {
+        Intent intent = new Intent(this, home.class);
+        startActivity(intent);
+    }
+
+    public void goFood(View view) {
+        Intent intent = new Intent(this, foodManagement.class);
+        startActivity(intent);
+    }
+
+    public void goCommunity(View view) {
+        Intent intent = new Intent(this, community.class);
+        startActivity(intent);
+    }
+
+    public void goProfile(View view) {
+        Intent intent = new Intent(this, profile.class);
+        startActivity(intent);
+    }
+
+    public void goToInputEntry(View view) {
+        Intent intent = new Intent(this, inputEntry.class);
+        startActivity(intent);
+    }
+
+    public void goToSort(View view) {
+        Intent intent = new Intent(this, Sort.class);
+        startActivity(intent);
     }
 }

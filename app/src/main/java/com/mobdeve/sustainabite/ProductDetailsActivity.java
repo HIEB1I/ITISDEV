@@ -33,8 +33,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         //Log.d("Filter", "Filters received: " + filterName + filterDOI +filterDOE);
 
         // Retrieve Data from Intent
-        String productName = getIntent().getStringExtra("productName");
-        String FID = getIntent().getStringExtra("foodId"); //Puts a FoodID on the intent
+       /* String productName = getIntent().getStringExtra("productName");
         String productQty_Val= getIntent().getStringExtra("productQty_Val");
         String productQty_Type = getIntent().getStringExtra("productQty_Type");
         String productDOI = getIntent().getStringExtra("productDOI");
@@ -43,6 +42,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productRemarks = getIntent().getStringExtra("productRemarks");
 
         String productImageBase64 = getIntent().getStringExtra("productImage");
+        */
+        String FID = getIntent().getStringExtra("foodId"); //Puts a FoodID on the intent
+
         Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
 
         if (FID != null) {
@@ -177,7 +179,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
             int updatedProductQuantity = data.getIntExtra("updatedFoodQuantity", 0);
             String updatedQuantityType = data.getStringExtra("updatedFoodQuantityType");
             String updatedProductImage = data.getStringExtra("updatedFoodImage");
-
+            String updatedStorage = data.getStringExtra("updatedFoodStorage");
+            String updatedRemarks = data.getStringExtra("updatedFoodRemarks");
 
             // Bind Updated Data to Views
             ((TextView) findViewById(R.id.productName)).setText(updatedProductName);
@@ -185,6 +188,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.productQty_Type)).setText(updatedQuantityType);
             ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(updatedProductDOI));
             ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(updatedProductDOE));
+            ((TextView) findViewById(R.id.productStorage)).setText(updatedStorage);
+            ((TextView) findViewById(R.id.productRemarks)).setText(updatedRemarks);
 
 
             ImageView productImageView = findViewById(R.id.productImage);
