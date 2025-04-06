@@ -1,6 +1,8 @@
 package com.mobdeve.sustainabite;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private String name;
     private String fid; // Added Food ID so this can be stored
     private int qty_val;

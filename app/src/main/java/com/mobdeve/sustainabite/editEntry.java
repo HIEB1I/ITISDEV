@@ -228,6 +228,17 @@ public class editEntry extends AppCompatActivity {
         String finalUpdatedFSTORAGE = updatedFSTORAGE;
         String updatedFImage = (selectedBitmap != null) ? bitmapToBase64(selectedBitmap) : null;
 
+        Product updatedProduct = new Product(
+                updatedFNAME,
+                getIntent().getStringExtra("foodId"),  // Assuming this ID is passed from ProductDetailsActivity
+                updatedFQuantity,
+                updatedFQuanType,
+                updatedFDOI,
+                updatedFDOE,
+                updatedFSTORAGE,
+                updatedFRemarks,
+                updatedFImage
+        );
 
         dbManager.updateFoodInFirestore(this, foodId, updatedFNAME, updatedFDOI, updatedFDOE,
                 finalUpdatedFQuantity, finalUpdatedFQuanType, finalUpdatedFSTORAGE, updatedFRemarks, updatedFImage, new DBManager.OnFoodUpdatedListener() {
@@ -246,6 +257,7 @@ public class editEntry extends AppCompatActivity {
                         resultIntent.putExtra("updatedFoodStorage", finalUpdatedFSTORAGE);
                         resultIntent.putExtra("updatedFoodRemarks", updatedFRemarks);
                         resultIntent.putExtra("updatedFoodImage", updatedFImage);
+                        resultIntent.putExtra("updatedProduct", updatedProduct);
                         resultIntent.putExtra("updated", true); // notify update
                         setResult(RESULT_OK, resultIntent);
                         // Finish this activity and go back
