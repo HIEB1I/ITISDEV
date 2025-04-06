@@ -57,6 +57,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             ((TextView) findViewById(R.id.productQty_Type)).setText(product.getQty_Type());
                             ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(product.getDOI()));
                             ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(product.getDOE()));
+                            ((TextView) findViewById(R.id.productStorage)).setText(product.getStorage());
+                            ((TextView) findViewById(R.id.productRemarks)).setText(product.getRemarks());
 
                             Bitmap bitmap = DBManager.decodeBase64ToBitmap(product.getImageString());
                             ImageView productImageView = findViewById(R.id.productImage);
