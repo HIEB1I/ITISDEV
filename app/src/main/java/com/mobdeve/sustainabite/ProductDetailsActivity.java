@@ -39,6 +39,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productQty_Type = getIntent().getStringExtra("productQty_Type");
         String productDOI = getIntent().getStringExtra("productDOI");
         String productDOE = getIntent().getStringExtra("productDOE");
+        String productStorage = getIntent().getStringExtra(" productStorage");
+        String productRemarks = getIntent().getStringExtra("productRemarks");
 
         String productImageBase64 = getIntent().getStringExtra("productImage");
         Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
@@ -78,8 +80,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.productQty_Type)).setText(productQty_Type);
         ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(productDOI));
         ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(productDOE));
-        //((TextView) findViewById(R.id.productStorage)).setText(productStorage);
-        //((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
+        ((TextView) findViewById(R.id.productStorage)).setText(productStorage);
+        ((TextView) findViewById(R.id.productRemarks)).setText(productRemarks);
 
         Bitmap bitmap = DBManager.decodeBase64ToBitmap(productImageBase64);
             if (bitmap != null){

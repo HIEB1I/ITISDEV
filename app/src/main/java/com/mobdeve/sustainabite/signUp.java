@@ -108,22 +108,26 @@ public class signUp extends AppCompatActivity {
     public void goSignUp(View view) {
         String userName = username.getText().toString();
         String userEmail = email.getText().toString();
-        String userPassword = password2.getText().toString();
+        String userPassword1 = password1.getText().toString();
+        String userPassword2 = password2.getText().toString();
 
         String imageString = selectedBitmap != null ? bitmapToBase64(selectedBitmap) : "";
 
         Log.d("SignUpDebug", "Username: " + userName);
         Log.d("SignUpDebug", "Email: " + userEmail);
-        Log.d("SignUpDebug", "Password: " + userPassword);
+        Log.d("SignUpDebug", "Password: " + userPassword2);
         Log.d("SignUpDebug", "Image String Length: " + imageString.length());
-        dbManager.putNewUser(userName, userPassword, userEmail, imageString);
 
-        Toast.makeText(this, "Sign-up successful!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, welcomePage.class);
-        startActivity(intent);
+        if (userPassword1.equals(userPassword2)) {
+            dbManager.putNewUser(userName, userPassword2, userEmail, imageString);
+
+            Toast.makeText(this, "Sign-up successful!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, welcomePage.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Passwords do not match. Please try again.", Toast.LENGTH_SHORT).show();
+        }
     }
-
-
 
     private void togglePasswordVisibility(EditText passwordField, ImageView button) {
         if (isPasswordVisible) {

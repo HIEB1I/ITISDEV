@@ -395,23 +395,33 @@ public class DBManager {
     // == SIGN UP ==
     public void getLatestUserID(FirestoreCallback callback) {
         firestore.collection("USERS")
-                .orderBy("UName")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    String latestUserID = null;
+                    int maxId = 0;
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        latestUserID = document.getId();
+                        String docId = document.getId();
+                        try {
+                            int numericPart = Integer.parseInt(docId.substring(1)); // skip 'U'
+                            if (numericPart > maxId) {
+                                maxId = numericPart;
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.e("ParseError", "Invalid ID format: " + docId, e);
+                        }
                     }
 
-                    String finalID = incrementUserId(latestUserID);
+                    String newID = String.format("U%03d", maxId + 1);
 
-                    Log.d("Increment", "Updated Latest ID: " + finalID);
-                    Log.d("Firestore", "Latest User ID: " + latestUserID);
-
-                    callback.onUserIDRetrieved(finalID);
+                    Log.d("Increment", "Generated New ID: " + newID);
+                    callback.onUserIDRetrieved(newID);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching users", e);
+                    callback.onUserIDRetrieved("U001"); // fallback
                 });
     }
+
 
     public String incrementUserId(String LUserID) {
         if (LUserID == null || LUserID.isEmpty()) {
