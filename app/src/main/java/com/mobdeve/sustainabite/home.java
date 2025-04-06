@@ -29,12 +29,13 @@ public class home extends AppCompatActivity {
     private SearchResultsAdapter searchResultsAdapter;
     private List<SearchResult> searchResults;
     private EditText searchBar;
-    private ImageView searchIcon, xbutton;
+    private ImageView searchIcon, xbutton, notif_icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -63,6 +64,10 @@ public class home extends AppCompatActivity {
         searchBar = findViewById(R.id.search_bar);
         searchIcon = findViewById(R.id.search_icon);
         xbutton = findViewById(R.id.xbutton);
+        notif_icon = findViewById(R.id.notif_icon);
+
+        notif_icon.setOnClickListener(v -> goNotif(v));
+
 
         searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
         searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -153,6 +158,15 @@ public class home extends AppCompatActivity {
 
     public void goProfile(View view) {
         Intent intent = new Intent(this, profile.class);
+        startActivity(intent);
+    }
+
+    public void goNotif(View view){
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("USER_ID", "No ID");
+
+        Intent intent = new Intent(this, NotificationsActivity.class);
+        intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
 
