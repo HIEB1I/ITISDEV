@@ -58,7 +58,7 @@ public class DBManager {
     }
 
     public interface SearchFoodLoadedListener {
-        void onSuccess(String FName, String FID, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage);
+        void onSuccess(String FID, String FName, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage, String FStorage, String FRemarks);
         void onFailure(Exception e);
     }
 
@@ -95,9 +95,11 @@ public class DBManager {
                         String FQuantity = String.valueOf(document.getLong("FQuantity"));
                         String FDOE = document.getString("FDOE");
                         String FDOI = document.getString("FDOI");
+                        String FStorage = document.getString("FSTORAGE");
+                        String FRemarks = document.getString("FRemarks");
                         String FImage = document.getString("FImage");
 
-                        listener.onSuccess(FID, FName, FQuanType, FQuantity, FDOE, FDOI, FImage);
+                        listener.onSuccess(FID, FName, FQuanType, FQuantity, FDOE, FDOI, FImage, FStorage, FRemarks );
                     } else {
                         listener.onFailure(new Exception("No matching product found"));
                     }

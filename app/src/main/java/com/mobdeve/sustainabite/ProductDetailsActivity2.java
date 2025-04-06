@@ -33,13 +33,15 @@ public class ProductDetailsActivity2 extends AppCompatActivity {
         if (foodName != null && dbManager != null) {
             dbManager.getProductById(foodName, new DBManager.SearchFoodLoadedListener() {
                 @Override
-                public void onSuccess(String FID, String FName, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage) {
+                public void onSuccess(String FID, String FName, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage, String FStorage, String FRemarks) {
                     // Bind Data to Views
                     ((TextView) findViewById(R.id.productName)).setText(FName);
                     ((TextView) findViewById(R.id.productQty_Val)).setText(FQuantity);
                     ((TextView) findViewById(R.id.productQty_Type)).setText(FQuanType);
                     ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(FDOI));
                     ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(FDOE));
+                    ((TextView) findViewById(R.id.productStorage)).setText(FStorage);
+                    ((TextView) findViewById(R.id.productRemarks)).setText(FRemarks);
 UFID = FID;
                     Bitmap bitmap = DBManager.decodeBase64ToBitmap(FImage);
                     if (bitmap != null) {
