@@ -42,8 +42,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
         }
 
         holder.foodName.setText(food.getName());
-        holder.foodKcal.setText(food.getKcal());
-
+        holder.foodKcal.setText(food.getKcal() + " KCal");
         holder.detailsButton.setOnClickListener(v -> {
             // Implement details button action
         });
