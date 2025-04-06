@@ -11,18 +11,11 @@ public class welcomePage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
+        setContentView(R.layout.activity_welcomepage);
     }
 
     public void goHome(View view) {
-        Intent intent = new Intent(this, welcomePage.class);
-        startActivity(intent);
-    }
-
-    //added this in order to have goLogin on welcomePage.java
-    public void goLogin(View view) {
-        // Start your login activity
-        Intent intent = new Intent(this, logIn.class); // Assuming logIn is the login activity
+        Intent intent = new Intent(this, logIn.class);
         startActivity(intent);
     }
 
