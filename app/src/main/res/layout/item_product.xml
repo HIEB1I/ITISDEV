@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/banana"
+            android:src="@drawable/noimage"
             app:shapeAppearanceOverlay="@style/RoundedImage" />
 
         <!-- Quantity Tag Overlay with Separate Value and Type -->
