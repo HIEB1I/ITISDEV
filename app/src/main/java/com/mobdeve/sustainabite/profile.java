@@ -28,13 +28,13 @@ public class profile extends AppCompatActivity {
     private ImageView profileImageView;
     private DBManager dbManager;
 
-    // Register ActivityResultLauncher to refresh profile after editing
+
     private final ActivityResultLauncher<Intent> profileLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null && data.getBooleanExtra("profile_updated", false)) {
-                        fetchUserProfile(); // Refresh user profile
+                        fetchUserProfile();
                     }
                 }
             });
@@ -52,7 +52,7 @@ public class profile extends AppCompatActivity {
         recyclerView = findViewById(R.id.profileRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ingProcAdapter = new IngProcAdapter(this, foodList);
+        ingProcAdapter = new IngProcAdapter(this, foodList, profileLauncher);
         recyclerView.setAdapter(ingProcAdapter);
 
         fetchRecipesFromFirestore();
@@ -82,12 +82,9 @@ public class profile extends AppCompatActivity {
     }
 
     private void fetchRecipesFromFirestore() {
-        Log.d("Firestore", "fetchRecipesFromFirestore() called"); // Debug Log
         dbManager.fetchFilteredRecipes(this, new DBManager.OnRecipesFetchedListener() {
             @Override
             public void onRecipesFetched(List<FoodItem> recipes) {
-                Log.d("Firestore", "Recipes fetched: " + recipes.size());
-
                 for (FoodItem recipe : recipes) {
                     Log.d("Firestore", "Fetched recipe: " + recipe.getName() + " | ImageString: " + recipe.getImageString());
                 }
@@ -136,7 +133,7 @@ public class profile extends AppCompatActivity {
     private void logoutUser(Context context) {
         dbManager.logoutUser(context);
         Intent intent = new Intent(context, logIn.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clears back stack
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

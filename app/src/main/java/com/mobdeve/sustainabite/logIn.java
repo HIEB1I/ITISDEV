@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ public class logIn extends AppCompatActivity {
     private Button logInButton;
     private boolean isPasswordVisible = false;
     private ImageView Button1;
+    private CheckBox rememberMe;
 
     DBManager dbManager = new DBManager();
 
@@ -32,9 +34,48 @@ public class logIn extends AppCompatActivity {
         Password = findViewById(R.id.editPassword);
         logInButton = findViewById(R.id.roundedButton);
         Button1 = findViewById(R.id.NoViewPass_1 );
+        rememberMe = findViewById(R.id.rememberMe);
         Button1.setOnClickListener(v -> togglePasswordVisibility(Password, Button1));
 
         logInButton.setOnClickListener(v -> LogIn());
+
+        loadSavedCredentials();
+    }
+
+    public void RememberMe() {
+        String UEmail = Email.getText().toString();
+        String UPass = Password.getText().toString();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if (rememberMe.isChecked()) {
+            // Save email and password
+            editor.putString("savedEmail", UEmail);
+            editor.putString("savedPassword", UPass);
+            editor.putBoolean("rememberMe", true);
+        } else {
+            // Clear saved data if unchecked
+            editor.remove("savedEmail");
+            editor.remove("savedPassword");
+            editor.putBoolean("rememberMe", false);
+        }
+
+        editor.apply();
+    }
+
+    private void loadSavedCredentials() {
+        SharedPreferences sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+        boolean isRemembered = sharedPreferences.getBoolean("rememberMe", false);
+
+        if (isRemembered) {
+            String savedEmail = sharedPreferences.getString("savedEmail", "");
+            String savedPassword = sharedPreferences.getString("savedPassword", "");
+
+            Email.setText(savedEmail);
+            Password.setText(savedPassword);
+            rememberMe.setChecked(true);
+        }
     }
 
     public void LogIn() {
@@ -54,6 +95,7 @@ public class logIn extends AppCompatActivity {
                 }
             }
         });
+        RememberMe();
 
     }
 

@@ -2,9 +2,13 @@ package com.mobdeve.sustainabite;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -15,15 +19,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap;
@@ -41,6 +50,236 @@ public class DBManager {
 
     public interface FirestoreCallback {
         void onUserIDRetrieved(String newUserID);
+    }
+
+    public interface OnRecipeLoadedListener {
+        void onSuccess(String name, String ingredients, String procedures, String imageBase64, String kcal, String ownerName);
+        void onFailure(Exception e);
+    }
+
+    public interface SearchFoodLoadedListener {
+        void onSuccess(String FName, String FID, String FQuanType, String FQuantity, String FDOE, String FDOI, String FImage);
+        void onFailure(Exception e);
+    }
+
+    public void getUserId(String foodName, FirestoreCallback callback) {
+        firestore.collection("FOODS")
+                .whereEqualTo("FNAME", foodName)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        callback.onUserIDRetrieved("Food Exists");
+                    } else {
+                        callback.onUserIDRetrieved("Recipe Exists");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DBManager", "Error fetching data", e);
+                    callback.onUserIDRetrieved("Error");
+                });
+    }
+
+
+    public void getProductById(String foodName, SearchFoodLoadedListener listener) {
+        Log.d("UserPrefs", "DB Query for FOOD_NAME: " + foodName);
+
+        firestore.collection("FOODS")
+                .whereEqualTo("FNAME", foodName) // Make sure foodName matches the database field
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                        String FID = document.getId();
+                        String FName = document.getString("FNAME");
+                        String FQuanType = document.getString("FQuanType");
+                        String FQuantity = String.valueOf(document.getLong("FQuantity"));
+                        String FDOE = document.getString("FDOE");
+                        String FDOI = document.getString("FDOI");
+                        String FImage = document.getString("FImage");
+
+                        listener.onSuccess(FID, FName, FQuanType, FQuantity, FDOE, FDOI, FImage);
+                    } else {
+                        listener.onFailure(new Exception("No matching product found"));
+                    }
+                })
+                .addOnFailureListener(listener::onFailure);
+    }
+
+    public void getRecipeById(String recipeId, OnRecipeLoadedListener listener) {
+        firestore.collection("RECIPES")
+                .whereEqualTo("RNAME", recipeId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+
+                        String name = document.getString("RNAME");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageBase64 = document.getString("RImage");
+                        String kcal = document.getString("RCalories");
+                        String ownerId = document.getString("UNum");
+
+                        firestore.collection("USERS").document(ownerId).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    String ownerName = userDoc.exists() ? userDoc.getString("UName") : "Unknown Owner";
+                                    listener.onSuccess(name, ingredients, procedures, imageBase64, kcal, ownerName);
+                                })
+                                .addOnFailureListener(listener::onFailure);
+                    } else {
+                        listener.onFailure(new Exception("Recipe not found"));
+                    }
+                })
+                .addOnFailureListener(listener::onFailure);
+    }
+
+
+    public static Bitmap decodeBase64ToBitmap(String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            Log.e("DecodeBase64", "Empty Base64 string");
+            return null;
+        }
+
+        try {
+            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            Log.e("DecodeBase64", "Failed to decode Base64 string", e);
+            return null;
+        }
+    }
+
+    public interface RecipeCallback {
+        void onRecipeRetrieved(List<String> recipes);
+    }
+
+    public void finder(String word, RecipeCallback callback) {
+        List<String> results = new ArrayList<>();
+
+        // Create all queries
+        Task<QuerySnapshot> query1 = firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RNAME", word)
+                .whereLessThanOrEqualTo("RNAME", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query2 = firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RCalories", word)
+                .whereLessThanOrEqualTo("RCalories", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query3 = firestore.collection("RECIPES")
+                .whereGreaterThanOrEqualTo("RIngredients", word)
+                .whereLessThanOrEqualTo("RIngredients", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query4 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FNAME", word)
+                .whereLessThanOrEqualTo("FNAME", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query5 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FSTORAGE", word)
+                .whereLessThanOrEqualTo("FSTORAGE", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query6 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FQuantity", word)
+                .whereLessThanOrEqualTo("FQuantity", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query7 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FDOE", word)
+                .whereLessThanOrEqualTo("FDOE", word + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> query8 = firestore.collection("FOODS")
+                .whereGreaterThanOrEqualTo("FDOI", word)
+                .whereLessThanOrEqualTo("FDOI", word + "\uf8ff")
+                .get();
+
+// Run all queries in parallel
+        Tasks.whenAllComplete(query1, query2, query3, query4, query5, query6, query7, query8)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (Task<?> completedTask : task.getResult()) {
+                            if (completedTask instanceof Task<?>) {
+                                QuerySnapshot snapshot = (QuerySnapshot) ((Task<?>) completedTask).getResult();
+                                if (snapshot != null) {
+                                    for (QueryDocumentSnapshot document : snapshot) {
+                                        String foundName = document.getString("RNAME");
+                                        if (foundName == null) {
+                                            foundName = document.getString("FNAME");
+                                        }
+
+                                        String secondaryinfo = document.getString("RCalories");
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("RIngredients");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FSTORAGE");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FQuantity");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FDOI");
+                                        }
+                                        if (secondaryinfo == null) {
+                                            secondaryinfo = document.getString("FDOE");
+                                        }
+
+                                        if (foundName != null && !results.contains(foundName)) {
+                                            results.add(foundName + " - " + (secondaryinfo != null ? secondaryinfo : "No Info"));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // If no results found, add "N/A"
+                    if (results.isEmpty()) {
+                        results.add("N/A");
+                    }
+
+                    // Return results via callback
+                    callback.onRecipeRetrieved(results);
+                });
+
+    }
+
+
+    public void getFoodHome(FoodDataCallback callback) {
+        firestore.collection("RECIPES").get().addOnCompleteListener(task -> {
+                ArrayList<FoodHome> foodList = new ArrayList<>();
+
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String rName = document.getString("RNAME");
+                    String rKCal = document.getString("RCalories");
+                    String rImageBase64 = document.getString("RImage");
+                    String rProcedure = ("");
+                    String rIngredients = ("");
+
+                    Bitmap rImage = base64ToBitmap(rImageBase64);
+
+                    foodList.add(new FoodHome(rImage, rName, rKCal, rProcedure, rIngredients));
+                }
+
+                callback.onFoodDataRetrieved(foodList);
+        });
+    }
+
+    public interface FoodDataCallback {
+        void onFoodDataRetrieved(ArrayList<FoodHome> foodList);
+    }
+
+    private Bitmap base64ToBitmap(String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            return null;
+        }
+        byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+        return android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
     public interface OnRecipesFetchedListener {
@@ -262,7 +501,7 @@ public class DBManager {
     }
 
     // === PROFILE UPDATE ===
-    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
+    public void updateUserProfile(Context context, String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> updatedData = new HashMap<>();
@@ -280,6 +519,13 @@ public class DBManager {
         db.collection("USERS").document(userId)
                 .update(updatedData)
                 .addOnSuccessListener(aVoid -> {
+                    SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("USER_NAME", newUsername);
+                    editor.putString("USER_EMAIL", newEmail);
+                    editor.putString("USER_IMAGE", encodedImage);
+                    editor.apply();
+
                     Log.d("Firestore", "User profile updated successfully: " + userId);
                     if (listener != null) listener.onSuccess();
                 })
@@ -515,20 +761,7 @@ public class DBManager {
                 .addOnFailureListener(e -> listener.onFailure(e));
     }
 
-    public static Bitmap decodeBase64ToBitmap(String base64String) {
-        if (base64String == null || base64String.isEmpty()) {
-            Log.e("DecodeBase64", "Empty Base64 string");
-            return null;
-        }
 
-        try {
-            byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-        } catch (Exception e) {
-            Log.e("DecodeBase64", "Failed to decode Base64 string", e);
-            return null;
-        }
-    }
 
     // FOOD MANAGEMENT
     //Fetch all the Products (Food)

@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +21,15 @@ public class home extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FoodAdapter foodAdapter;
     private List<FoodItem> foodList;
+    DBManager dbManager = new DBManager();
+
+
+    /*NEWWW*/
+    private RecyclerView searchResultsRecyclerView;
+    private SearchResultsAdapter searchResultsAdapter;
+    private List<SearchResult> searchResults;
+    private EditText searchBar;
+    private ImageView searchIcon, xbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,37 +45,95 @@ public class home extends AppCompatActivity {
 
         Log.d("UserPrefs", "Name: " + name);
         Log.d("UserPrefs", "User ID: " + userId);
-      /*
-      boolean isLoggedIn = prefs.getBoolean("IS_LOGGED_IN", false);
-        Log.d("UserPrefs", "User ID: " + userId);
-        Log.d("UserPrefs", "Email: " + email);
-        Log.d("UserPrefs", "Name: " + name);
-        Log.d("UserPrefs", "Image URL: " + image);
-        Log.d("UserPrefs", "Is Logged In: " + isLoggedIn);*/
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         foodList = new ArrayList<>();
-        foodList.add(new FoodItem(null, R.drawable.fried_rice, "Roasted Chicken", "Kcal 200", "", "", null));
-        foodList.add(new FoodItem(null, R.drawable.spinach_omelette, "Chicken Alfredo", "Kcal 198", "", "", null));
-        foodList.add(new FoodItem(null, R.drawable.yellow_bg, "Pork Sisig", "Kcal 184", "", "", null));
-        foodList.add(new FoodItem(null, R.drawable.green_rounded_button, "Lechon Manok", "Kcal 243", "", "", null));
 
-        foodAdapter = new FoodAdapter(this, foodList);
-        recyclerView.setAdapter(foodAdapter);
-
-        ImageView notifIcon = findViewById(R.id.notif_icon);
-        notifIcon.setOnClickListener(new View.OnClickListener() {
+        dbManager.getFoodHome(new DBManager.FoodDataCallback() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(home.this, NotificationsActivity.class);
-                startActivity(intent);
+            public void onFoodDataRetrieved(ArrayList<FoodHome> foodList) {
+                foodAdapter = new FoodAdapter(home.this, foodList);  // Pass context
+                recyclerView.setAdapter(foodAdapter);
             }
         });
+
+
+        searchBar = findViewById(R.id.search_bar);
+        searchIcon = findViewById(R.id.search_icon);
+        xbutton = findViewById(R.id.xbutton);
+
+        searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
+        searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        searchResults = new ArrayList<>();
+
+                searchResultsRecyclerView.setAdapter(searchResultsAdapter);
+                searchResultsRecyclerView.setVisibility(View.GONE);
+                xbutton.setVisibility(View.GONE);
+
+        searchIcon.setOnClickListener(v -> performSearch());
+        xbutton.setOnClickListener(v -> clearSearchResults());
     }
 
 
+    private void performSearch() {
+        String query = searchBar.getText().toString().trim();
+
+        if (query.isEmpty()) {
+            Toast.makeText(this, "Enter a search term", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        searchResults.clear();
+
+        dbManager.finder(query, new DBManager.RecipeCallback() {
+            @Override
+            public void onRecipeRetrieved(List<String> foundSearch) {
+                if (foundSearch.isEmpty()) {
+                    foundSearch.add("N/A - No Info");
+                }
+
+                for (String result : foundSearch) {
+                    String[] parts = result.split(" - ", 2);
+                    String name = parts[0];
+                    String secondaryInfo = (parts.length > 1) ? parts[1] : "No Info";
+                    searchResults.add(new SearchResult(name, secondaryInfo));
+                }
+
+                searchResultsAdapter.notifyDataSetChanged();
+                searchResultsRecyclerView.setVisibility(View.VISIBLE);
+                xbutton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        searchResultsAdapter = new SearchResultsAdapter(this, searchResults, searchResult -> {
+            Log.d("UserPrefs", "SEARCH: " + searchResult);  // Fixed: Removed .getName()
+
+            dbManager.getUserId(searchResult, new DBManager.FirestoreCallback() {
+                @Override
+                public void onUserIDRetrieved(String resultType) {
+                    Intent intent;
+                    if (resultType.equals("Food Exists")) {
+                        intent = new Intent(home.this, ProductDetailsActivity2.class);
+                        intent.putExtra("FOOD_NAME", searchResult);
+                    } else {
+                        intent = new Intent(home.this, RecipeDetailsActivity2.class);
+                        intent.putExtra("RECIPE_ID", searchResult);
+                    }
+                    startActivity(intent);
+                }
+            });
+        });
+
+        searchResultsRecyclerView.setAdapter(searchResultsAdapter);
+    }
+
+    private void clearSearchResults() {
+        searchResultsRecyclerView.setVisibility(View.GONE);
+        xbutton.setVisibility(View.GONE);
+    }
 
     /*NAVIGATIONS*/
     public void goHome(View view) {

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,10 +25,12 @@ import java.util.List;
 public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodViewHolder> {
     private List<FoodItem> foodList;
     private Context context;
+    private final ActivityResultLauncher<Intent> recipeLauncher;
 
-    public IngProcAdapter(Context context, List<FoodItem> foodList) {
+    public IngProcAdapter(Context context, List<FoodItem> foodList, ActivityResultLauncher<Intent> recipeLauncher) {
         this.context = context;
         this.foodList = foodList;
+        this.recipeLauncher = recipeLauncher;
     }
 
     public static class FoodViewHolder extends RecyclerView.ViewHolder {
@@ -84,7 +87,7 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
         View.OnClickListener listener = v -> {
             Intent intent = new Intent(context, RecipeDetailsActivity.class);
             intent.putExtra("foodItem", food);
-            context.startActivity(intent);
+            recipeLauncher.launch(intent);
         };
 
         holder.itemView.setOnClickListener(listener);
@@ -113,7 +116,6 @@ public class IngProcAdapter extends RecyclerView.Adapter<IngProcAdapter.FoodView
             }
         });
     }
-
 
     @Override
     public int getItemCount() {

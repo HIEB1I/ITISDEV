@@ -156,158 +156,118 @@
 
     </LinearLayout>
 
-    <!-- Yellow Background -->
     <ImageView
+        android:id="@+id/foodImage"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:src="@drawable/yellow_bg"
+        android:layout_height="220dp"
+        android:src="@drawable/egg"
         android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/headerImageFrame"
+        app:layout_constraintBottom_toTopOf="@id/body"/>
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/headerImageFrame"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/yellow_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/menuBar"/>
+        app:shapeAppearanceOverlay="@style/RoundedBottomCorners" />
+
+
 
     <!-- Content Container -->
+
     <LinearLayout
         android:id="@+id/body"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="180dp"
         android:background="@drawable/white_rounded_top_corners"
         android:orientation="vertical"
+        android:padding="20dp"
         app:layout_constraintBottom_toTopOf="@id/menuBar"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerImageFrame"
         app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="-38dp">
+        tools:layout_editor_absoluteX="0dp">
 
-        <!-- Home and Notif -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/home_bar"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/home_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Home"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/notif_icon"
+                android:id="@+id/foodName"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginEnd="50dp"
-                android:src="@drawable/baseline_notifications_none_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- Search, and Add -->
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/tools_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="15dp">
-
-            <EditText
-                android:id="@+id/search_bar"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:background="@drawable/white_textbox"
-                android:hint="Search"
-                android:minHeight="48dp"
-                android:padding="10dp"
-                android:textColor="#000000"
+                android:layout_marginTop="10dp"
+                android:text="Food Name"
+                android:textColor="#000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/recipeDetailsOwner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textAlignment="textEnd"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textStyle="italic" />
+        </LinearLayout>
 
-            <ImageView
-                android:id="@+id/search_icon"
-                android:layout_width="25dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="15dp"
-                android:src="@drawable/search_icon"
-                app:layout_constraintBottom_toBottomOf="@id/search_bar"
-                app:layout_constraintEnd_toEndOf="@id/search_bar"
-                app:layout_constraintTop_toTopOf="@id/search_bar" />
-
-
-            <ImageView
-                android:id="@+id/xbutton"
-                android:layout_width="17dp"
-                android:layout_height="17dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/x"
-                app:layout_constraintBottom_toBottomOf="@+id/search_bar"
-                app:layout_constraintEnd_toStartOf="@+id/search_icon"
-                app:layout_constraintTop_toTopOf="@+id/search_bar" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/searchResultsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@android:color/white"
-            android:padding="10dp"
-            android:scrollbars="vertical"
-            android:visibility="visible" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <LinearLayout
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="20dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="15dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/logo"
-                    app:shapeAppearanceOverlay="@style/RoundedImage" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/foodKcal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="Top of the Week"
-                    android:textSize="18sp" />
+                    android:text="100 kcal"
+                    android:textColor="#fec76f"
+                    android:textSize="20sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/ing_content"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="15dp"
-                    android:orientation="horizontal" />
+                    android:text="Ingredients"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/procedures_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Procedures"
+                    android:textSize="20sp" />
+
+
             </LinearLayout>
+
         </ScrollView>
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/menuBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

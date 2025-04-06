@@ -31,13 +31,12 @@ public class profile_edit extends AppCompatActivity {
     private String userId;
     private String encodedImage = "";
 
-    // Register ActivityResultLauncher for profile updates
     private final ActivityResultLauncher<Intent> profileLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null && data.getBooleanExtra("profile_updated", false)) {
-                        fetchUserProfile(); // Refresh user details after editing
+                        fetchUserProfile();
                     }
                 }
             });
@@ -173,21 +172,49 @@ public class profile_edit extends AppCompatActivity {
         }
 
         if (userId != null && !userId.isEmpty()) {
-            dbManager.updateUserProfile(userId, updatedUsername, updatedEmail, updatedPassword, encodedImage, new DBManager.OnUserUpdateListener() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(profile_edit.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("profile_updated", true);
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                }
+            if (encodedImage.isEmpty()) {
+                dbManager.getCurrentUserDetails(this, new DBManager.OnUserDetailsFetchedListener() {
+                    @Override
+                    public void onUserDetailsFetched(String id, String email, String name, String image) {
+                        dbManager.updateUserProfile(profile_edit.this, userId, updatedUsername, updatedEmail, updatedPassword, image, new DBManager.OnUserUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(profile_edit.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("profile_updated", true);
+                                setResult(RESULT_OK, resultIntent);
+                                finish();
+                            }
 
-                @Override
-                public void onFailure(Exception e) {
-                    Toast.makeText(profile_edit.this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(profile_edit.this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(profile_edit.this, "Failed to fetch current user image", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                dbManager.updateUserProfile(profile_edit.this, userId, updatedUsername, updatedEmail, updatedPassword, encodedImage, new DBManager.OnUserUpdateListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(profile_edit.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("profile_updated", true);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(profile_edit.this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
             Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
         }
@@ -195,7 +222,8 @@ public class profile_edit extends AppCompatActivity {
 
 
 
-/* NAVIGATIONS */
+
+    /* NAVIGATIONS */
     public void goHome(View view) {
         startActivity(new Intent(this, home.class));
     }

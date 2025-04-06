@@ -66,6 +66,22 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         }
 
+        DBManager dbManager = new DBManager();
+        dbManager.getCurrentUserDetails(this, new DBManager.OnUserDetailsFetchedListener() {
+            @Override
+            public void onUserDetailsFetched(String userId, String email, String name, String image) {
+                if (!userId.equals(foodItem.getUNum())) {
+                    editButton.setVisibility(View.GONE);
+                    deleteButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(RecipeDetailsActivity.this, "Failed to get current user details", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         editButton.setOnClickListener(v -> showEditDialog());
         deleteButton.setOnClickListener(v -> confirmDeleteRecipe());
     }
@@ -102,34 +118,46 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit Recipe")
                 .setView(dialogView)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String updatedName = editFoodName.getText().toString();
-                    String updatedKcal = editFoodKcal.getText().toString();
-                    String updatedIngredients = editIngContent.getText().toString();
-                    String updatedProcedures = editProcContent.getText().toString();
-
-                    foodName.setText(updatedName);
-                    ingContent.setText(updatedIngredients);
-                    procContent.setText(updatedProcedures);
-                    foodKcal.setText(updatedKcal);
-
-                    DBManager dbManager = new DBManager();
-                    dbManager.updateRecipeInFirestore(foodItem.getId(), updatedName, updatedKcal, updatedIngredients, updatedProcedures, new DBManager.OnRecipeListener() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(RecipeDetailsActivity.this, "Recipe updated successfully!", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(RecipeDetailsActivity.this, "Failed to update recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                })
+                .setPositiveButton("Save", null)
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.yellow_rounded_box);
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            saveButton.setOnClickListener(v -> {
+                String updatedName = editFoodName.getText().toString().trim();
+                String updatedKcal = editFoodKcal.getText().toString().trim();
+                String updatedIngredients = editIngContent.getText().toString().trim();
+                String updatedProcedures = editProcContent.getText().toString().trim();
+
+                if (updatedName.isEmpty() || updatedKcal.isEmpty() || updatedIngredients.isEmpty() || updatedProcedures.isEmpty()) {
+                    Toast.makeText(RecipeDetailsActivity.this, "Please fill in all fields before saving.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                foodName.setText(updatedName);
+                ingContent.setText(updatedIngredients);
+                procContent.setText(updatedProcedures);
+                foodKcal.setText(updatedKcal);
+
+                DBManager dbManager = new DBManager();
+                dbManager.updateRecipeInFirestore(foodItem.getId(), updatedName, updatedKcal, updatedIngredients, updatedProcedures, new DBManager.OnRecipeListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(RecipeDetailsActivity.this, "Recipe updated successfully!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(RecipeDetailsActivity.this, "Failed to update recipe: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
+
         dialog.show();
     }
 
