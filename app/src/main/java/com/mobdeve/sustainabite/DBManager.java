@@ -105,6 +105,11 @@ public class DBManager {
         void onError(String message);
     }
 
+    public interface UserCallback {
+        void onUserRetrieved(String ownerName);
+        void onError(Exception e);
+    }
+
     // === USERS ===
     // == SIGN IN ==
     public void checkUser(Context context, String userEmail, String userPass, OnCheckUserListener listener) {
@@ -221,6 +226,20 @@ public class DBManager {
         Log.d("Firestore", "User logged out successfully.");
     }
 
+    public static void getUserById(String userId, UserCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("USERS").document(userId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String ownerName = documentSnapshot.getString("UName");
+                        callback.onUserRetrieved(ownerName);
+                    } else {
+                        callback.onUserRetrieved("Unknown Owner");
+                    }
+                })
+                .addOnFailureListener(callback::onError);
+    }
+
     // === PROFILE ===
     public void getCurrentUserDetails(Context context, OnUserDetailsFetchedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
@@ -243,13 +262,20 @@ public class DBManager {
     }
 
     // === PROFILE UPDATE ===
-    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, OnUserUpdateListener listener) {
+    public void updateUserProfile(String userId, String newUsername, String newEmail, String newPassword, String encodedImage, OnUserUpdateListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("UName", newUsername);
         updatedData.put("UEmail", newEmail);
-        updatedData.put("UPass", newPassword);
+
+        if (!newPassword.isEmpty()) {
+            updatedData.put("UPass", newPassword);
+        }
+
+        if (encodedImage != null && !encodedImage.isEmpty()) {
+            updatedData.put("UImage", encodedImage);
+        }
 
         db.collection("USERS").document(userId)
                 .update(updatedData)
@@ -262,7 +288,6 @@ public class DBManager {
                     if (listener != null) listener.onFailure(e);
                 });
     }
-
 
     // === FOODS ===
     public void getLatestFoodID(OnSuccessListener<String> onSuccessListener) {
@@ -325,12 +350,12 @@ public class DBManager {
                 });
     }
 
-    public void fetchRecipes(OnRecipesFetchedListener listener) {
+    public void fetchRecipes(Context context,OnRecipesFetchedListener listener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("RECIPES")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    List<FoodItem> foodItems = new ArrayList<>();
+                    List<FoodItem> recipes = new ArrayList<>();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String documentId = document.getId();
                         String name = document.getString("RNAME");
@@ -338,6 +363,7 @@ public class DBManager {
                         String ingredients = document.getString("RIngredients");
                         String procedures = document.getString("RProcedure");
                         String imageString = document.getString("RImage");
+                        String UNum = document.getString("UNum");
 
                         Bitmap imageBitmap = null;
                         if (imageString != null && !imageString.isEmpty()) {
@@ -349,7 +375,54 @@ public class DBManager {
                             Log.e("Firestore", "No image data found for recipe: " + name);
                         }
 
-                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures));
+                        FoodItem foodItem = new FoodItem(documentId, imageString, name, kcal, ingredients, procedures, UNum);
+                        recipes.add(foodItem);
+                    }
+                    listener.onRecipesFetched(recipes);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error fetching recipes", e);
+                    listener.onError(e);
+                });
+    }
+
+    public void fetchFilteredRecipes(Context context, OnRecipesFetchedListener listener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String currentUserId = prefs.getString("USER_ID", "");
+
+        if (currentUserId.isEmpty()) {
+            Log.e("Firestore", "Current user ID not found in SharedPreferences");
+            listener.onError(new Exception("User ID not found"));
+            return;
+        }
+
+        db.collection("RECIPES")
+                .whereEqualTo("UNum", currentUserId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<FoodItem> foodItems = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String documentId = document.getId();
+                        String name = document.getString("RNAME");
+                        String kcal = document.getString("RCalories");
+                        String ingredients = document.getString("RIngredients");
+                        String procedures = document.getString("RProcedure");
+                        String imageString = document.getString("RImage");
+                        String UNum = document.getString("UNum");
+
+                        Bitmap imageBitmap = null;
+                        if (imageString != null && !imageString.isEmpty()) {
+                            imageBitmap = decodeBase64ToBitmap(imageString);
+                            if (imageBitmap == null) {
+                                Log.e("Firestore", "Failed to decode image for recipe: " + name);
+                            }
+                        } else {
+                            Log.e("Firestore", "No image data found for recipe: " + name);
+                        }
+
+                        foodItems.add(new FoodItem(documentId, imageString, name, kcal, ingredients, procedures, UNum));
                     }
                     listener.onRecipesFetched(foodItems);
                 })
@@ -359,9 +432,10 @@ public class DBManager {
                 });
     }
 
+
     public void addRecipeToFirestore(Context context, String rImage, String rIngredients, String rName, String rProcedure, String rCalories, OnRecipeAddedListener listener) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String uNum = prefs.getString("USER_ID", "U000"); // Retrieve stored UNum
+        String uNum = prefs.getString("USER_ID", "U000");
 
         CollectionReference recipesRef = firestore.collection("RECIPES");
 
@@ -385,7 +459,6 @@ public class DBManager {
                 // Generate new Recipe ID
                 String newRecipeId = "R" + String.format("%03d", maxId + 1);
 
-                // Create Recipe Data
                 Map<String, Object> recipeData = new HashMap<>();
                 recipeData.put("RImage", rImage);
                 recipeData.put("RIngredients", rIngredients);

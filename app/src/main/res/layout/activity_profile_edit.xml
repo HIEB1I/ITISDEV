@@ -37,6 +37,16 @@
             android:scaleType="centerCrop"
             android:src="@drawable/sample_profile" />
 
+        <Button
+            android:id="@+id/editPhoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:alpha="0.80"
+            android:backgroundTint="#407B49"
+            android:text="+"
+            android:textSize="24sp" />
+
     </com.google.android.material.card.MaterialCardView>
 
     <ImageView
@@ -248,7 +258,7 @@
             android:layout_marginTop="5dp"
             android:autofillHints="password"
             android:background="@drawable/white_textbox"
-            android:hint="@string/hint_cpassword"
+            android:hint="*****"
             android:inputType="textPassword"
             android:minHeight="48dp"
             android:padding="12dp"
