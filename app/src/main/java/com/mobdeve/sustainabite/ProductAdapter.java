@@ -9,16 +9,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import android.content.Intent;
 
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
-    private String foodId;//==
+    private List<Product> fullProductList; //backup in case something happens to old productList
+    private List<Product> filteredProducts;
+    private String foodId;
 
     public ProductAdapter(List<Product> productList) {
         this.productList = productList;
+        this.fullProductList = new ArrayList<>(productList); //backup in case something happens to old productList
+        this.filteredProducts = new ArrayList<>(productList);
     }
 
     @NonNull
@@ -35,11 +45,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         Log.d("FirestoreID", "Product ID: " + product.getFid());
 
+        // Add null or empty check before calling convertDate
+        String itemDOI = product.getDOI();
+        String itemDOE = product.getDOE();
+
         holder.itemName.setText(product.getName());
         holder.itemQty_Val.setText(String.valueOf(product.getQty_Val())); // Since this is an integer, have to modify this code.
         holder.itemQty_Type.setText(product.getQty_Type());
-        holder.itemDOI.setText(DBManager.convertDate(product.getDOI()));
-        holder.itemDOE.setText(DBManager.convertDate(product.getDOE()));
+        holder.itemDOI.setText(itemDOI != null && !itemDOI.isEmpty() ? DBManager.convertDate(itemDOI) : "Invalid Date");
+        holder.itemDOE.setText(itemDOE != null && !itemDOE.isEmpty() ? DBManager.convertDate(itemDOE) : "Invalid Date");
         //holder.itemStorage.setText(product.getStorage());
         //holder.itemRemarks.setText(product.getRemarks());
 
@@ -61,8 +75,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             intent.putExtra("productQty_Type", product.getQty_Type());
             intent.putExtra("productDOI", product.getDOI());
             intent.putExtra("productDOE", product.getDOE());
-            //intent.putExtra("productStorage", product.getStorage());
-            //intent.putExtra("productRemarks", product.getRemarks());
+            intent.putExtra("productStorage", product.getStorage());
+            intent.putExtra("productRemarks", product.getRemarks());
             intent.putExtra("productImage", product.getImageString());
             view.getContext().startActivity(intent);
         });
@@ -93,4 +107,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 
+        // RESETS THE LIST
+        public void resetList() {
+           productList = new ArrayList<>(fullProductList);
+           notifyDataSetChanged();
+        }
+
+        public void setFilteredProducts(List<Product> filtered) {
+            this.productList.clear();
+            this.productList.addAll(filtered);
+            notifyDataSetChanged();
+        }
+
 }
+

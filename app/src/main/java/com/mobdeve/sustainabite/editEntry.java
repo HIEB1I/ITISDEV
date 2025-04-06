@@ -25,7 +25,7 @@ public class editEntry extends AppCompatActivity {
     private EditText addFoodName, remarks, quantityInput, editTextDOE, editTextDOI;
     private String productName, productQty_Val, productQty_Type,productDOI, productDOE, productStorage, productRemarks, productImageResource, foodId;
     private ImageView foodImageView;
-
+    private ProductAdapter productAdapter;
     private Bitmap selectedBitmap;
     private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -61,7 +61,7 @@ public class editEntry extends AppCompatActivity {
         Button submitBtn = findViewById(R.id.button2);
 
         //Retrieve all the data
-
+/*
         productName = getIntent().getStringExtra("productName");
         productQty_Val= getIntent().getStringExtra("productQty_Val");
         productQty_Type = getIntent().getStringExtra("productQty_Type");
@@ -91,6 +91,44 @@ public class editEntry extends AppCompatActivity {
                 foodImageView.setImageResource(R.drawable.banana);
             }
         }
+
+ */
+        foodId = getIntent().getStringExtra("foodId");
+        Log.d("editEntry", "FoodId: " + foodId);
+
+        if (foodId != null && !foodId.isEmpty()) {
+            // Fetch food details from Firestore
+            DBManager dbManager = new DBManager();
+            dbManager.fetchFoodDetailsFromFirestore(this, foodId, new DBManager.OnFoodDetailsFetchedListener() {
+                @Override
+                public void onSuccess(Product product) {
+                    // Set the fields with the fetched data
+                    addFoodName.setText(product.getName());
+                    editTextDOE.setText(product.getDOE());
+                    editTextDOI.setText(product.getDOI());
+                    quantityInput.setText(String.valueOf(product.getQty_Val()));
+                    quantityFragment.setSelectedQuantity(product.getQty_Type());
+                    storageFragment.setSelectedStorage(product.getStorage());
+                    remarks.setText(product.getRemarks());
+
+                    // Set image (if any)
+                    if (product.getImageString() != null && !product.getImageString().isEmpty()) {
+                        Bitmap bitmap = DBManager.decodeBase64ToBitmap(product.getImageString());
+                        if (bitmap != null) {
+                            foodImageView.setImageBitmap(bitmap);
+                        } else {
+                            foodImageView.setImageResource(R.drawable.banana);
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e("editEntry", "Error fetching food details", e);
+                }
+            });
+        }
+
 
         foodImageView.getLayoutParams().width = 300;
         foodImageView.getLayoutParams().height = 300;
@@ -159,8 +197,8 @@ public class editEntry extends AppCompatActivity {
         }
 
         String updatedFNAME = addFoodName.getText().toString().trim();
-        String updatedFDOE = editTextDOI.getText().toString().trim();
-        String updatedFDOI = editTextDOE.getText().toString().trim();
+        String updatedFDOI = editTextDOI.getText().toString().trim();
+        String updatedFDOE = editTextDOE.getText().toString().trim();
         Integer updatedFQuantity = 0;
 
         try {
@@ -190,12 +228,25 @@ public class editEntry extends AppCompatActivity {
         String finalUpdatedFSTORAGE = updatedFSTORAGE;
         String updatedFImage = (selectedBitmap != null) ? bitmapToBase64(selectedBitmap) : null;
 
+        Product updatedProduct = new Product(
+                updatedFNAME,
+                getIntent().getStringExtra("foodId"),  // Assuming this ID is passed from ProductDetailsActivity
+                updatedFQuantity,
+                updatedFQuanType,
+                updatedFDOI,
+                updatedFDOE,
+                updatedFSTORAGE,
+                updatedFRemarks,
+                updatedFImage
+        );
 
         dbManager.updateFoodInFirestore(this, foodId, updatedFNAME, updatedFDOI, updatedFDOE,
                 finalUpdatedFQuantity, finalUpdatedFQuanType, finalUpdatedFSTORAGE, updatedFRemarks, updatedFImage, new DBManager.OnFoodUpdatedListener() {
                     @Override
                     public void onSuccess() {
                         Log.d("EditEntry", "Food has been updated.");
+
+
                         // Send data back to the previous activity (if needed)
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("updatedFoodName", updatedFNAME);
@@ -206,9 +257,9 @@ public class editEntry extends AppCompatActivity {
                         resultIntent.putExtra("updatedFoodStorage", finalUpdatedFSTORAGE);
                         resultIntent.putExtra("updatedFoodRemarks", updatedFRemarks);
                         resultIntent.putExtra("updatedFoodImage", updatedFImage);
+                        resultIntent.putExtra("updatedProduct", updatedProduct);
                         resultIntent.putExtra("updated", true); // notify update
                         setResult(RESULT_OK, resultIntent);
-
                         // Finish this activity and go back
                         finish();
                     }
@@ -218,6 +269,7 @@ public class editEntry extends AppCompatActivity {
                         Log.e("EditEntry", "Error in updating food..");
                     }
                 });
+
     }
     // Convert Bitmap to Base64 String
     private String bitmapToBase64(Bitmap bitmap) {

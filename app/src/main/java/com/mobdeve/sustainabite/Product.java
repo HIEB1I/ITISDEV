@@ -1,6 +1,8 @@
 package com.mobdeve.sustainabite;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private String name;
     private String fid; // Added Food ID so this can be stored
     private int qty_val;
@@ -21,6 +23,11 @@ public class Product {
         this.storage = storage;
         this.remarks = remarks;
         this.imageString = imageString;
+    }
+
+    // No-argument constructor for Firestore deserialization
+    public Product() {
+        // Empty constructor needed for Firestore
     }
 
     public String getName() {
@@ -57,5 +64,42 @@ public class Product {
 
     public String getImageString() {
         return imageString;
+    }
+
+    // Setters
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setFoodId(String fid) {
+        this.fid = fid;
+    }
+
+    public void setQty_Val(int qty_val) {
+        this.qty_val = qty_val;
+    }
+
+    public void setQty_Type(String qty_type) {
+        this.qty_type = qty_type;
+    }
+
+    public void setDOI(String doi) {
+        this.doi = doi;
+    }
+
+    public void setDOE(String doe) {
+        this.doe = doe;
+    }
+
+    public void setStorage(String storage) {
+        this.storage = storage;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public void setImageString(String imageString) {
+        this.imageString = imageString;
     }
 }
