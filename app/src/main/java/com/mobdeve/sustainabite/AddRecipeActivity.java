@@ -146,4 +146,22 @@ public class AddRecipeActivity extends AppCompatActivity {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
+
+    /* NAVIGATIONS */
+    public void goHome(View view) {
+        startActivity(new Intent(this, home.class));
+    }
+
+    public void goFood(View view) {
+        startActivity(new Intent(this, foodManagement.class));
+    }
+
+    public void goCommunity(View view) {
+        startActivity(new Intent(this, community.class));
+    }
+
+    public void goProfile(View view) {
+        startActivity(new Intent(this, profile.class));
+    }
+
 }
