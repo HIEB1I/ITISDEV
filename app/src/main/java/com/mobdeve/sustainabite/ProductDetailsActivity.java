@@ -86,14 +86,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        goToEditEntry();
+                        // goToEditEntry();
                     }
                 });
     }
 
 
 // this allows the user to go to the edit page and also sends data over to there
-    public void goToEditEntry(){
+  /*  public void goToEditEntry(){
         Intent intent = new Intent(this, editEntry.class);
         intent.putExtra("foodId", getIntent().getStringExtra("foodId"));
         intent.putExtra("productName", getIntent().getStringExtra("productName"));
@@ -170,7 +170,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
         setResult(RESULT_OK);
     }
-
+*/
 
     /*NAVIGATIONS*/
     public void goHome(View view) {
