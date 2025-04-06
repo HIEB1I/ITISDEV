@@ -1,18 +1,18 @@
 package com.mobdeve.sustainabite;
 
 public class NotificationItem {
-    private int imageResId;
+    private String imageBase64;
     private String notificationText;
     private String timestamp;
 
-    public NotificationItem(int imageResId, String notificationText, String timestamp) {
-        this.imageResId = imageResId;
+    public NotificationItem(String imageBase64, String notificationText, String timestamp) {
+        this.imageBase64 = imageBase64;
         this.notificationText = notificationText;
         this.timestamp = timestamp;
     }
 
-    public int getImageResId() {
-        return imageResId;
+    public String getImageBase64() {
+        return imageBase64;
     }
 
     public String getNotificationText() {

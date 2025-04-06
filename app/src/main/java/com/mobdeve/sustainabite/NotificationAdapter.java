@@ -1,5 +1,7 @@
 package com.mobdeve.sustainabite;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,9 +44,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
         NotificationItem notification = notificationList.get(position);
-        holder.notificationImage.setImageResource(notification.getImageResId());
+
+        // Retrieve base64 string from NotificationItem
+        String base64Image = notification.getImageBase64(); // Use appropriate method to get the base64 string
+
+        // Decode the base64 string to a Bitmap (decode only when binding the view)
+        Bitmap notificationImage = DBManager.decodeBase64ToBitmap(base64Image);
+
+
+        holder.notificationImage.setImageBitmap(notificationImage);
         holder.notificationText.setText(notification.getNotificationText());
         holder.notificationTime.setText(notification.getTimestamp());
+
+        // If decoding fails, use a default image
+        if (notificationImage == null) {
+            notificationImage = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.noimage);
+        }
     }
 
     @Override

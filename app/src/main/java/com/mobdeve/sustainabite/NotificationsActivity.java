@@ -2,6 +2,8 @@ package com.mobdeve.sustainabite;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,9 +31,12 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
+
+        // Initialize the notification list first
+        notificationList = new ArrayList<>();
+
         recyclerView = findViewById(R.id.notificationsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String currentUserId = prefs.getString("USER_ID", null);
@@ -49,23 +54,41 @@ public class NotificationsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             String foodName = document.getString("FNAME");
                             String foodExpiryDate = document.getString("FDOE"); // Date of Expiry
+                            String foodImageBase64 = document.getString("FImage"); // food image on base64.
+
+
+                            Log.d("Firestore", "foodName: " + foodName);
+                            Log.d("NotifActivity", "FoodExpiryDate: " + foodExpiryDate);
 
                             if (foodExpiryDate != null) {
-                                Date expiryDate = new Date(foodExpiryDate); // Assuming the date is in a valid format
-                                Date now = new Date();
+                                try {
+                                    // Use SimpleDateFormat to parse the date string
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("d/M/yyyy");
+                                    Date expiryDate = dateFormat.parse(foodExpiryDate); // Parse the expiry date string
 
-                                // Check if the food has expired
-                                if (expiryDate.before(now)) {
-                                    // Item is expired, add to notifications
-                                    notificationList.add(new NotificationItem(
-                                            R.drawable.noimage, // Replace with an actual icon
-                                            foodName + " has expired!",
-                                            new SimpleDateFormat("hh:mm a").format(now)
-                                    ));
+                                    Date now = new Date();
+
+                                    // Check if expired
+                                    if (expiryDate.before(now)) {
+                                        String imageBase64 = foodImageBase64 != null && !foodImageBase64.isEmpty() ? foodImageBase64 : null;
+
+                                        notificationList.add(new NotificationItem(
+                                                imageBase64,
+                                                foodName + " has expired!",
+                                                new SimpleDateFormat("hh:mm a").format(now)
+                                        ));
+                                    }
+                                } catch (Exception e) {
+                                    Log.e("NotifActivity", "Error parsing expiry date: " + foodExpiryDate, e);
                                 }
                             }
                         }
-
+                        // Log the contents of notificationList
+                        for (NotificationItem notification : notificationList) {
+                            Log.d("NotifList",
+                                    "Text: " + notification.getNotificationText() +
+                                    ", Time: " + notification.getTimestamp());
+                        }
                         // Update the notification list and notify adapter
                         adapter.notifyDataSetChanged();
                     })
