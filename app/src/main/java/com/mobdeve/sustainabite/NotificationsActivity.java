@@ -55,6 +55,7 @@ public class NotificationsActivity extends AppCompatActivity {
                             String foodName = document.getString("FNAME");
                             String foodExpiryDate = document.getString("FDOE"); // Date of Expiry
                             String foodImageBase64 = document.getString("FImage"); // food image on base64.
+                            String foodId = document.getId(); // Get the foodId (document ID)
 
 
                             Log.d("Firestore", "foodName: " + foodName);
@@ -87,7 +88,8 @@ public class NotificationsActivity extends AppCompatActivity {
                                         notificationList.add(new NotificationItem(
                                                 imageBase64,
                                                 notificationText,
-                                                new SimpleDateFormat("hh:mm a").format(now)
+                                                new SimpleDateFormat("hh:mm a").format(now),
+                                                foodId
                                         ));
                                     }
                                 } catch (Exception e) {

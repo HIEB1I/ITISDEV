@@ -1,5 +1,6 @@
 package com.mobdeve.sustainabite;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -56,6 +57,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.notificationText.setText(notification.getNotificationText());
         holder.notificationTime.setText(notification.getTimestamp());
 
+/*
+        // Set a click listener to navigate to ProductDetailsActivity
+        holder.itemView.setOnClickListener(view -> {
+            // Get the foodId
+            String foodId = notification.getfoodId();
+
+            // Navigate to ProductDetailsActivity and pass the foodId
+            Intent intent = new Intent(view.getContext(), ProductDetailsActivity.class);
+            intent.putExtra("foodId", foodId);
+            view.getContext().startActivity(intent);
+        });
+*/
         // If decoding fails, use a default image
         if (notificationImage == null) {
             notificationImage = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.noimage);

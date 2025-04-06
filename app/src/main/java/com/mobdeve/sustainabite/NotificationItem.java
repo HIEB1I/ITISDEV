@@ -4,11 +4,13 @@ public class NotificationItem {
     private String imageBase64;
     private String notificationText;
     private String timestamp;
+    private String foodId;
 
-    public NotificationItem(String imageBase64, String notificationText, String timestamp) {
+    public NotificationItem(String imageBase64, String notificationText, String timestamp, String foodId) {
         this.imageBase64 = imageBase64;
         this.notificationText = notificationText;
         this.timestamp = timestamp;
+        this.foodId = foodId;
     }
 
     public String getImageBase64() {
@@ -22,5 +24,11 @@ public class NotificationItem {
     public String getTimestamp() {
         return timestamp;
     }
+
+    public String getfoodId() {
+        return foodId;
+    }
+
+
 }
 

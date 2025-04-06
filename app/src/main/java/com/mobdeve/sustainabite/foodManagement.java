@@ -1,6 +1,7 @@
 package com.mobdeve.sustainabite;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,9 @@ public class foodManagement extends AppCompatActivity {
 
         dbManager = new DBManager();
 
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("USER_ID", "No ID");
+
         //Initialize the array for products.
         productList = new ArrayList<>();
         fullProductList = new ArrayList<>();
@@ -46,12 +50,14 @@ public class foodManagement extends AppCompatActivity {
 
     //Fetch the set of products that are in Firestore.
 
-    private void fetchProductsFromFirestore(){
+    private void fetchProductsFromFirestore(String userId){
         //Clear Data first in order to ensure that it does not show the old data.
         productList.clear();
         fullProductList.clear();  // Add this line to clear the backup list
         productAdapter.notifyDataSetChanged();
-        dbManager.fetchProduct(new DBManager.OnProductsFetchedListener() {
+
+
+        dbManager.fetchProductUserId(userId, new DBManager.OnProductsFetchedListener() {
             @Override
 
             public void onProductsFetched(List<Product> products) {
@@ -86,7 +92,10 @@ public class foodManagement extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        fetchProductsFromFirestore();  // Only fetch the full list if not filtered
+        // Retrieve the user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String userId = prefs.getString("USER_ID", "No ID");
+        fetchProductsFromFirestore(userId);  // Only fetch the full list if not filtered
     }
 
     @Override

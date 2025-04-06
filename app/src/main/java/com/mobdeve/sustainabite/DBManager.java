@@ -799,6 +799,42 @@ public class DBManager {
                 });
     }
 
+    //Fetch all the Products  based on userId(Food)
+    public void fetchProductUserId(String userId, OnProductsFetchedListener listener) {
+        firestore.collection("FOODS")
+                .whereEqualTo("UNUM", userId)  // Add this line to filter by userId
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Product> productList = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            String FID = document.getId();
+                            String name = document.getString("FNAME");
+
+                            // Integer quantity = document.getLong("FQuantity").intValue();
+                            Long quantityLong = document.getLong("FQuantity");
+                            int quantity = (quantityLong != null) ? quantityLong.intValue() : 0;
+                            String doi = document.getString("FDOI");
+                            String doe = document.getString("FDOE");
+                            String qty_type = document.getString("FQuanType");
+                            String storage = document.getString("FRemarks");
+                            String remarks = document.getString("FSTORAGE");
+                            String imageResId = document.getString("FImage");
+
+                            Log.d("Firestore", "Food Id: " + FID + ", Name: " + name);
+                            Product product = new Product(name, FID, quantity, qty_type, doi, doe, storage, remarks, imageResId); //added FID here so that food ID can be stored on intent.
+                            productList.add(product);
+                        }
+
+                        // lets listener know that there are products being fetched.
+                        listener.onProductsFetched(productList);
+                    } else {
+                        listener.onError(task.getException());
+                    }
+
+                });
+    }
+
 
     //Code for adding Food
 
