@@ -945,7 +945,7 @@ public class DBManager {
 
                         // Manually map fields from the Firestore document to the Product object
                         String foodName = documentSnapshot.getString("FNAME");
-                        String fImage = documentSnapshot.getString("FIMAGE");
+                        String fImage = documentSnapshot.getString("FImage");
                         String qtyValue = documentSnapshot.get("FQuantity") != null ? documentSnapshot.get("FQuantity").toString() : "N/A";
                         String qtyType = documentSnapshot.getString("FQuanType");
                         String storage = documentSnapshot.getString("FSTORAGE");
@@ -1075,6 +1075,58 @@ public class DBManager {
                 });
     }
 
+//fetches the product based on the ID
+    public void fetchProductById(String foodId, FetchProductCallback callback) {
+        Log.d("DBManager", "Attempting to fetch product with ID: " + foodId);
+
+        FirebaseFirestore.getInstance()
+                .collection("FOODS")
+                .document(foodId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        try {
+                            // Manually map fields from Firestore
+                            String foodName = documentSnapshot.getString("FNAME");
+                            String fImage = documentSnapshot.getString("FImage");
+                            String qtyValue = documentSnapshot.get("FQuantity") != null ? documentSnapshot.get("FQuantity").toString() : "0";
+                            String qtyType = documentSnapshot.getString("FQuanType");
+                            String storage = documentSnapshot.getString("FSTORAGE");
+                            String remarks = documentSnapshot.getString("FRemarks");
+                            String fdoe = documentSnapshot.getString("FDOE");
+                            String fdoi = documentSnapshot.getString("FDOI");
+                            String fID = documentSnapshot.getId(); // Document ID if you prefer
+
+                            // Create and populate Product object
+                            Product product = new Product();
+                            product.setName(foodName);
+                            product.setImageString(fImage);
+                            product.setQty_Val(Integer.parseInt(qtyValue));
+                            product.setQty_Type(qtyType);
+                            product.setStorage(storage);
+                            product.setRemarks(remarks);
+                            product.setDOE(fdoe);
+                            product.setDOI(fdoi);
+                            product.setFoodId(fID);
+
+                            Log.d("DBManager", "Product fetched successfully: " + product.getName());
+                            callback.onSuccess(product);
+                        } catch (Exception e) {
+                            Log.e("DBManager", "Error mapping product data: " + e.getMessage());
+                            callback.onFailure(e);
+                        }
+                    } else {
+                        Log.w("DBManager", "No product found with ID: " + foodId);
+                        callback.onFailure(new Exception("Product not found"));
+                    }
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public interface FetchProductCallback {
+        void onSuccess(Product product);
+        void onFailure(Exception e);
+    }
 /*
 
     // Fetch products with filtering logic from Firestore

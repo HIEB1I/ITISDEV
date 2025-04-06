@@ -57,7 +57,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.notificationText.setText(notification.getNotificationText());
         holder.notificationTime.setText(notification.getTimestamp());
 
-/*
+
         // Set a click listener to navigate to ProductDetailsActivity
         holder.itemView.setOnClickListener(view -> {
             // Get the foodId
@@ -68,7 +68,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             intent.putExtra("foodId", foodId);
             view.getContext().startActivity(intent);
         });
-*/
+
         // If decoding fails, use a default image
         if (notificationImage == null) {
             notificationImage = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.noimage);

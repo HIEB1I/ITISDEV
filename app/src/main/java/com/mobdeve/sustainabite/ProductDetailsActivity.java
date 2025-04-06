@@ -43,9 +43,35 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String productImageBase64 = getIntent().getStringExtra("productImage");
         Log.d("FirestoreID", "The product that you selected has an ID of: " + FID); //Check if this is the correct FoodID
 
+        if (FID != null) {
+            dbManager.fetchProductById(FID, new DBManager.FetchProductCallback() {
+                        @Override
+                        public void onSuccess(Product product) {
+                            Log.d("ProductDetailsActivity", "Product details fetched: " + product.getName());
 
+                            // Bind data to views
+                            ((TextView) findViewById(R.id.productName)).setText(product.getName());
+                            ((TextView) findViewById(R.id.productQty_Val)).setText(String.valueOf(product.getQty_Val()));
+                            ((TextView) findViewById(R.id.productQty_Type)).setText(product.getQty_Type());
+                            ((TextView) findViewById(R.id.productDOI)).setText(DBManager.convertDate(product.getDOI()));
+                            ((TextView) findViewById(R.id.productDOE)).setText(DBManager.convertDate(product.getDOE()));
 
+                            Bitmap bitmap = DBManager.decodeBase64ToBitmap(product.getImageString());
+                            ImageView productImageView = findViewById(R.id.productImage);
+                            if (bitmap != null) {
+                                productImageView.setImageBitmap(bitmap);
+                            } else {
+                                productImageView.setImageResource(R.drawable.noimage);
+                            }
+                        }
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e("FirestoreError", "Failed to load product details: " + e.getMessage());
+                }
+            });
+        }
 
+/*
         // Bind Data to Views
         ((TextView) findViewById(R.id.productName)).setText(productName);
         ((TextView) findViewById(R.id.productQty_Val)).setText(productQty_Val);
@@ -62,6 +88,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 ((ImageView) findViewById(R.id.productImage)).setImageResource(R.drawable.noimage);
 
             }
+
+ */
 
         //((ImageView) findViewById(R.id.productImage)).setImageResource(productImage);
 
@@ -86,14 +114,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // goToEditEntry();
+                         goToEditEntry();
                     }
                 });
     }
 
 
 // this allows the user to go to the edit page and also sends data over to there
-  /*  public void goToEditEntry(){
+  public void goToEditEntry(){
         Intent intent = new Intent(this, editEntry.class);
         intent.putExtra("foodId", getIntent().getStringExtra("foodId"));
         intent.putExtra("productName", getIntent().getStringExtra("productName"));
@@ -170,7 +198,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
         setResult(RESULT_OK);
     }
-*/
+
 
     /*NAVIGATIONS*/
     public void goHome(View view) {
